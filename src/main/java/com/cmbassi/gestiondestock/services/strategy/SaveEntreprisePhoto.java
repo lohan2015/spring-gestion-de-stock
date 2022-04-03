@@ -26,7 +26,7 @@ public class SaveEntreprisePhoto implements Strategy<EntrepriseDto> {
   }
 
   @Override
-  public EntrepriseDto savePhoto(Integer id, InputStream photo, String titre) throws FlickrException {
+  public EntrepriseDto savePhoto(Integer id, InputStream photo, String titre) throws FlickrException, Exception {
     EntrepriseDto entreprise = entrepriseService.findById(id);
     String urlPhoto = flickrService.savePhoto(photo, titre);
     if (!StringUtils.hasLength(urlPhoto)) {

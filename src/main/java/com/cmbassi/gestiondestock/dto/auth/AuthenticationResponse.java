@@ -9,4 +9,10 @@ public class AuthenticationResponse {
 
   private String accessToken;
 
+  public AuthenticationResponse() {
+  }
+
+  public AuthenticationResponse(String accessToken) {
+    this.accessToken = accessToken;
+  }
 }

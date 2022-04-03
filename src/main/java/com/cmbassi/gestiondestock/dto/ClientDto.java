@@ -29,6 +29,21 @@ public class ClientDto {
   @JsonIgnore
   private List<CommandeClientDto> commandeClients;
 
+  public ClientDto() {
+  }
+
+  public ClientDto(Integer id, String nom, String prenom, AdresseDto adresse, String photo, String mail, String numTel, Integer idEntreprise, List<CommandeClientDto> commandeClients) {
+    this.id = id;
+    this.nom = nom;
+    this.prenom = prenom;
+    this.adresse = adresse;
+    this.photo = photo;
+    this.mail = mail;
+    this.numTel = numTel;
+    this.idEntreprise = idEntreprise;
+    this.commandeClients = commandeClients;
+  }
+
   public static ClientDto fromEntity(Client client) {
     if (client == null) {
       return null;

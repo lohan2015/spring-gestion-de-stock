@@ -26,6 +26,19 @@ public class MvtStkDto {
 
   private Integer idEntreprise;
 
+  public MvtStkDto() {
+  }
+
+  public MvtStkDto(Integer id, Instant dateMvt, BigDecimal quantite, ArticleDto article, TypeMvtStk typeMvt, SourceMvtStk sourceMvt, Integer idEntreprise) {
+    this.id = id;
+    this.dateMvt = dateMvt;
+    this.quantite = quantite;
+    this.article = article;
+    this.typeMvt = typeMvt;
+    this.sourceMvt = sourceMvt;
+    this.idEntreprise = idEntreprise;
+  }
+
   public static MvtStkDto fromEntity(MvtStk mvtStk) {
     if (mvtStk == null) {
       return null;

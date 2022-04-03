@@ -14,4 +14,12 @@ public class ChangerMotDePasseUtilisateurDto {
 
   private String confirmMotDePasse;
 
+  public ChangerMotDePasseUtilisateurDto() {
+  }
+
+  public ChangerMotDePasseUtilisateurDto(Integer id, String motDePasse, String confirmMotDePasse) {
+    this.id = id;
+    this.motDePasse = motDePasse;
+    this.confirmMotDePasse = confirmMotDePasse;
+  }
 }

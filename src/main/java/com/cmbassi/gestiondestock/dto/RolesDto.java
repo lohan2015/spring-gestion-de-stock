@@ -16,6 +16,15 @@ public class RolesDto {
   @JsonIgnore
   private UtilisateurDto utilisateur;
 
+  public RolesDto() {
+  }
+
+  public RolesDto(Integer id, String roleName, UtilisateurDto utilisateur) {
+    this.id = id;
+    this.roleName = roleName;
+    this.utilisateur = utilisateur;
+  }
+
   public static RolesDto fromEntity(Roles roles) {
     if (roles == null) {
       return null;

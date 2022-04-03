@@ -5,6 +5,6 @@ import java.io.InputStream;
 
 public interface Strategy<T> {
 
-  T savePhoto(Integer id, InputStream photo, String titre) throws FlickrException;
+  T savePhoto(Integer id, InputStream photo, String titre) throws FlickrException, Exception;
 
 }

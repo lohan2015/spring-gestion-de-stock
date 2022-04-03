@@ -23,6 +23,18 @@ public class LigneCommandeClientDto {
 
   private Integer idEntreprise;
 
+  public LigneCommandeClientDto() {
+  }
+
+  public LigneCommandeClientDto(Integer id, ArticleDto article, CommandeClientDto commandeClient, BigDecimal quantite, BigDecimal prixUnitaire, Integer idEntreprise) {
+    this.id = id;
+    this.article = article;
+    this.commandeClient = commandeClient;
+    this.quantite = quantite;
+    this.prixUnitaire = prixUnitaire;
+    this.idEntreprise = idEntreprise;
+  }
+
   public static LigneCommandeClientDto fromEntity(LigneCommandeClient ligneCommandeClient) {
     if (ligneCommandeClient == null) {
       return null;

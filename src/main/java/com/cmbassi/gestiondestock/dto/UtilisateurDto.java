@@ -31,6 +31,22 @@ public class UtilisateurDto {
 
   private List<RolesDto> roles;
 
+  public UtilisateurDto() {
+  }
+
+  public UtilisateurDto(Integer id, String nom, String prenom, String email, Instant dateDeNaissance, String moteDePasse, AdresseDto adresse, String photo, EntrepriseDto entreprise, List<RolesDto> roles) {
+    this.id = id;
+    this.nom = nom;
+    this.prenom = prenom;
+    this.email = email;
+    this.dateDeNaissance = dateDeNaissance;
+    this.moteDePasse = moteDePasse;
+    this.adresse = adresse;
+    this.photo = photo;
+    this.entreprise = entreprise;
+    this.roles = roles;
+  }
+
   public static UtilisateurDto fromEntity(Utilisateur utilisateur) {
     if (utilisateur == null) {
       return null;

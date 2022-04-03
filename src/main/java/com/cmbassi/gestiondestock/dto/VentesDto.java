@@ -22,6 +22,18 @@ public class VentesDto {
 
   private Integer idEntreprise;
 
+  public VentesDto() {
+  }
+
+  public VentesDto(Integer id, String code, Instant dateVente, String commentaire, List<LigneVenteDto> ligneVentes, Integer idEntreprise) {
+    this.id = id;
+    this.code = code;
+    this.dateVente = dateVente;
+    this.commentaire = commentaire;
+    this.ligneVentes = ligneVentes;
+    this.idEntreprise = idEntreprise;
+  }
+
   public static VentesDto fromEntity(Ventes vente) {
     if (vente == null) {
       return null;

@@ -32,6 +32,22 @@ public class EntrepriseDto {
   @JsonIgnore
   private List<UtilisateurDto> utilisateurs;
 
+  public EntrepriseDto() {
+  }
+
+  public EntrepriseDto(Integer id, String nom, String description, AdresseDto adresse, String codeFiscal, String photo, String email, String numTel, String steWeb, List<UtilisateurDto> utilisateurs) {
+    this.id = id;
+    this.nom = nom;
+    this.description = description;
+    this.adresse = adresse;
+    this.codeFiscal = codeFiscal;
+    this.photo = photo;
+    this.email = email;
+    this.numTel = numTel;
+    this.steWeb = steWeb;
+    this.utilisateurs = utilisateurs;
+  }
+
   public static EntrepriseDto fromEntity(Entreprise entreprise) {
     if (entreprise == null) {
       return null;

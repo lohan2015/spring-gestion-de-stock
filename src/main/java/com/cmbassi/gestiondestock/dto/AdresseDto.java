@@ -18,6 +18,17 @@ public class AdresseDto {
 
   private String pays;
 
+  public AdresseDto() {
+  }
+
+  public AdresseDto(String adresse1, String adresse2, String ville, String codePostale, String pays) {
+    this.adresse1 = adresse1;
+    this.adresse2 = adresse2;
+    this.ville = ville;
+    this.codePostale = codePostale;
+    this.pays = pays;
+  }
+
   public static AdresseDto fromEntity(Adresse adresse) {
     if (adresse == null) {
       return null;

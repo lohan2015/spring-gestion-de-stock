@@ -27,6 +27,21 @@ public class ArticleDto {
 
   private Integer idEntreprise;
 
+  public ArticleDto() {
+  }
+
+  public ArticleDto(Integer id, String codeArticle, String designation, BigDecimal prixUnitaireHt, BigDecimal tauxTva, BigDecimal prixUnitaireTtc, String photo, CategoryDto category, Integer idEntreprise) {
+    this.id = id;
+    this.codeArticle = codeArticle;
+    this.designation = designation;
+    this.prixUnitaireHt = prixUnitaireHt;
+    this.tauxTva = tauxTva;
+    this.prixUnitaireTtc = prixUnitaireTtc;
+    this.photo = photo;
+    this.category = category;
+    this.idEntreprise = idEntreprise;
+  }
+
   public static ArticleDto fromEntity(Article article) {
     if (article == null) {
       return null;

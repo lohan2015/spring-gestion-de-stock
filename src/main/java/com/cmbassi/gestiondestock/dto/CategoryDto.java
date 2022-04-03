@@ -21,6 +21,17 @@ public class CategoryDto {
   @JsonIgnore
   private List<ArticleDto> articles;
 
+  public CategoryDto() {
+  }
+
+  public CategoryDto(Integer id, String code, String designation, Integer idEntreprise, List<ArticleDto> articles) {
+    this.id = id;
+    this.code = code;
+    this.designation = designation;
+    this.idEntreprise = idEntreprise;
+    this.articles = articles;
+  }
+
   public static CategoryDto fromEntity(Category category) {
     if (category == null) {
       return null;

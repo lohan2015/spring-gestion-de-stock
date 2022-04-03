@@ -22,6 +22,18 @@ public class LigneCommandeFournisseurDto {
 
   private Integer idEntreprise;
 
+  public LigneCommandeFournisseurDto() {
+  }
+
+  public LigneCommandeFournisseurDto(Integer id, ArticleDto article, CommandeFournisseur commandeFournisseur, BigDecimal quantite, BigDecimal prixUnitaire, Integer idEntreprise) {
+    this.id = id;
+    this.article = article;
+    this.commandeFournisseur = commandeFournisseur;
+    this.quantite = quantite;
+    this.prixUnitaire = prixUnitaire;
+    this.idEntreprise = idEntreprise;
+  }
+
   public static LigneCommandeFournisseurDto fromEntity(LigneCommandeFournisseur ligneCommandeFournisseur) {
     if (ligneCommandeFournisseur == null) {
       return null;

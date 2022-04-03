@@ -21,6 +21,18 @@ public class LigneVenteDto {
 
   private Integer idEntreprise;
 
+  public LigneVenteDto() {
+  }
+
+  public LigneVenteDto(Integer id, VentesDto vente, ArticleDto article, BigDecimal quantite, BigDecimal prixUnitaire, Integer idEntreprise) {
+    this.id = id;
+    this.vente = vente;
+    this.article = article;
+    this.quantite = quantite;
+    this.prixUnitaire = prixUnitaire;
+    this.idEntreprise = idEntreprise;
+  }
+
   public static LigneVenteDto fromEntity(LigneVente ligneVente) {
     if (ligneVente == null) {
       return null;

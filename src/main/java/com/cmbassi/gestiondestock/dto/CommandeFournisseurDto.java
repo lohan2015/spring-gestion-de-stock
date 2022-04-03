@@ -28,6 +28,19 @@ public class CommandeFournisseurDto {
 
   private List<LigneCommandeFournisseurDto> ligneCommandeFournisseurs;
 
+  public CommandeFournisseurDto() {
+  }
+
+  public CommandeFournisseurDto(Integer id, String code, Instant dateCommande, EtatCommande etatCommande, FournisseurDto fournisseur, Integer idEntreprise, List<LigneCommandeFournisseurDto> ligneCommandeFournisseurs) {
+    this.id = id;
+    this.code = code;
+    this.dateCommande = dateCommande;
+    this.etatCommande = etatCommande;
+    this.fournisseur = fournisseur;
+    this.idEntreprise = idEntreprise;
+    this.ligneCommandeFournisseurs = ligneCommandeFournisseurs;
+  }
+
   public static CommandeFournisseurDto fromEntity(CommandeFournisseur commandeFournisseur) {
     if (commandeFournisseur == null) {
       return null;

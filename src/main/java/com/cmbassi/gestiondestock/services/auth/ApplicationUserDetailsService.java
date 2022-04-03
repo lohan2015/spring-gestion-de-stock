@@ -1,12 +1,15 @@
 package com.cmbassi.gestiondestock.services.auth;
 
 import com.cmbassi.gestiondestock.dto.UtilisateurDto;
+import com.cmbassi.gestiondestock.exception.EntityNotFoundException;
+import com.cmbassi.gestiondestock.exception.ErrorCodes;
+import com.cmbassi.gestiondestock.model.Utilisateur;
 import com.cmbassi.gestiondestock.model.auth.ExtendedUser;
+import com.cmbassi.gestiondestock.repository.UtilisateurRepository;
 import com.cmbassi.gestiondestock.services.UtilisateurService;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,9 +20,7 @@ import org.springframework.stereotype.Service;
 public class ApplicationUserDetailsService implements UserDetailsService {
 
   @Autowired
-  @Lazy
   private UtilisateurService service;
-
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

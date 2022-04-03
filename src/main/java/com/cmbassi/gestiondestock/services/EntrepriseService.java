@@ -5,12 +5,12 @@ import java.util.List;
 
 public interface EntrepriseService {
 
-  EntrepriseDto save(EntrepriseDto dto);
+  EntrepriseDto save(EntrepriseDto dto) throws Exception;
 
-  EntrepriseDto findById(Integer id);
+  EntrepriseDto findById(Integer id) throws Exception;
 
-  List<EntrepriseDto> findAll();
+  List<EntrepriseDto> findAll() throws Exception;
 
-  void delete(Integer id);
+  void delete(Integer id) throws Exception;
 
 }

@@ -22,7 +22,7 @@ public class StrategyPhotoContext {
     this.beanFactory = beanFactory;
   }
 
-  public Object savePhoto(String context, Integer id, InputStream photo, String title) throws FlickrException {
+  public Object savePhoto(String context, Integer id, InputStream photo, String title) throws FlickrException, Exception {
     determinContext(context);
     return strategy.savePhoto(id, photo, title);
   }

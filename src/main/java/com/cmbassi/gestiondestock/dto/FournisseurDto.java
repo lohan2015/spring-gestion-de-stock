@@ -29,6 +29,21 @@ public class FournisseurDto {
   @JsonIgnore
   private List<CommandeFournisseurDto> commandeFournisseurs;
 
+  public FournisseurDto() {
+  }
+
+  public FournisseurDto(Integer id, String nom, String prenom, AdresseDto adresse, String photo, String mail, String numTel, Integer idEntreprise, List<CommandeFournisseurDto> commandeFournisseurs) {
+    this.id = id;
+    this.nom = nom;
+    this.prenom = prenom;
+    this.adresse = adresse;
+    this.photo = photo;
+    this.mail = mail;
+    this.numTel = numTel;
+    this.idEntreprise = idEntreprise;
+    this.commandeFournisseurs = commandeFournisseurs;
+  }
+
   public static FournisseurDto fromEntity(Fournisseur fournisseur) {
     if (fournisseur == null) {
       return null;

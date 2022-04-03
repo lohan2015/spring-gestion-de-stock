@@ -3,6 +3,8 @@ package com.cmbassi.gestiondestock.config;
 import com.cmbassi.gestiondestock.services.auth.ApplicationUserDetailsService;
 import java.util.Arrays;
 import java.util.Collections;
+
+import com.cmbassi.gestiondestock.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.SessionManagementFilter;
@@ -40,7 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     http.addFilterBefore(corsFilter(), SessionManagementFilter.class)
         .csrf().disable()
         .authorizeRequests().antMatchers("/**/authenticate",
-        "/**/entreprises/create",
+         "/**/entreprises/create",
         "/v2/api-docs",
         "/swagger-resources",
         "/swagger-resources/**",
@@ -78,6 +81,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Bean
   public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
+    return NoOpPasswordEncoder.getInstance();//new BCryptPasswordEncoder();
   }
 }

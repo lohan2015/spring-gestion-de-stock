@@ -29,6 +29,19 @@ public class CommandeClientDto {
 
   private List<LigneCommandeClientDto> ligneCommandeClients;
 
+  public CommandeClientDto() {
+  }
+
+  public CommandeClientDto(Integer id, String code, Instant dateCommande, EtatCommande etatCommande, ClientDto client, Integer idEntreprise, List<LigneCommandeClientDto> ligneCommandeClients) {
+    this.id = id;
+    this.code = code;
+    this.dateCommande = dateCommande;
+    this.etatCommande = etatCommande;
+    this.client = client;
+    this.idEntreprise = idEntreprise;
+    this.ligneCommandeClients = ligneCommandeClients;
+  }
+
   public static CommandeClientDto fromEntity(CommandeClient commandeClient) {
     if (commandeClient == null) {
       return null;
