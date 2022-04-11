@@ -5,6 +5,7 @@ import static com.cmbassi.gestiondestock.utils.Constants.AUTHENTICATION_ENDPOINT
 import com.cmbassi.gestiondestock.dto.auth.AuthenticationRequest;
 import com.cmbassi.gestiondestock.dto.auth.AuthenticationResponse;
 import io.swagger.annotations.Api;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Api("authentication")
 public interface AuthenticationApi {
 
-  @PostMapping(AUTHENTICATION_ENDPOINT + "/authenticate")
-  public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) throws Exception;
+  @PostMapping(value=AUTHENTICATION_ENDPOINT + "/authenticate", produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+  public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request);
 
 }

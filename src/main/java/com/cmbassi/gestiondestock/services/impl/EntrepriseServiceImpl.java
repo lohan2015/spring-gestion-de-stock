@@ -17,7 +17,10 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Transactional(rollbackOn = Exception.class)
 @Service
@@ -37,10 +40,10 @@ public class EntrepriseServiceImpl implements EntrepriseService {
   }
 
   @Override
-  public EntrepriseDto save(EntrepriseDto dto) throws Exception {
+  public EntrepriseDto save(EntrepriseDto dto) throws InvalidEntityException {
     List<String> errors = EntrepriseValidator.validate(dto);
     if (!errors.isEmpty()) {
-      log.error("Entreprise is not valid {}", dto);
+      //log.error("Entreprise is not valid {}", dto);
       throw new InvalidEntityException("L'entreprise n'est pas valide", ErrorCodes.ENTREPRISE_NOT_VALID, errors);
     }
     EntrepriseDto savedEntreprise = EntrepriseDto.fromEntity(
@@ -79,7 +82,7 @@ public class EntrepriseServiceImpl implements EntrepriseService {
   }
 
   @Override
-  public EntrepriseDto findById(Integer id) throws Exception {
+  public EntrepriseDto findById(Integer id) {
     if (id == null) {
       log.error("Entreprise ID is null");
       return null;
@@ -93,14 +96,14 @@ public class EntrepriseServiceImpl implements EntrepriseService {
   }
 
   @Override
-  public List<EntrepriseDto> findAll() throws Exception {
+  public List<EntrepriseDto> findAll() {
     return entrepriseRepository.findAll().stream()
         .map(EntrepriseDto::fromEntity)
         .collect(Collectors.toList());
   }
 
   @Override
-  public void delete(Integer id) throws Exception {
+  public void delete(Integer id) {
     if (id == null) {
       log.error("Entreprise ID is null");
       return;

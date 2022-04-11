@@ -1,12 +1,12 @@
 spring:
   datasource:
-    url: postgres://jdlysksngpmstg:def7148466dd0f8b1bb5b50844542a7274d6632058c135f701ea84dd5ab8ecc7@ec2-99-80-170-190.eu-west-1.compute.amazonaws.com:5432/d943poluenfqcb
-    username: jdlysksngpmstg
-    password: def7148466dd0f8b1bb5b50844542a7274d6632058c135f701ea84dd5ab8ecc7
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://localhost:3306/gestionstock?createDatabaseIfNotExist=true&userSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
   ## Specify DBMS
   jpa:
-    database: POSTGRESQL
+    database: MYSQL
     show-sql: false
     properties:
       hibernate:
@@ -16,7 +16,7 @@ spring:
     # Hibernate DDL Auto (create, create-drop, update)
     hibernate:
       ddl-auto: update
-      dialect: org.hibernate.dialect.PostgreSQLDialect
+      dialect: org.hibernate.dialect.MySQL5Dialect
 
 server:
   port: 8081

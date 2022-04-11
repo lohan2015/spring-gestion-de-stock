@@ -1,6 +1,8 @@
 package com.cmbassi.gestiondestock.exception;
 
-public enum ErrorCodes {
+import java.io.Serializable;
+
+public enum ErrorCodes implements Serializable {
 
   ARTICLE_NOT_FOUND(1000),
   ARTICLE_NOT_VALID(1001),
