@@ -3,7 +3,6 @@ package com.cmbassi.gestiondestock.services.strategy;
 import com.cmbassi.gestiondestock.dto.FournisseurDto;
 import com.cmbassi.gestiondestock.exception.ErrorCodes;
 import com.cmbassi.gestiondestock.exception.InvalidOperationException;
-import com.cmbassi.gestiondestock.model.Fournisseur;
 import com.cmbassi.gestiondestock.services.FlickrService;
 import com.cmbassi.gestiondestock.services.FournisseurService;
 import com.flickr4java.flickr.FlickrException;

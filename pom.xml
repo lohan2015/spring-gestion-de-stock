@@ -29,6 +29,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>2.0.1.Final</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.flickr4java</groupId>
@@ -108,15 +113,16 @@
 							<springmvc>true</springmvc>
 							<locations>
 								<location>com.cmbassi.gestiondestock.controller.api</location>
+								<location>com.cmbassi.gestiondepaie.controller.api</location>
 							</locations>
 							<basePath>http://localhost:8081</basePath>
 							<info>
-								<title>Swagger Api Documentation for Gestion de stock application</title>
+								<title>Swagger Api Documentation for Gestion de paie et stock application</title>
 								<version>${project.version}</version>
-								<description>Swagger Api documentation for Gestion de stock application</description>
+								<description>Swagger Api documentation for Gestion de paie et stock application</description>
 								<contact>
 									<email>mbacyrille2002@yahoo.fr</email>
-									<name>Ali Bouali</name>
+									<name>Cyrille MBASSI</name>
 									<url>https://www.udemy.com/user/cyrille-mbassi/</url>
 								</contact>
 							</info>

@@ -13,7 +13,6 @@ import com.cmbassi.gestiondestock.model.Article;
 import com.cmbassi.gestiondestock.model.CommandeFournisseur;
 import com.cmbassi.gestiondestock.model.EtatCommande;
 import com.cmbassi.gestiondestock.model.Fournisseur;
-import com.cmbassi.gestiondestock.model.LigneCommandeClient;
 import com.cmbassi.gestiondestock.model.LigneCommandeFournisseur;
 import com.cmbassi.gestiondestock.model.SourceMvtStk;
 import com.cmbassi.gestiondestock.model.TypeMvtStk;

@@ -29,8 +29,8 @@ public class SwaggerConfiguration {
     return new Docket(DocumentationType.SWAGGER_2)
         .apiInfo(
             new ApiInfoBuilder()
-                .description("Gestion de stock API documentation")
-                .title("Gestion de stock REST API")
+                .description("Gestion de paie et stock API documentation")
+                .title("Gestion de paie et stock REST API")
                 .build()
         )
             .groupName("REST API V1")
@@ -38,7 +38,7 @@ public class SwaggerConfiguration {
             .securitySchemes(Collections.singletonList(apiKey()))
             .useDefaultResponseMessages(false)
             .select()
-            .apis(RequestHandlerSelectors.basePackage("com.cmbassi.gestiondestock"))
+            .apis(RequestHandlerSelectors.basePackage("com.cmbassi"))
             .paths(PathSelectors.any())
             .build();
 //            .select()

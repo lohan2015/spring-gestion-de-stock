@@ -1,6 +1,7 @@
 package com.cmbassi.gestiondestock.services;
 
 import com.cmbassi.gestiondestock.dto.ClientDto;
+
 import java.util.List;
 
 public interface ClientService {

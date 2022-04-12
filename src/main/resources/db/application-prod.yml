@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: postgres://jdlysksngpmstg:def7148466dd0f8b1bb5b50844542a7274d6632058c135f701ea84dd5ab8ecc7@ec2-99-80-170-190.eu-west-1.compute.amazonaws.com:5432/d943poluenfqcb
-    username: jdlysksngpmstg
-    password: def7148466dd0f8b1bb5b50844542a7274d6632058c135f701ea84dd5ab8ecc7
+    url: postgres://vugqnxhrdnkftz:d0f42d4c7596d75629e391a059468988282aa83d4b4a203866a4dc4b3cb56d1e@ec2-3-248-121-12.eu-west-1.compute.amazonaws.com:5432/da1pc9bkqq4cvf
+    username: vugqnxhrdnkftz
+    password: d0f42d4c7596d75629e391a059468988282aa83d4b4a203866a4dc4b3cb56d1e
     driver-class-name: org.postgresql.Driver
   ## Specify DBMS
   jpa:

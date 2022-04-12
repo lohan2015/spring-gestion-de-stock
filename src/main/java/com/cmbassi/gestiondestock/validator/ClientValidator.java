@@ -1,8 +1,9 @@
 package com.cmbassi.gestiondestock.validator;
 
-import com.cmbassi.gestiondestock.dto.ClientDto;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.cmbassi.gestiondestock.dto.ClientDto;
 import org.springframework.util.StringUtils;
 
 public class ClientValidator {
