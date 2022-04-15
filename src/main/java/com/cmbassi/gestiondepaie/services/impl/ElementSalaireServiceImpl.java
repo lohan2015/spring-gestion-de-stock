@@ -41,7 +41,7 @@ public class ElementSalaireServiceImpl implements ElementSalaireService {
 
         // Base de calcul
         elementSalaireRepository.deleteBaseCalculByCodeElement(dto.getCrub());
-        if(!dto.getElementSalaireBase().isEmpty()){
+        if(dto!=null && dto.getElementSalaireBase()!=null && !dto.getElementSalaireBase().isEmpty()){
             for(ElementSalaireBaseDto elementSalaireBaseDto : dto.getElementSalaireBase()){
                 elementSalaireBaseRepository.save(ElementSalaireBaseDto.toEntity(elementSalaireBaseDto));
             }
@@ -49,7 +49,7 @@ public class ElementSalaireServiceImpl implements ElementSalaireService {
 
         // Barème
         elementSalaireRepository.deleteBaremeByCodeElement(dto.getCrub());
-        if(!dto.getElementSalaireBareme().isEmpty()){
+        if(dto!=null && dto.getElementSalaireBareme()!=null && !dto.getElementSalaireBareme().isEmpty()){
             for(ElementSalaireBaremeDto elementSalaireBaremeDto : dto.getElementSalaireBareme()){
                 elementSalaireBaremeRepository.save(ElementSalaireBaremeDto.toEntity(elementSalaireBaremeDto));
             }

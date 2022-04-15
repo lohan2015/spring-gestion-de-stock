@@ -2,6 +2,7 @@ package com.cmbassi.gestiondepaie.services;
 
 import com.cmbassi.gestiondepaie.dto.DossierPaieDto;
 
+import java.util.Date;
 import java.util.List;
 
 public interface DossierPaieService {
@@ -14,7 +15,7 @@ public interface DossierPaieService {
 
     void delete(Integer id);
 
-    String getMoisDePaieCourant(Integer idEntreprise);
+    Date getMoisDePaieCourant(Integer idEntreprise);
 
     Integer getNumeroBulletinPaie(Integer idEntreprise);
 }

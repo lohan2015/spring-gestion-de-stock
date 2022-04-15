@@ -291,11 +291,11 @@ public class ClsDate {
 	}	
 	
 	public String getYearAndMonth(){
-		return String.valueOf(this.c1.get(Calendar.YEAR)) + ClsStringUtil.formatNumber(this.c1.get(Calendar.MONTH) + 1, "00");
+		return String.valueOf(this.c1.get(Calendar.YEAR)) + StringUtil.formatNumber(this.c1.get(Calendar.MONTH) + 1, "00");
 	}
 	
 	public String getYearAndMonth(char c){
-		return String.valueOf(this.c1.get(Calendar.YEAR)) + c + ClsStringUtil.formatNumber(this.c1.get(Calendar.MONTH) + 1, "00");
+		return String.valueOf(this.c1.get(Calendar.YEAR)) + c + StringUtil.formatNumber(this.c1.get(Calendar.MONTH) + 1, "00");
 	}
 	
 	public Date getYearAndMonthDate(){
@@ -517,7 +517,7 @@ public class ClsDate {
 		double nmoisAnnee = na*12;
 		double nmoisMois = nmois;
 		double nmoisJours = nj / Double.valueOf(30);
-		nmois =ClsStringUtil.truncateTo3Decimal(new BigDecimal(nmoisAnnee + nmoisMois + nmoisJours)).doubleValue();
+		nmois = StringUtil.truncateTo3Decimal(new BigDecimal(nmoisAnnee + nmoisMois + nmoisJours)).doubleValue();
 		
 		return nmois;
 	}
@@ -559,8 +559,8 @@ public class ClsDate {
 	}
 	
 	public String getFormatedDate(char c){
-		return String.valueOf(this.c1.get(Calendar.YEAR)) + c + ClsStringUtil.formatNumber(this.c1.get(Calendar.MONTH), "00")
-				 + c + ClsStringUtil.formatNumber(this.c1.get(Calendar.DAY_OF_MONTH), "00");
+		return String.valueOf(this.c1.get(Calendar.YEAR)) + c + StringUtil.formatNumber(this.c1.get(Calendar.MONTH), "00")
+				 + c + StringUtil.formatNumber(this.c1.get(Calendar.DAY_OF_MONTH), "00");
 	}
 	
 	public String getFormatedDate(){

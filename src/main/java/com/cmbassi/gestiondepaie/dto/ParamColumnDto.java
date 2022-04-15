@@ -8,7 +8,7 @@ import org.springframework.beans.BeanUtils;
 @Data
 @Builder
 public class ParamColumnDto {
-
+    private Integer id;
     private Integer idEntreprise;
 
     private Integer ctab;
@@ -34,7 +34,8 @@ public class ParamColumnDto {
     public ParamColumnDto() {
     }
 
-    public ParamColumnDto(Integer idEntreprise, Integer ctab, String ctyp, Integer nume, String libe, String duti, Integer numeLien, Integer ctabLien, String codeProfil, String ctypLien, String obligatoire) {
+    public ParamColumnDto(Integer id, Integer idEntreprise, Integer ctab, String ctyp, Integer nume, String libe, String duti, Integer numeLien, Integer ctabLien, String codeProfil, String ctypLien, String obligatoire) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.ctab = ctab;
         this.ctyp = ctyp;

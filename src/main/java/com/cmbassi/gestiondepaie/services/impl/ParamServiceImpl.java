@@ -153,10 +153,13 @@ public class ParamServiceImpl implements ParamService {
     }
 
     @Override
-    public List<ParamDataDto> findDataByNumeroLigne(Integer ctab, String cacc, Integer nume) {
-        return paramDataRepository.findByNumeroLigne(ctab, cacc, nume).stream()
-                .map(ParamDataDto::fromEntity)
-                .collect(Collectors.toList());
+    public ParamDataDto findDataByNumeroLigne(Integer ctab, String cacc, Integer nume) {
+        return paramDataRepository.findByNumeroLigne(ctab, cacc, nume).map(ParamDataDto::fromEntity)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Aucune donnée avec l'ID = " + cacc + " n' ete trouve dans la BDD",
+                                ErrorCodes.ARTICLE_NOT_FOUND)
+                );
     }
 
     @Override

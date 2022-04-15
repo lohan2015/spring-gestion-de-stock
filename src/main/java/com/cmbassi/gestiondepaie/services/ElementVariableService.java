@@ -4,6 +4,7 @@ import com.cmbassi.gestiondepaie.dto.ElementVariableDetailMoisDto;
 import com.cmbassi.gestiondepaie.dto.ElementVariableEnteteMoisDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ElementVariableService {
 
@@ -14,4 +15,6 @@ public interface ElementVariableService {
     List<ElementVariableDetailMoisDto> findDetailAll();
 
     void delete(Integer id);
+
+    List<ElementVariableDetailMoisDto> findEVByFilter(Optional<String> matricule, Optional<String> coderub);
 }

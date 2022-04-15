@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @Builder
 public class CaisseMutuelleSalarieDto {
-
+    private Integer id;
     private Integer idEntreprise;
 
     private String nmat;
@@ -30,7 +30,8 @@ public class CaisseMutuelleSalarieDto {
     public CaisseMutuelleSalarieDto() {
     }
 
-    public CaisseMutuelleSalarieDto(Integer idEntreprise, String nmat, String rscm, String rpcm, String nadh, Date dtad, Date dtrd, Salarie salarie) {
+    public CaisseMutuelleSalarieDto(Integer id, Integer idEntreprise, String nmat, String rscm, String rpcm, String nadh, Date dtad, Date dtrd, Salarie salarie) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.nmat = nmat;
         this.rscm = rscm;

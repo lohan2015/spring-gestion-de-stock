@@ -13,6 +13,7 @@ import java.util.Date;
 @Data
 @Builder
 public class PretInterneDto implements Serializable {
+    private Integer id;
     private Integer idEntreprise;
     private String nmat;
     private Integer nprt;
@@ -37,7 +38,8 @@ public class PretInterneDto implements Serializable {
     public PretInterneDto() {
     }
 
-    public PretInterneDto(Integer idEntreprise, String nmat, Integer nprt, String crub, String com1, String com2, Date dmep, Date dpec, Date per1, BigDecimal mntp, BigDecimal resr, Integer nbec, Integer nber, BigDecimal mtec, BigDecimal tint, BigDecimal ttax, String pact, String etpr, Date dcrp, String ncpt) {
+    public PretInterneDto(Integer id, Integer idEntreprise, String nmat, Integer nprt, String crub, String com1, String com2, Date dmep, Date dpec, Date per1, BigDecimal mntp, BigDecimal resr, Integer nbec, Integer nber, BigDecimal mtec, BigDecimal tint, BigDecimal ttax, String pact, String etpr, Date dcrp, String ncpt) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.nmat = nmat;
         this.nprt = nprt;

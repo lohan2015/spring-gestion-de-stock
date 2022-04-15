@@ -23,7 +23,7 @@ public interface DossierPaieApi {
     })
     ResponseEntity<DossierPaieDto> save(@RequestBody DossierPaieDto dto);
 
-    @GetMapping(value = APP_ROOT_PAIE + "/calcul/filter/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = APP_ROOT_PAIE + "/dossierpaie/filter/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Rechercher un calul par ID", notes = "Cette methode permet de chercher un salarié par son CODE", response =
             DossierPaieDto.class)
     @ApiResponses(value = {
@@ -53,7 +53,7 @@ public interface DossierPaieApi {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Le mois de paie en cours")
     })
-    String getMoisDePaieCourant(Integer idEntreprise);
+    String getMoisDePaieCourant(@PathVariable("idEntreprise") Integer idEntreprise, @PathVariable("dateFormat") String dateFormat);
 
     @GetMapping(value = APP_ROOT_PAIE + "/dossierpaie/numbul", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Renvoi le numéro de bulletin en cours", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
@@ -61,5 +61,5 @@ public interface DossierPaieApi {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Le numérode bulletin de paie en cours")
     })
-    Integer getNumeroBulletinPaie(Integer idEntreprise);
+    Integer getNumeroBulletinPaie(@PathVariable("idEntreprise") Integer idEntreprise);
 }

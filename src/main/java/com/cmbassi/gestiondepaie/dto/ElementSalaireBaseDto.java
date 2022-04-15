@@ -9,7 +9,7 @@ import org.springframework.beans.BeanUtils;
 @Data
 @Builder
 public class ElementSalaireBaseDto {
-
+    private Integer id;
     private Integer idEntreprise;
 
     private String crub;
@@ -26,7 +26,8 @@ public class ElementSalaireBaseDto {
     public ElementSalaireBaseDto() {
     }
 
-    public ElementSalaireBaseDto(Integer idEntreprise, String crub, Integer nume, String sign, String rubk, ElementSalaire elementSalaire) {
+    public ElementSalaireBaseDto(Integer id, Integer idEntreprise, String crub, Integer nume, String sign, String rubk, ElementSalaire elementSalaire) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.crub = crub;
         this.nume = nume;

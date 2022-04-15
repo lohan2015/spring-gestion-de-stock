@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class ElementSalaireBaremeDto {
-
+    private Integer id;
     private Integer idEntreprise;
 
     private String crub;
@@ -32,7 +32,8 @@ public class ElementSalaireBaremeDto {
     public ElementSalaireBaremeDto() {
     }
 
-    public ElementSalaireBaremeDto(Integer idEntreprise, String crub, Integer nume, String val1, String val2, BigDecimal taux, BigDecimal mont, ElementSalaire elementSalaire) {
+    public ElementSalaireBaremeDto(Integer id, Integer idEntreprise, String crub, Integer nume, String val1, String val2, BigDecimal taux, BigDecimal mont, ElementSalaire elementSalaire) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.crub = crub;
         this.nume = nume;

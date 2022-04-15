@@ -89,7 +89,7 @@ public interface ParamApi {
             @ApiResponse(code = 200, message = "Le salarié a ete trouve dans la BDD"),
             @ApiResponse(code = 404, message = "Aucun salarié n'existe dans la BDD avec le CODE fourni")
     })
-    ResponseEntity<List<ParamDataDto>> findDataByNumeroLigne(@PathVariable("ctab") Integer ctab, @PathVariable("cacc") String cacc, @PathVariable("nume") Integer nume);
+    ResponseEntity<ParamDataDto> findDataByNumeroLigne(@PathVariable("ctab") Integer ctab, @PathVariable("cacc") String cacc, @PathVariable("nume") Integer nume);
 
     @GetMapping(value = APP_ROOT_PAIE + "/parametrage/colonne/filter/{ctab}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Rechercher une colonne par numéro de table", notes = "Cette methode permet de chercher un salarié par son CODE", response =

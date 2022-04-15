@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @Data
 @Builder
 public class ParamTableDto {
-
+    private Integer id;
     private Integer idEntreprise;
 
     private Integer ctab;
@@ -32,7 +32,8 @@ public class ParamTableDto {
     public ParamTableDto() {
     }
 
-    public ParamTableDto(Integer idEntreprise, Integer ctab, String libe, int nccl, String typc, String duti, String profil) {
+    public ParamTableDto(Integer id, Integer idEntreprise, Integer ctab, String libe, int nccl, String typc, String duti, String profil) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.ctab = ctab;
         this.libe = libe;

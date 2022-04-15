@@ -43,7 +43,7 @@ public class SalarieServiceImpl implements SalarieService {
 
         // Caisses et mutuelles
         salarieRepository.deleteCaisseMutuelleByMatricule(dto.getNmat());
-        if(!dto.getCaisseMutuelleSalarie().isEmpty()){
+        if(dto!=null && dto.getCaisseMutuelleSalarie()!=null && !dto.getCaisseMutuelleSalarie().isEmpty()){
             for(CaisseMutuelleSalarieDto caisseMutDto : dto.getCaisseMutuelleSalarie()){
                     caisseMutuelleSalarieRepository.save(CaisseMutuelleSalarieDto.toEntity(caisseMutDto));
             }
@@ -52,7 +52,7 @@ public class SalarieServiceImpl implements SalarieService {
 
         // Eléments fixes
         salarieRepository.deleteElementFixeByMatricule(dto.getNmat());
-        if(!dto.getElementFixeSalaire().isEmpty()){
+        if(dto!=null && dto.getElementFixeSalaire()!=null && !dto.getElementFixeSalaire().isEmpty()){
             for(ElementFixeSalaireDto elementFixeSalaireDto : dto.getElementFixeSalaire()){
                 elementFixeSalaireRepository.save(ElementFixeSalaireDto.toEntity(elementFixeSalaireDto));
             }
@@ -60,7 +60,7 @@ public class SalarieServiceImpl implements SalarieService {
 
         // Prêts internes
         salarieRepository.deletePretInterneByMatricule(dto.getNmat());
-        if(!dto.getPretInterne().isEmpty()){
+        if(dto!=null && dto.getPretInterne()!=null && !dto.getPretInterne().isEmpty()){
             for(PretInterneDto pretInterneDto : dto.getPretInterne()){
                 pretInterneRepository.save(PretInterneDto.toEntity(pretInterneDto));
             }
@@ -68,7 +68,7 @@ public class SalarieServiceImpl implements SalarieService {
 
         // Banques
         salarieRepository.deleteBanqueByMatricule(dto.getNmat());
-        if(!dto.getVirementSalarie().isEmpty()){
+        if(dto!=null && dto.getVirementSalarie()!=null && !dto.getVirementSalarie().isEmpty()){
             for(VirementSalarieDto virementSalarieDto : dto.getVirementSalarie()){
                 virementSalarieRepository.save(VirementSalarieDto.toEntity(virementSalarieDto));
             }

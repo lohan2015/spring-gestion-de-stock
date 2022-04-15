@@ -4,6 +4,7 @@ import com.cmbassi.gestiondepaie.controller.api.DossierPaieApi;
 import com.cmbassi.gestiondepaie.dto.CalculPaieDto;
 import com.cmbassi.gestiondepaie.dto.DossierPaieDto;
 import com.cmbassi.gestiondepaie.services.DossierPaieService;
+import com.cmbassi.gestiondepaie.services.utils.ClsDate;
 import com.cmbassi.gestiondestock.exception.EntityNotFoundException;
 import com.cmbassi.gestiondestock.exception.InvalidEntityException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -57,8 +59,10 @@ public class DossierPaieController implements DossierPaieApi {
     }
 
     @Override
-    public String getMoisDePaieCourant(Integer idEntreprise) {
-        return dossierPaieService.getMoisDePaieCourant(idEntreprise);
+    public String getMoisDePaieCourant(Integer idEntreprise, String dateFormat) {
+        Date ddmp = dossierPaieService.getMoisDePaieCourant(idEntreprise);
+        if(ddmp!=null) return new ClsDate(new ClsDate(ddmp, dateFormat).addMonth(1)).getYearAndMonth();
+        return null;
     }
 
     @Override

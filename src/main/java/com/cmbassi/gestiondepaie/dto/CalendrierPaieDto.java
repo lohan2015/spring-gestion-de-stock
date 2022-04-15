@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @Builder
 public class CalendrierPaieDto {
-
+    private Integer id;
     private Integer idEntreprise;
 
     private Date jour;
@@ -30,7 +30,8 @@ public class CalendrierPaieDto {
     public CalendrierPaieDto() {
     }
 
-    public CalendrierPaieDto(Integer idEntreprise, Date jour, String jsem, String ouvr, String fer, Long nsem, Long anne, String trav) {
+    public CalendrierPaieDto(Integer id, Integer idEntreprise, Date jour, String jsem, String ouvr, String fer, Long nsem, Long anne, String trav) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.jour = jour;
         this.jsem = jsem;

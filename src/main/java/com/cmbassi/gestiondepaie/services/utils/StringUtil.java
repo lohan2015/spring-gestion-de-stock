@@ -3,17 +3,17 @@
  */
 package com.cmbassi.gestiondepaie.services.utils;
 
+import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-
-import org.springframework.util.StringUtils;
 
 /**
  * @author c.mbassi
  *
  */
-public class ClsStringUtil {
+public class StringUtil {
 	
 	
 	public static String substring(String chaine, int indiceDebut, int indiceFin){
@@ -302,6 +302,37 @@ public class ClsStringUtil {
 		}
 		if(!Avec_Zero) temp = temp.replace("0", " ");
 		return temp;
+	}
+
+	public static String oraLPad(String chaine, int totalLength, String charToAdd)
+	{
+		if (StringUtils.isEmpty(chaine))
+			return chaine;
+		String add = "";
+//		if (ClsParameter._isStringNull(chaine))
+//			chaine = "";
+		if (chaine.length() < totalLength)
+			for (int i = 0; i < totalLength - chaine.length(); i++)
+				add += charToAdd;
+		return add + chaine;
+	}
+
+	public static String oraLPad(String chaine, int totalLength, char charToAdd)
+	{
+		if (StringUtils.isEmpty(chaine))
+			return chaine;
+		String add = "";
+//		if (ClsParameter._isStringNull(chaine))
+//			chaine = "";
+		if (chaine.length() < totalLength)
+			for (int i = 0; i < totalLength - chaine.length(); i++)
+				add += charToAdd;
+		return add + chaine;
+	}
+
+	public static String oraLPad(String chaine, int totalLength)
+	{
+		return StringUtil.oraLPad(chaine, totalLength, " ");
 	}
 
 }

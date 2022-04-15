@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class ElementVariableController implements ElementVariableApi {
@@ -44,6 +45,16 @@ public class ElementVariableController implements ElementVariableApi {
     @Override
     public ResponseEntity<List<ElementVariableDetailMoisDto>> findAll() {
         List<ElementVariableDetailMoisDto> elementVariableDetailMoisDto = elementVariableService.findDetailAll();
+        if(elementVariableDetailMoisDto!=null) {
+            return ResponseEntity.ok(elementVariableDetailMoisDto);
+        } else {
+            throw new EntityNotFoundException("Pas de EVs trouvés");
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<ElementVariableDetailMoisDto>> findEVByFilter(Optional<String> matricule, Optional<String> coderub) {
+        List<ElementVariableDetailMoisDto> elementVariableDetailMoisDto = elementVariableService.findEVByFilter(matricule, coderub);
         if(elementVariableDetailMoisDto!=null) {
             return ResponseEntity.ok(elementVariableDetailMoisDto);
         } else {

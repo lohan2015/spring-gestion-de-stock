@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,9 +74,9 @@ public class DossierPaieImpl implements DossierPaieService {
     }
 
     @Override
-    public String getMoisDePaieCourant(Integer idEntreprise) {
+    public Date getMoisDePaieCourant(Integer idEntreprise) {
         DossierPaie dossierPaie = dossierPaieRepository.findByIdEntreprise(idEntreprise);
-        if(dossierPaie != null) return new ClsDate(dossierPaie.getDdmp()).getYearAndMonth();
+        if(dossierPaie != null) return dossierPaie.getDdmp();
         return null;
     }
 

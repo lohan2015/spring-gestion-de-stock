@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @Builder
 public class ParamDataDto {
-
+    private Integer id;
     private Integer idEntreprise;
 
     private Integer ctab;
@@ -32,7 +32,16 @@ public class ParamDataDto {
     public ParamDataDto() {
     }
 
-    public ParamDataDto(Integer idEntreprise, Integer ctab, String cacc, Integer nume, String vall, Long valm, BigDecimal valt, String duti, Date vald) {
+    public ParamDataDto(String cacc, String vall, Long valm, BigDecimal valt, Date vald) {
+        this.cacc = cacc;
+        this.vall = vall;
+        this.valm = valm;
+        this.valt = valt;
+        this.vald = vald;
+    }
+
+    public ParamDataDto(Integer id, Integer idEntreprise, Integer ctab, String cacc, Integer nume, String vall, Long valm, BigDecimal valt, String duti, Date vald) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.ctab = ctab;
         this.cacc = cacc;

@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 @Builder
 public class DossierPaieDto {
-
+    private Integer id;
     private Integer idEntreprise;
 
     private String nred;
@@ -163,7 +163,8 @@ public class DossierPaieDto {
     public DossierPaieDto() {
     }
 
-    public DossierPaieDto(Integer idEntreprise, String nred, String drsc, String dad1, String dad2, String dad3, String dad4, String dcpo, String dbdi, String dpay, String dnrc, String dtst, String dnst, String dnac, String dncp, Date ddex, Date dfex, Date ddes, Date dfes, String dcjr, String ddev, String dcan, String dnpe, String dueb, Date ddpa, Integer dnsa, Date ddcd, Integer nddd, Integer dmpa, Integer npce, Integer carr, String gcli, String gfou, String rapp, String maji, Integer nbjv, Integer ntmp, Integer tmmp, String serveur, BigDecimal port, String utilisateur, String motpasse, String mail, String dnss, String dncr, String dnii, String com1, String com2, Date ddmp, String dseb, String comp, String dccg, String dniv1, String rniv1, String bgnv1, String bdnv1, String dniv2, String rniv2, String bgnv2, String bdnv2, String dniv3, String rniv3, String bgnv3, String bdnv3, String dz1, String tz1, String dz2, String tz2, Integer dnbu, String dniv4, String rniv4, String bgnv4, String bdnv4, int tbn4) {
+    public DossierPaieDto(Integer id, Integer idEntreprise, String nred, String drsc, String dad1, String dad2, String dad3, String dad4, String dcpo, String dbdi, String dpay, String dnrc, String dtst, String dnst, String dnac, String dncp, Date ddex, Date dfex, Date ddes, Date dfes, String dcjr, String ddev, String dcan, String dnpe, String dueb, Date ddpa, Integer dnsa, Date ddcd, Integer nddd, Integer dmpa, Integer npce, Integer carr, String gcli, String gfou, String rapp, String maji, Integer nbjv, Integer ntmp, Integer tmmp, String serveur, BigDecimal port, String utilisateur, String motpasse, String mail, String dnss, String dncr, String dnii, String com1, String com2, Date ddmp, String dseb, String comp, String dccg, String dniv1, String rniv1, String bgnv1, String bdnv1, String dniv2, String rniv2, String bgnv2, String bdnv2, String dniv3, String rniv3, String bgnv3, String bdnv3, String dz1, String tz1, String dz2, String tz2, Integer dnbu, String dniv4, String rniv4, String bgnv4, String bdnv4, int tbn4) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.nred = nred;
         this.drsc = drsc;

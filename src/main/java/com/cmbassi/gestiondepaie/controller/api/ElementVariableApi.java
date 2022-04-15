@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.cmbassi.gestiondestock.utils.Constants.APP_ROOT_PAIE;
 
@@ -38,6 +39,14 @@ public interface ElementVariableApi {
             @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
     })
     ResponseEntity<List<ElementVariableDetailMoisDto>> findAll();
+
+    @GetMapping(value = APP_ROOT_PAIE + "/eltvar/filter2", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Renvoi la liste des bulletins", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "List<ElementVariableDetailMoisDto>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    ResponseEntity<List<ElementVariableDetailMoisDto>> findEVByFilter(@PathVariable("matricule") Optional<String> matricule, @PathVariable("coderub") Optional<String> coderub);
 
     @DeleteMapping(value = APP_ROOT_PAIE + "/eltvar/delete/{id}")
     @ApiOperation(value = "Supprimer un dossier", notes = "Cette methode permet de supprimer un élément par ID")

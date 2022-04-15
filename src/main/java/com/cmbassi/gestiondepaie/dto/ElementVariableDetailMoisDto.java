@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class ElementVariableDetailMoisDto implements Serializable {
+    private Integer id;
     private Integer idEntreprise;
     private String nmat;
     private Integer nbul;
@@ -31,7 +32,8 @@ public class ElementVariableDetailMoisDto implements Serializable {
     public ElementVariableDetailMoisDto() {
     }
 
-    public ElementVariableDetailMoisDto(Integer idEntreprise, String nmat, Integer nbul, String aamm, String rubq, String argu, String nprt, String ruba, BigDecimal mont, String cuti, String nomsalarie, String librubrique, ElementVariableEnteteMoisDto enteteEltVar) {
+    public ElementVariableDetailMoisDto(Integer id, Integer idEntreprise, String nmat, Integer nbul, String aamm, String rubq, String argu, String nprt, String ruba, BigDecimal mont, String cuti, String nomsalarie, String librubrique, ElementVariableEnteteMoisDto enteteEltVar) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.nmat = nmat;
         this.nbul = nbul;

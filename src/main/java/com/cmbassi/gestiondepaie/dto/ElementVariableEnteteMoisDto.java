@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @Builder
 public class ElementVariableEnteteMoisDto implements Serializable {
+    private Integer id;
     private Integer idEntreprise;
     private String aamm;
     private String nmat;
@@ -27,7 +28,8 @@ public class ElementVariableEnteteMoisDto implements Serializable {
     public ElementVariableEnteteMoisDto() {
     }
 
-    public ElementVariableEnteteMoisDto(Integer idEntreprise, String aamm, String nmat, Integer nbul, Date ddpa, Date dfpa, String bcmo, List<ElementVariableDetailMoisDto> elementVariableDetailMois) {
+    public ElementVariableEnteteMoisDto(Integer id, Integer idEntreprise, String aamm, String nmat, Integer nbul, Date ddpa, Date dfpa, String bcmo, List<ElementVariableDetailMoisDto> elementVariableDetailMois) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.aamm = aamm;
         this.nmat = nmat;

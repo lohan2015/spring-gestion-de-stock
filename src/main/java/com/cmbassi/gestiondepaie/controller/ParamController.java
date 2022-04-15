@@ -100,8 +100,8 @@ public class ParamController implements ParamApi {
     }
 
     @Override
-    public ResponseEntity<List<ParamDataDto>> findDataByNumeroLigne(Integer ctab, String cacc, Integer nume) {
-        List<ParamDataDto> paramsDataDto = paramService.findDataByNumeroLigne(ctab, cacc, nume);
+    public ResponseEntity<ParamDataDto> findDataByNumeroLigne(Integer ctab, String cacc, Integer nume) {
+        ParamDataDto paramsDataDto = paramService.findDataByNumeroLigne(ctab, cacc, nume);
         if(paramsDataDto!=null) {
             return ResponseEntity.ok(paramsDataDto);
         } else {

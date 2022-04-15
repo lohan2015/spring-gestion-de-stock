@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class VirementSalarieDto implements Serializable {
+    private Integer id;
     private Integer idEntreprise;
     private String nmat;
     private String bqag;
@@ -33,7 +34,8 @@ public class VirementSalarieDto implements Serializable {
     public VirementSalarieDto() {
     }
 
-    public VirementSalarieDto(Integer idEntreprise, String nmat, String bqag, String guic, String comp, String cle, String bqso, Integer pourc, BigDecimal mont, String dvd, BigDecimal txchg, BigDecimal mntdb, BigDecimal mntdvd, String aamm, String princ, String swift, String titu) {
+    public VirementSalarieDto(Integer id, Integer idEntreprise, String nmat, String bqag, String guic, String comp, String cle, String bqso, Integer pourc, BigDecimal mont, String dvd, BigDecimal txchg, BigDecimal mntdb, BigDecimal mntdvd, String aamm, String princ, String swift, String titu) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.nmat = nmat;
         this.bqag = bqag;

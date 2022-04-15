@@ -14,7 +14,7 @@ import java.util.Date;
 @Data
 @Builder
 public class ElementFixeSalaireDto {
-
+    private Integer id;
     private Integer idEntreprise;
 
     private String nmat;
@@ -33,7 +33,8 @@ public class ElementFixeSalaireDto {
     public ElementFixeSalaireDto() {
     }
 
-    public ElementFixeSalaireDto(Integer idEntreprise, String nmat, String codp, BigDecimal monp, Date ddeb, Date dfin, Salarie salarie) {
+    public ElementFixeSalaireDto(Integer id, Integer idEntreprise, String nmat, String codp, BigDecimal monp, Date ddeb, Date dfin, Salarie salarie) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.nmat = nmat;
         this.codp = codp;

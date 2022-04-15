@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class CalculPaieDto {
-
+    private Integer id;
     private Integer idEntreprise;
 
     private String nmat;
@@ -42,7 +42,8 @@ public class CalculPaieDto {
     public CalculPaieDto() {
     }
 
-    public CalculPaieDto(Integer idEntreprise, String nmat, String aamm, Integer nbul, String rubq, BigDecimal basc, BigDecimal basp, BigDecimal taux, BigDecimal mont, String nprt, String ruba, String argu, String clas, String trtb) {
+    public CalculPaieDto(Integer id, Integer idEntreprise, String nmat, String aamm, Integer nbul, String rubq, BigDecimal basc, BigDecimal basp, BigDecimal taux, BigDecimal mont, String nprt, String ruba, String argu, String clas, String trtb) {
+        this.id = id;
         this.idEntreprise = idEntreprise;
         this.nmat = nmat;
         this.aamm = aamm;

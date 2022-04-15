@@ -36,7 +36,7 @@ public interface ParamService {
 
     List<ParamDataDto> findDataByCle(Integer ctab, String cacc);
 
-    List<ParamDataDto> findDataByNumeroLigne(Integer ctab, String cacc, Integer nume);
+    ParamDataDto findDataByNumeroLigne(Integer ctab, String cacc, Integer nume);
 
     void deleteColumn(Integer id);
 
