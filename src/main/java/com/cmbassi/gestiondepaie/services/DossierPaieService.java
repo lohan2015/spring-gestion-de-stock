@@ -13,4 +13,8 @@ public interface DossierPaieService {
     List<DossierPaieDto> findAll();
 
     void delete(Integer id);
+
+    String getMoisDePaieCourant(Integer idEntreprise);
+
+    Integer getNumeroBulletinPaie(Integer idEntreprise);
 }

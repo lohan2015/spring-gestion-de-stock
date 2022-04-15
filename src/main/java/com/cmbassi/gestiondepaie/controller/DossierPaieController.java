@@ -55,4 +55,14 @@ public class DossierPaieController implements DossierPaieApi {
     public void delete(Integer id) {
         dossierPaieService.delete(id);
     }
+
+    @Override
+    public String getMoisDePaieCourant(Integer idEntreprise) {
+        return dossierPaieService.getMoisDePaieCourant(idEntreprise);
+    }
+
+    @Override
+    public Integer getNumeroBulletinPaie(Integer idEntreprise) {
+        return dossierPaieService.getNumeroBulletinPaie(idEntreprise);
+    }
 }

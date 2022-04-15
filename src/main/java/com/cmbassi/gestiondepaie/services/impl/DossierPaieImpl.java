@@ -1,8 +1,10 @@
 package com.cmbassi.gestiondepaie.services.impl;
 
 import com.cmbassi.gestiondepaie.dto.DossierPaieDto;
+import com.cmbassi.gestiondepaie.model.DossierPaie;
 import com.cmbassi.gestiondepaie.repository.DossierPaieRepository;
 import com.cmbassi.gestiondepaie.services.DossierPaieService;
+import com.cmbassi.gestiondepaie.services.utils.ClsDate;
 import com.cmbassi.gestiondepaie.validator.DossierPaieValidator;
 import com.cmbassi.gestiondestock.exception.EntityNotFoundException;
 import com.cmbassi.gestiondestock.exception.ErrorCodes;
@@ -68,5 +70,19 @@ public class DossierPaieImpl implements DossierPaieService {
             return;
         }
         dossierPaieRepository.deleteById(id);
+    }
+
+    @Override
+    public String getMoisDePaieCourant(Integer idEntreprise) {
+        DossierPaie dossierPaie = dossierPaieRepository.findByIdEntreprise(idEntreprise);
+        if(dossierPaie != null) return new ClsDate(dossierPaie.getDdmp()).getYearAndMonth();
+        return null;
+    }
+
+    @Override
+    public Integer getNumeroBulletinPaie(Integer idEntreprise) {
+        DossierPaie dossierPaie = dossierPaieRepository.findByIdEntreprise(idEntreprise);
+        if(dossierPaie != null) return dossierPaie.getDnbu();
+        return null;
     }
 }

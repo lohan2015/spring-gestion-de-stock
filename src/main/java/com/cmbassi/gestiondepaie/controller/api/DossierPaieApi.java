@@ -46,4 +46,20 @@ public interface DossierPaieApi {
             @ApiResponse(code = 200, message = "L'élément a ete supprime")
     })
     void delete(@PathVariable("id") Integer id);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/dossierpaie/moispaie", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Renvoi le mois depaie en cours", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "String")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Le mois de paie en cours")
+    })
+    String getMoisDePaieCourant(Integer idEntreprise);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/dossierpaie/numbul", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Renvoi le numéro de bulletin en cours", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "String")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Le numérode bulletin de paie en cours")
+    })
+    Integer getNumeroBulletinPaie(Integer idEntreprise);
 }
