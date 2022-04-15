@@ -23,7 +23,7 @@ public interface DossierPaieApi {
     })
     ResponseEntity<DossierPaieDto> save(@RequestBody DossierPaieDto dto);
 
-    @GetMapping(value = APP_ROOT_PAIE + "/calcul/filter/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = APP_ROOT_PAIE + "/dossierpaie/filter/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Rechercher un calul par ID", notes = "Cette methode permet de chercher un salarié par son CODE", response =
             DossierPaieDto.class)
     @ApiResponses(value = {
