@@ -11,7 +11,7 @@ spring:
     properties:
       hibernate:
         session_factory:
-          interceptor: com.cmbassi.gestiondestock.interceptor.Interceptor
+          interceptor: com.kinart.stock.business.interceptor.Interceptor
 
     # Hibernate DDL Auto (create, create-drop, update)
     hibernate:

@@ -1,0 +1,79 @@
+package com.kinart.api.gestiondestock.dto;
+
+import com.kinart.stock.business.model.Fournisseur;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class FournisseurDto {
+
+  private Integer id;
+
+  private String nom;
+
+  private String prenom;
+
+  private AdresseDto adresse;
+
+  private String photo;
+
+  private String mail;
+
+  private String numTel;
+
+  private Integer idEntreprise;
+
+  @JsonIgnore
+  private List<CommandeFournisseurDto> commandeFournisseurs;
+
+  public FournisseurDto() {
+  }
+
+  public FournisseurDto(Integer id, String nom, String prenom, AdresseDto adresse, String photo, String mail, String numTel, Integer idEntreprise, List<CommandeFournisseurDto> commandeFournisseurs) {
+    this.id = id;
+    this.nom = nom;
+    this.prenom = prenom;
+    this.adresse = adresse;
+    this.photo = photo;
+    this.mail = mail;
+    this.numTel = numTel;
+    this.idEntreprise = idEntreprise;
+    this.commandeFournisseurs = commandeFournisseurs;
+  }
+
+  public static FournisseurDto fromEntity(Fournisseur fournisseur) {
+    if (fournisseur == null) {
+      return null;
+    }
+    return FournisseurDto.builder()
+        .id(fournisseur.getId())
+        .nom(fournisseur.getNom())
+        .prenom(fournisseur.getPrenom())
+        .adresse(AdresseDto.fromEntity(fournisseur.getAdresse()))
+        .photo(fournisseur.getPhoto())
+        .mail(fournisseur.getMail())
+        .numTel(fournisseur.getNumTel())
+        .idEntreprise(fournisseur.getIdEntreprise())
+        .build();
+  }
+
+  public static Fournisseur toEntity(FournisseurDto dto) {
+    if (dto == null) {
+      return null;
+    }
+    Fournisseur fournisseur = new Fournisseur();
+    fournisseur.setId(dto.getId());
+    fournisseur.setNom(dto.getNom());
+    fournisseur.setPrenom(dto.getPrenom());
+    fournisseur.setAdresse(AdresseDto.toEntity(dto.getAdresse()));
+    fournisseur.setPhoto(dto.getPhoto());
+    fournisseur.setMail(dto.getMail());
+    fournisseur.setNumTel(dto.getNumTel());
+    fournisseur.setIdEntreprise(dto.getIdEntreprise());
+
+    return fournisseur;
+  }
+}
