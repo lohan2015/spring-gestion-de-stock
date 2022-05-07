@@ -1,11 +1,19 @@
 package com.kinart.api.gestiondestock.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.kinart.stock.business.model.CommandeClient;
 import com.kinart.stock.business.model.EtatCommande;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
+import com.kinart.stock.business.utils.NoUTCInstant;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,7 +25,7 @@ public class CommandeClientDto {
 
   private String code;
 
-  private Instant dateCommande;
+  private Date dateCommande;
 
   private EtatCommande etatCommande;
 
@@ -30,7 +38,7 @@ public class CommandeClientDto {
   public CommandeClientDto() {
   }
 
-  public CommandeClientDto(Integer id, String code, Instant dateCommande, EtatCommande etatCommande, ClientDto client, Integer idEntreprise, List<LigneCommandeClientDto> ligneCommandeClients) {
+  public CommandeClientDto(Integer id, String code, Date dateCommande, EtatCommande etatCommande, ClientDto client, Integer idEntreprise, List<LigneCommandeClientDto> ligneCommandeClients) {
     this.id = id;
     this.code = code;
     this.dateCommande = dateCommande;

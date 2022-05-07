@@ -4,6 +4,7 @@ import com.kinart.stock.business.model.CommandeFournisseur;
 import com.kinart.stock.business.model.EtatCommande;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class CommandeFournisseurDto {
 
   private String code;
 
-  private Instant dateCommande;
+  private Date dateCommande;
 
   private EtatCommande etatCommande;
 
@@ -29,7 +30,7 @@ public class CommandeFournisseurDto {
   public CommandeFournisseurDto() {
   }
 
-  public CommandeFournisseurDto(Integer id, String code, Instant dateCommande, EtatCommande etatCommande, FournisseurDto fournisseur, Integer idEntreprise, List<LigneCommandeFournisseurDto> ligneCommandeFournisseurs) {
+  public CommandeFournisseurDto(Integer id, String code, Date dateCommande, EtatCommande etatCommande, FournisseurDto fournisseur, Integer idEntreprise, List<LigneCommandeFournisseurDto> ligneCommandeFournisseurs) {
     this.id = id;
     this.code = code;
     this.dateCommande = dateCommande;

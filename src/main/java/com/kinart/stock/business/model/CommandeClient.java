@@ -1,6 +1,7 @@
 package com.kinart.stock.business.model;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,7 +27,7 @@ public class CommandeClient extends AbstractEntity {
   private String code;
 
   @Column(name = "datecommande")
-  private Instant dateCommande;
+  private Date dateCommande;
 
   @Column(name = "etatcommande")
   @Enumerated(EnumType.STRING)

@@ -97,7 +97,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
       log.warn("");
       throw new InvalidEntityException("Article n'existe pas dans la BDD", ErrorCodes.ARTICLE_NOT_FOUND, articleErrors);
     }
-    dto.setDateCommande(Instant.now());
+    //dto.setDateCommande(new Date());
     CommandeFournisseur savedCmdFrs = commandeFournisseurRepository.save(CommandeFournisseurDto.toEntity(dto));
 
     if (dto.getLigneCommandeFournisseurs() != null) {

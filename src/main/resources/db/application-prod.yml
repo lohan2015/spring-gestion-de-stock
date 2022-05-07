@@ -1,3 +1,15 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    expose: "*"
+    shutdown:
+      enabled: "true"
+  trace.http.enabled: true
+  server:
+    port: 8081
+
 spring:
   datasource:
     url: postgres://vugqnxhrdnkftz:d0f42d4c7596d75629e391a059468988282aa83d4b4a203866a4dc4b3cb56d1e@ec2-3-248-121-12.eu-west-1.compute.amazonaws.com:5432/da1pc9bkqq4cvf

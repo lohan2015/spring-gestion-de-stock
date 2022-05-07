@@ -23,6 +23,10 @@ public class LigneCommandeClientDto {
 
   private Integer idEntreprise;
 
+  private String codeArticle;
+
+  private String libelleArticle;
+
   public LigneCommandeClientDto() {
   }
 
@@ -33,6 +37,17 @@ public class LigneCommandeClientDto {
     this.quantite = quantite;
     this.prixUnitaire = prixUnitaire;
     this.idEntreprise = idEntreprise;
+  }
+
+  public LigneCommandeClientDto(Integer id, ArticleDto article, CommandeClientDto commandeClient, BigDecimal quantite, BigDecimal prixUnitaire, Integer idEntreprise, String codeArticle, String libelleArticle) {
+    this.id = id;
+    this.article = article;
+    this.commandeClient = commandeClient;
+    this.quantite = quantite;
+    this.prixUnitaire = prixUnitaire;
+    this.idEntreprise = idEntreprise;
+    this.codeArticle = codeArticle;
+    this.libelleArticle = libelleArticle;
   }
 
   public static LigneCommandeClientDto fromEntity(LigneCommandeClient ligneCommandeClient) {

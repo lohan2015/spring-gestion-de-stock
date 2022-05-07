@@ -1,12 +1,6 @@
 package com.kinart.api.gestiondestock.controller.api;
 
-import static com.kinart.stock.business.utils.Constants.COMMANDE_FOURNISSEUR_ENDPOINT;
-import static com.kinart.stock.business.utils.Constants.CREATE_COMMANDE_FOURNISSEUR_ENDPOINT;
-import static com.kinart.stock.business.utils.Constants.DELETE_COMMANDE_FOURNISSEUR_ENDPOINT;
-import static com.kinart.stock.business.utils.Constants.FIND_ALL_COMMANDE_FOURNISSEUR_ENDPOINT;
-import static com.kinart.stock.business.utils.Constants.FIND_COMMANDE_FOURNISSEUR_BY_CODE_ENDPOINT;
-import static com.kinart.stock.business.utils.Constants.FIND_COMMANDE_FOURNISSEUR_BY_ID_ENDPOINT;
-
+import com.kinart.api.gestiondestock.dto.CommandeClientDto;
 import com.kinart.api.gestiondestock.dto.CommandeFournisseurDto;
 import com.kinart.api.gestiondestock.dto.LigneCommandeFournisseurDto;
 import com.kinart.stock.business.model.EtatCommande;
@@ -14,6 +8,9 @@ import io.swagger.annotations.Api;
 import java.math.BigDecimal;
 import java.util.List;
 
+import io.swagger.annotations.ApiOperation;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +18,11 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import static com.kinart.stock.business.utils.Constants.*;
 
 @Api("commandefournisseur")
 public interface CommandeFournisseurApi {
@@ -60,4 +62,7 @@ public interface CommandeFournisseurApi {
   @DeleteMapping(DELETE_COMMANDE_FOURNISSEUR_ENDPOINT)
   void delete(@PathVariable("idCommandeFournisseur") Integer id);
 
+  @PostMapping(value=APP_ROOT + "/commandesfournisseurs/report", consumes = MediaType.APPLICATION_JSON_VALUE)
+  @ApiOperation(value = "Générer édition commande", notes = "Cette methode permet de générer édition commande")
+  void getReport(@RequestBody CommandeFournisseurDto dto, HttpServletRequest request, HttpServletResponse response);
 }

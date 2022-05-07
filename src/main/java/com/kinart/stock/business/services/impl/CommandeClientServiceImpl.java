@@ -23,6 +23,7 @@ import com.kinart.stock.business.validator.CommandeClientValidator;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -93,7 +94,7 @@ public class CommandeClientServiceImpl implements CommandeClientService {
       log.warn("");
       throw new InvalidEntityException("Article n'existe pas dans la BDD", ErrorCodes.ARTICLE_NOT_FOUND, articleErrors);
     }
-    dto.setDateCommande(Instant.now());
+    //dto.setDateCommande(new Date());
     CommandeClient savedCmdClt = commandeClientRepository.save(CommandeClientDto.toEntity(dto));
 
     if (dto.getLigneCommandeClients() != null) {
