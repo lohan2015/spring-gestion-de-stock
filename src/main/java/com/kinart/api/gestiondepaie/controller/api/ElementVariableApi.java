@@ -1,6 +1,7 @@
 package com.kinart.api.gestiondepaie.controller.api;
 
 import com.kinart.api.gestiondepaie.dto.ElementVariableDetailMoisDto;
+import com.kinart.api.gestiondepaie.dto.RechercheDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -42,13 +43,13 @@ public interface ElementVariableApi {
     })
     ResponseEntity<List<ElementVariableDetailMoisDto>> findAll();
 
-    @GetMapping(value = APP_ROOT_PAIE + "/eltvar/filter2", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PostMapping(value = APP_ROOT_PAIE + "/eltvar/filter2", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Renvoi la liste des bulletins", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
             + "dans la BDD", responseContainer = "List<ElementVariableDetailMoisDto>")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
     })
-    ResponseEntity<List<ElementVariableDetailMoisDto>> findEVByFilter(@PathVariable("matricule") Optional<String> matricule, @PathVariable("coderub") Optional<String> coderub);
+    ResponseEntity<List<ElementVariableDetailMoisDto>> findEVByFilter(@RequestBody RechercheDto dto);
 
     @DeleteMapping(value = APP_ROOT_PAIE + "/eltvar/delete/{id}")
     @ApiOperation(value = "Supprimer un dossier", notes = "Cette methode permet de supprimer un élément par ID")

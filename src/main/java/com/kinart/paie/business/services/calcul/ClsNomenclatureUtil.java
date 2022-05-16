@@ -7,9 +7,11 @@ import com.kinart.paie.business.model.ElementVariableConge;
 import com.kinart.paie.business.model.ParamData;
 import com.kinart.paie.business.repository.ParamDataRepository;
 import com.kinart.paie.business.services.utils.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.springframework.stereotype.Service;
 
 /**
  * Cette classe est un utilitaire pour les tables de nommenclature et des tables de donn�es �v�nementielles.
@@ -17,21 +19,23 @@ import org.hibernate.Session;
  * @author c.mbassi
  * 
  */
+@Service
+@Slf4j
 public class ClsNomenclatureUtil
 {
 
-	HibernateConnexionService service = null;
+	GeneriqueConnexionService service = null;
 
 	ParamDataRepository paramDataRepository = null;
 
 	ClsParameterOfPay parameter = null;
 
-	public HibernateConnexionService getService()
+	public GeneriqueConnexionService getService()
 	{
 		return service;
 	}
 
-	public void setService(HibernateConnexionService service)
+	public void setService(GeneriqueConnexionService service)
 	{
 		this.service = service;
 	}
@@ -81,7 +85,7 @@ public class ClsNomenclatureUtil
 		}
 		finally
 		{
-			service.closeConnexion(session);
+			service.closeSession(session);
 		}
 		return nbrj;
 	}
@@ -113,7 +117,7 @@ public class ClsNomenclatureUtil
 		}
 		finally
 		{
-			service.closeConnexion(session);
+			service.closeSession(session);
 		}
 		return nbrj;
 	}
@@ -154,8 +158,8 @@ public class ClsNomenclatureUtil
 	public String getLabelOfPreviousSalary(String cdos, long nlot, String colname, String nmat)
 	{
 		String result = "";
-		List l = service.find("select vall from Rhtprevsal " + " where comp_id.cdos ='" + cdos + "'" + " and comp_id.colname = '" + colname + "'" + " and comp_id.nmat = '" + nmat + "'"
-				+ " and comp_id.nlot = " + nlot + " and tval = '1'");
+		List l = service.find("select vall from Rhtprevsal " + " where identreprise ='" + cdos + "'" + " and colname = '" + colname + "'" + " and nmat = '" + nmat + "'"
+				+ " and nlot = " + nlot + " and tval = '1'");
 		if (l != null && l.size() > 0 && l.get(0) != null)
 		{
 			result = (String) l.get(0);
@@ -182,8 +186,8 @@ public class ClsNomenclatureUtil
 		Number result = null;
 		// pr�ciser le nom de la colonne
 		String colName = (columnToRead == ClsEnumeration.EnColumnToRead.AMOUNT) ? "valm" : "valt";
-		List l = service.find("select " + colName + " from Rhtprevsal " + " where comp_id.cdos ='" + cdos + "'" + " and comp_id.colname = '" + colname + "'" + " and comp_id.nmat = '" + nmat + "'"
-				+ " and comp_id.nlot = " + nlot + " and tval = '1'");
+		List l = service.find("select " + colName + " from Rhtprevsal " + " where identreprise ='" + cdos + "'" + " and colname = '" + colname + "'" + " and nmat = '" + nmat + "'"
+				+ " and nlot = " + nlot + " and tval = '1'");
 		if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 		{
 			result = (Double) l.get(0);
@@ -207,8 +211,8 @@ public class ClsNomenclatureUtil
 	public Date getDateOfPreviousSalary(String cdos, long nlot, String colname, String nmat)
 	{
 		Date result = null;
-		List l = service.find("select vald from Rhtprevsal " + " where comp_id.cdos ='" + cdos + "'" + " and comp_id.colname = '" + colname + "'" + " and comp_id.nmat = '" + nmat + "'"
-				+ " and comp_id.nlot = " + nlot + " and tval = '2'");
+		List l = service.find("select vald from Rhtprevsal " + " where identreprise ='" + cdos + "'" + " and colname = '" + colname + "'" + " and nmat = '" + nmat + "'"
+				+ " and nlot = " + nlot + " and tval = '2'");
 		if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 		{
 			result = (Date) l.get(0);
@@ -295,32 +299,32 @@ public class ClsNomenclatureUtil
 
 
 		 String strSqlQuery1 = "select sum(" + nomcol + ") from Rhtcumul "
-		 + " where comp_id.cdos = '" + cdos +"'"
-		 + " and comp_id.nmat = '" + nmat + "'"
-		 + " and comp_id.aamm = '" + aamm + "'"
-		 + " and comp_id.rubq = '" + rubq + "'"
-		 + " and comp_id.nbul != 0";
+		 + " where identreprise = '" + cdos +"'"
+		 + " and nmat = '" + nmat + "'"
+		 + " and aamm = '" + aamm + "'"
+		 + " and rubq = '" + rubq + "'"
+		 + " and nbul != 0";
 			
 		 String strSqlQuery2 = "select sum(" + nomcol + ") from Rhtprcumu "
-		 + " where comp_id.cdos = '" + cdos +"'"
-		 + " and comp_id.nmat = '" + nmat + "'"
-		 + " and comp_id.aamm = '" + aamm + "'"
-		 + " and comp_id.rubq = '" + rubq + "'"
-		 + " and comp_id.nbul != 0";
+		 + " where identreprise = '" + cdos +"'"
+		 + " and nmat = '" + nmat + "'"
+		 + " and aamm = '" + aamm + "'"
+		 + " and rubq = '" + rubq + "'"
+		 + " and nbul != 0";
 			
 		 String strSqlQuery3 = "select sum(" + nomcol + ") from Rhtcumul "
-		 + " where comp_id.cdos = '" + cdos +"'"
-		 + " and comp_id.nmat = '" + nmat + "'"
-		 + " and comp_id.aamm = '" + aamm + "'"
-		 + " and comp_id.rubq = '" + rubq + "'"
-		 + " and comp_id.nbul = " + nbul;
+		 + " where identreprise = '" + cdos +"'"
+		 + " and nmat = '" + nmat + "'"
+		 + " and aamm = '" + aamm + "'"
+		 + " and rubq = '" + rubq + "'"
+		 + " and nbul = " + nbul;
 				
 		 String strSqlQuery4 = "select sum(" + nomcol + ") from Rhtprcumu "
-		 + " where comp_id.cdos = '" + cdos +"'"
-		 + " and comp_id.nmat = '" + nmat + "'"
-		 + " and comp_id.aamm = '" + aamm + "'"
-		 + " and comp_id.rubq = '" + rubq + "'"
-		 + " and comp_id.nbul = " + nbul;
+		 + " where identreprise = '" + cdos +"'"
+		 + " and nmat = '" + nmat + "'"
+		 + " and aamm = '" + aamm + "'"
+		 + " and rubq = '" + rubq + "'"
+		 + " and nbul = " + nbul;
 		List ListOfRow = null;
 		
 		double result = 0;
@@ -424,7 +428,7 @@ public class ClsNomenclatureUtil
 		//
 		if (StringUtils.isBlank(periodeTraitement) || periodeTraitement.equals(moisPaieCourant))
 		{
-			l = service.find("select monp, ddeb, dfin from Rhteltfixagent " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.nmat = '" + nmat + "'" + " and comp_id.codp = '" + rubq + "'");
+			l = service.find("select monp, ddeb, dfin from Rhteltfixagent " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and codp = '" + rubq + "'");
 			if (l != null && !l.isEmpty())
 			{
 				row = (Object[]) l.get(0);
@@ -468,8 +472,8 @@ public class ClsNomenclatureUtil
 		}
 		else
 		{
-			l = service.find("select monp from Rhthelfix " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.nmat = '" + nmat + "'" + " and comp_id.aamm = '" + periodeTraitement + "'"
-					+ " and comp_id.nbul = " + nbul + " and comp_id.codp = '" + rubq + "'");
+			l = service.find("select monp from Rhthelfix " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and aamm = '" + periodeTraitement + "'"
+					+ " and nbul = " + nbul + " and codp = '" + rubq + "'");
 			if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 			{
 				result = ((BigDecimal) l.get(0)).doubleValue();
@@ -501,7 +505,7 @@ public class ClsNomenclatureUtil
 		//
 		if (StringUtils.isBlank(periodeTraitement) || periodeTraitement.equals(moisPaieCourant))
 		{
-			l = service.find("select sum(mont) from Rhteltvardet " + " where cdos = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and aamm = '" + moisPaieCourant + "'" + " and nbul = " + nbul
+			l = service.find("select sum(mont) from Rhteltvardet " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and aamm = '" + moisPaieCourant + "'" + " and nbul = " + nbul
 					+ " and rubq = '" + rubq + "'");
 			if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 			{
@@ -510,7 +514,7 @@ public class ClsNomenclatureUtil
 		}
 		else
 		{
-			l = service.find("select sum(mont) from Rhthevar " + " where cdos = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and aamm = '" + periodeTraitement + "'" + " and nbul = " + nbul
+			l = service.find("select sum(mont) from Rhthevar " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and aamm = '" + periodeTraitement + "'" + " and nbul = " + nbul
 					+ " and rubq = '" + rubq + "'");
 			if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 			{
@@ -537,8 +541,8 @@ public class ClsNomenclatureUtil
 	public String getLabelFromEventData(String cdos, long nlot, int ntable, String cleAcces, int numLigne)
 	{
 		String result = "";
-		List l = service.find("select vall from Rhtprevnmlig " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.nlot = " + nlot + " and comp_id.ntab = " + ntable + " and comp_id.cacc = '"
-				+ cleAcces + "'" + " and comp_id.nume = " + numLigne + " and comp_id.lmt = 'L'");
+		List l = service.find("select vall from Rhtprevnmlig " + " where identreprise = '" + cdos + "'" + " and nlot = " + nlot + " and ntab = " + ntable + " and cacc = '"
+				+ cleAcces + "'" + " and nume = " + numLigne + " and lmt = 'L'");
 		if (!ClsObjectUtil.isListEmty(l) && !ClsObjectUtil.isNull(l.get(0)))
 		{
 			result = (String) l.get(0);
@@ -567,8 +571,8 @@ public class ClsNomenclatureUtil
 		// pr�ciser le nom de la colonne
 		String colName = (columnToRead == ClsEnumeration.EnColumnToRead.AMOUNT) ? "valm" : "valt";
 		String lmt = (columnToRead == ClsEnumeration.EnColumnToRead.AMOUNT) ? "M" : "L";
-		List l = service.find("select " + colName + " from Rhtprevnmlig " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.nlot = " + nlot + " and comp_id.ntab = " + ntable
-				+ " and comp_id.cacc = '" + cleAcces + "'" + " and comp_id.lmt = '" + lmt + "'" + " and comp_id.nume = " + numLigne);
+		List l = service.find("select " + colName + " from Rhtprevnmlig " + " where identreprise = '" + cdos + "'" + " and nlot = " + nlot + " and ntab = " + ntable
+				+ " and cacc = '" + cleAcces + "'" + " and lmt = '" + lmt + "'" + " and nume = " + numLigne);
 		if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 		{
 			result = (Double) l.get(0);
@@ -592,8 +596,8 @@ public class ClsNomenclatureUtil
 		List l = null;
 		// pr�ciser le nom de la colonne
 		String colName = (columnToRead == ClsEnumeration.EnColumnToRead.AMOUNT) ? "valm" : "valt";
-		l = service.find("select " + colName + " from Rhtprevsal " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.nlot = " + nlot + " and comp_id.colname = '" + colName + "'"
-				+ " and comp_id.nmat = '" + nmat + "'" + " and tval = '0'");
+		l = service.find("select " + colName + " from Rhtprevsal " + " where identreprise = '" + cdos + "'" + " and nlot = " + nlot + " and colname = '" + colName + "'"
+				+ " and nmat = '" + nmat + "'" + " and tval = '0'");
 		if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 		{
 			result = (Double) l.get(0);
@@ -614,8 +618,8 @@ public class ClsNomenclatureUtil
 	public Number getAmountOrRateFromSalaryEventData(String cdos, String nmat, long nlot, String colName)
 	{
 		Number result = null;
-		List l = service.find("select valm from Rhtprevsal " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.nlot = " + nlot + " and comp_id.colname = '" + colName + "'"
-				+ " and comp_id.nmat = '" + nmat + "'" + " and tval = '0'");
+		List l = service.find("select valm from Rhtprevsal " + " where identreprise = '" + cdos + "'" + " and nlot = " + nlot + " and colname = '" + colName + "'"
+				+ " and nmat = '" + nmat + "'" + " and tval = '0'");
 		if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 		{
 			result = (Double) l.get(0);
@@ -654,7 +658,7 @@ public class ClsNomenclatureUtil
 		{
 			if(! listOfTableXXMap.containsKey(clemap))
 			{
-				l = service.find("From ParamData  where comp_id.cdos = '" + cdos + "'" + " and comp_id.ctab = " + ntable + " and comp_id.cacc = '" + cleAcces + "'  and comp_id.nume = " + numLigne);			
+				l = service.find("From ParamData  where identreprise = '" + cdos + "'" + " and ctab = " + ntable + " and cacc = '" + cleAcces + "'  and nume = " + numLigne);			
 				if(!l.isEmpty())
 					fnom =(ParamData) l.get(0);
 				listOfTableXXMap.put(clemap, fnom);
@@ -664,8 +668,8 @@ public class ClsNomenclatureUtil
 			{
 				result = (ClsEnumeration.EnColumnToRead.AMOUNT == columnName) ? (fnom.getValm() != null ? fnom.getValm() : 0) : (fnom.getValt() != null ? fnom.getValt() : 0 ).doubleValue();
 			}
-//			l = service.find("select " + colName + " from ParamData " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.ctab = " + ntable + " and comp_id.cacc = '" + cleAcces + "'"
-//					+ " and comp_id.nume = " + numLigne);
+//			l = service.find("select " + colName + " from ParamData " + " where identreprise = '" + cdos + "'" + " and ctab = " + ntable + " and cacc = '" + cleAcces + "'"
+//					+ " and nume = " + numLigne);
 //			if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 //			{
 //				result = (l.get(0) instanceof BigDecimal) ? ((BigDecimal) l.get(0)).doubleValue() : (Long) l.get(0);
@@ -676,8 +680,8 @@ public class ClsNomenclatureUtil
 			result = this.getAmountOrRateFromEventData(cdos, nlot, ntable, cleAcces, numLigne, columnName);
 			if (result == null)
 			{
-				l = service.find("select " + colName + " from Rhthfnom " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.ctab = " + ntable + " and comp_id.cacc = '" + cleAcces + "'"
-						+ " and comp_id.nume = " + numLigne + " and comp_id.nbul = " + nbul + " and comp_id.aamm = '" + periodeTraitement + "'");
+				l = service.find("select " + colName + " from Rhthfnom " + " where identreprise = '" + cdos + "'" + " and ctab = " + ntable + " and cacc = '" + cleAcces + "'"
+						+ " and nume = " + numLigne + " and nbul = " + nbul + " and aamm = '" + periodeTraitement + "'");
 				if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 				{
 					result = (l.get(0) instanceof BigDecimal) ? ((BigDecimal) l.get(0)).doubleValue() : (Long) l.get(0);
@@ -828,7 +832,7 @@ public class ClsNomenclatureUtil
 		{
 			if(! listOfTableXXMap.containsKey(clemap))
 			{
-				l = service.find("From ParamData  where comp_id.cdos = '" + cdos + "'" + " and comp_id.ctab = " + ntable + " and comp_id.cacc = '" + cleAcces + "'  and comp_id.nume = " + numLigne);			
+				l = service.find("From ParamData  where identreprise = '" + cdos + "'" + " and ctab = " + ntable + " and cacc = '" + cleAcces + "'  and nume = " + numLigne);			
 				if(!l.isEmpty())
 					fnom =(ParamData) l.get(0);
 				listOfTableXXMap.put(clemap, fnom);
@@ -837,8 +841,8 @@ public class ClsNomenclatureUtil
 			if(fnom != null)
 				result = (ClsEnumeration.EnColumnToRead.AMOUNT == columnName) ? fnom.getValm() : fnom.getValt();		
 				
-//			l = service.find("select " + colName + " from ParamData " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.ctab = " + ntable + " and comp_id.cacc = '" + cleAcces + "'"
-//					+ " and comp_id.nume = " + numLigne);
+//			l = service.find("select " + colName + " from ParamData " + " where identreprise = '" + cdos + "'" + " and ctab = " + ntable + " and cacc = '" + cleAcces + "'"
+//					+ " and nume = " + numLigne);
 //			if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 //			{
 //				result = (l.get(0) instanceof BigDecimal) ? ((BigDecimal) l.get(0)).doubleValue() : (Long) l.get(0);
@@ -849,8 +853,8 @@ public class ClsNomenclatureUtil
 			result = this.getAmountOrRateFromEventData(cdos, nlot, ntable, cleAcces, numLigne, columnName);
 			if (result == null)
 			{
-				l = service.find("select " + colName + " from Rhthfnom " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.ctab = " + ntable + " and comp_id.cacc = '" + cleAcces + "'"
-						+ " and comp_id.nume = " + numLigne + " and comp_id.nbul = " + nbul + " and comp_id.aamm = '" + periodeTraitement + "'");
+				l = service.find("select " + colName + " from Rhthfnom " + " where identreprise = '" + cdos + "'" + " and ctab = " + ntable + " and cacc = '" + cleAcces + "'"
+						+ " and nume = " + numLigne + " and nbul = " + nbul + " and aamm = '" + periodeTraitement + "'");
 				if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 				{
 					result = (l.get(0) instanceof BigDecimal) ? ((BigDecimal) l.get(0)).doubleValue() : (Long) l.get(0);
@@ -894,7 +898,7 @@ public class ClsNomenclatureUtil
 		//
 		if (StringUtils.isBlank(periodeTraitement) || periodeTraitement.equals(moisPaieCourant))
 		{
-			l = service.find("select vall from ParamData " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.ctab = " + ntable + " and comp_id.cacc = '" + cleAcces + "'" + " and comp_id.nume = "
+			l = service.find("select vall from ParamData " + " where identreprise = '" + cdos + "'" + " and ctab = " + ntable + " and cacc = '" + cleAcces + "'" + " and nume = "
 					+ numLigne);
 			if (!ClsObjectUtil.isListEmty(l) && !ClsObjectUtil.isNull(l.get(0)))
 			{
@@ -906,8 +910,8 @@ public class ClsNomenclatureUtil
 			result = this.getLabelFromEventData(cdos, nlot, ntable, cleAcces, numLigne);
 			if (result == "")
 			{
-				l = service.find("select vall from Rhthfnom " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.ctab = " + ntable + " and comp_id.cacc = '" + cleAcces + "'"
-						+ " and comp_id.nume = " + numLigne + " and comp_id.nbul = " + nbul + " and comp_id.aamm = '" + periodeTraitement + "'");
+				l = service.find("select vall from Rhthfnom " + " where identreprise = '" + cdos + "'" + " and ctab = " + ntable + " and cacc = '" + cleAcces + "'"
+						+ " and nume = " + numLigne + " and nbul = " + nbul + " and aamm = '" + periodeTraitement + "'");
 				if (!ClsObjectUtil.isListEmty(l) && !ClsObjectUtil.isNull(l.get(0)))
 				{
 					result = (String) l.get(0);
@@ -1016,7 +1020,7 @@ public class ClsNomenclatureUtil
 	public String getTypePaiementOfSalary(String cdos, String moisPaieCourant, String matricule)
 	{
 		String modePaiement = "";
-		List l = service.find("select modp from Rhpagent " + " where cdos = '" + cdos + "'" + " and comp_id.nmat = '" + matricule + "'");
+		List l = service.find("select modp from Rhpagent " + " where identreprise = '" + cdos + "'" + " and nmat = '" + matricule + "'");
 		if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 		{
 			modePaiement = (String) l.get(0);
@@ -1047,22 +1051,22 @@ public class ClsNomenclatureUtil
 		boolean Base_30 = false;
 		String W_Cas_1 = (typeOfDay == ClsEnumeration.EnTypeOfDay.C) ? "O" : "%";
 		String W_Cas_2 = (typeOfDay == ClsEnumeration.EnTypeOfDay.C) ? "N" : "%";
-//		String strPacalCursor = "select count(*), concat(month(comp_id.jour), year(comp_id.jour)) as period from Rhpcalendrier " + " where comp_id.cdos = '" + cdos + "'"
-//				+ " and comp_id.jour between '" + new ClsDate(dateDebut, strDateFormat).getDateS() + "' and '" + new ClsDate(dateFin, strDateFormat).getDateS() + "'" + " and ouvr like '" + W_Cas_1
-//				+ "'" + " and fer  like '" + W_Cas_2 + "'" + " group by concat(month(comp_id.jour), year(comp_id.jour))";
+//		String strPacalCursor = "select count(*), concat(month(jour), year(jour)) as period from CalendrierPaie " + " where identreprise = '" + cdos + "'"
+//				+ " and jour between '" + new ClsDate(dateDebut, strDateFormat).getDateS() + "' and '" + new ClsDate(dateFin, strDateFormat).getDateS() + "'" + " and ouvr like '" + W_Cas_1
+//				+ "'" + " and fer  like '" + W_Cas_2 + "'" + " group by concat(month(jour), year(jour))";
 		
 		
-		String strPacalCursor = "select count(*), TO_CHAR(comp_id.jour,'yyyyMM') as period from Rhpcalendrier " + " where comp_id.cdos = '" + cdos + "'"
-		+ " and comp_id.jour between '" + new ClsDate(dateDebut, strDateFormat).getDateS() + "' and '" + new ClsDate(dateFin, strDateFormat).getDateS() + "'" + " and ouvr like '" + W_Cas_1
-		+ "'" + " and fer  like '" + W_Cas_2 + "'" + " group by TO_CHAR(comp_id.jour,'yyyyMM')";
+		String strPacalCursor = "select count(*), TO_CHAR(jour,'yyyyMM') as period from CalendrierPaie " + " where identreprise = '" + cdos + "'"
+		+ " and jour between '" + new ClsDate(dateDebut, strDateFormat).getDateS() + "' and '" + new ClsDate(dateFin, strDateFormat).getDateS() + "'" + " and ouvr like '" + W_Cas_1
+		+ "'" + " and fer  like '" + W_Cas_2 + "'" + " group by TO_CHAR(jour,'yyyyMM')";
 		
 		if(TypeBDUtil.AS == TypeBDUtil.typeBD || TypeBDUtil.DB == TypeBDUtil.typeBD)
-			strPacalCursor = "select count(*), concat(year(comp_id.jour),month(comp_id.jour)) as period from Rhpcalendrier " + " where comp_id.cdos = '" + cdos + "'"
-			+ " and comp_id.jour between '" + new ClsDate(dateDebut, strDateFormat).getDateS() + "' and '" + new ClsDate(dateFin, strDateFormat).getDateS() + "'" + " and ouvr like '" + W_Cas_1
-			+ "'" + " and fer  like '" + W_Cas_2 + "'" + " group by concat(year(comp_id.jour),month(comp_id.jour))";
+			strPacalCursor = "select count(*), concat(year(jour),month(jour)) as period from CalendrierPaie " + " where identreprise = '" + cdos + "'"
+			+ " and jour between '" + new ClsDate(dateDebut, strDateFormat).getDateS() + "' and '" + new ClsDate(dateFin, strDateFormat).getDateS() + "'" + " and ouvr like '" + W_Cas_1
+			+ "'" + " and fer  like '" + W_Cas_2 + "'" + " group by concat(year(jour),month(jour))";
 		
 		
-		String strQuery = "select vall, valm from ParamData " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.ctab = 99 " + " and comp_id.cacc = 'BASE30'" + " and comp_id.nume  = 1";
+		String strQuery = "select vall, valm from ParamData " + " where identreprise = '" + cdos + "'" + " and ctab = 99 " + " and cacc = 'BASE30'" + " and nume  = 1";
 		List listOfNomenc = service.find(strQuery);
 		String valueLabel = "";
 		if (listOfNomenc != null && listOfNomenc.size() > 0)
@@ -1144,10 +1148,10 @@ public class ClsNomenclatureUtil
 
 		/*
 		 * long w_nb = 0; long w_nbtot = 0; String w_mois = ""; long numberMaxOfDayByMonth = 0; int totalDaysOfMonth = 0; boolean Base_30 = false; String W_Cas_1 = (typeOfDay ==
-		 * ClsEnumeration.EnTypeOfDay.C)? "O" : "%"; String W_Cas_2 = (typeOfDay == ClsEnumeration.EnTypeOfDay.C)? "N" : "%"; String strPacalCursor = "select count(*), concat(month(comp_id.jour),
-		 * year(comp_id.jour)) as period from Rhpcalendrier " + " where comp_id.cdos = '" + cdos + "'" + " and comp_id.jour between '" + debutDateCls.getDateS() + "' and '" + finDateCls.getDateS() +
-		 * "'" + " and ouvr like '" + W_Cas_1 + "'" + " and fer like '" + W_Cas_2 + "'" + " group by concat(month(comp_id.jour), year(comp_id.jour))"; String strQuery = "select vall, valm from ParamData " + "
-		 * where comp_id.cdos = '" + cdos + "'" + " and comp_id.ctab = 99 " + " and comp_id.cacc = 'BASE30'" + " and comp_id.nume = 1"; List listOfNomenc = service.find(strQuery); String valueLabel =
+		 * ClsEnumeration.EnTypeOfDay.C)? "O" : "%"; String W_Cas_2 = (typeOfDay == ClsEnumeration.EnTypeOfDay.C)? "N" : "%"; String strPacalCursor = "select count(*), concat(month(jour),
+		 * year(jour)) as period from CalendrierPaie " + " where identreprise = '" + cdos + "'" + " and jour between '" + debutDateCls.getDateS() + "' and '" + finDateCls.getDateS() +
+		 * "'" + " and ouvr like '" + W_Cas_1 + "'" + " and fer like '" + W_Cas_2 + "'" + " group by concat(month(jour), year(jour))"; String strQuery = "select vall, valm from ParamData " + "
+		 * where identreprise = '" + cdos + "'" + " and ctab = 99 " + " and cacc = 'BASE30'" + " and nume = 1"; List listOfNomenc = service.find(strQuery); String valueLabel =
 		 * ""; if(listOfNomenc != null && listOfNomenc.size() > 0){ Object[] row = (Object[])listOfNomenc.get(0); valueLabel = (row[0] == null)? "" : (String)row[0]; numberMaxOfDayByMonth = (row[1] ==
 		 * null)? 0 : (Long)row[1]; } else{ valueLabel = "O"; numberMaxOfDayByMonth = 30; } if((! "O".equals(valueLabel)) && (! "N".equals(valueLabel))){ valueLabel = "O"; numberMaxOfDayByMonth = 30; }
 		 * if("O".equals(valueLabel)){ Base_30 = true; if(numberMaxOfDayByMonth < 1 || numberMaxOfDayByMonth > 99) numberMaxOfDayByMonth = 30; } else{ Base_30 = false; } w_nbtot = 0; List oListPacal =
@@ -1190,17 +1194,17 @@ public class ClsNomenclatureUtil
 		Date dfin = new Date();
 		String motf = "";
 		//
-		String strPaevcgSqlString = "From Rhteltvarconge " + " where comp_id.cdos = '" + cdos
-				+ "'" + " and comp_id.nmat = '" + i_nmat + "'" + " and comp_id.aamm = '" + i_aamm + "'" + " and comp_id.nbul = " + i_nbul + " and comp_id.ddeb between '" + debutDateCls.getDateS()
-				+ "' and '" + finDateCls.getDateS() + "'" + " and dfin between '" + debutDateCls.getDateS() + "' and '" + finDateCls.getDateS() + "'" + " ORDER BY motf, comp_id.ddeb";
+		String strPaevcgSqlString = "From Rhteltvarconge " + " where identreprise = '" + cdos
+				+ "'" + " and nmat = '" + i_nmat + "'" + " and aamm = '" + i_aamm + "'" + " and nbul = " + i_nbul + " and ddeb between '" + debutDateCls.getDateS()
+				+ "' and '" + finDateCls.getDateS() + "'" + " and dfin between '" + debutDateCls.getDateS() + "' and '" + finDateCls.getDateS() + "'" + " ORDER BY motf, ddeb";
 
-		String strPahevcgSqlString = "From Rhthevcg " + " where comp_id.cdos = '" + cdos
-				+ "'" + " and comp_id.nmat = '" + i_nmat + "'" + " and comp_id.aamm = '" + i_aamm + "'" + " and comp_id.nbul = " + i_nbul + " and comp_id.ddeb between '" + debutDateCls.getDateS()
-				+ "' and '" + finDateCls.getDateS() + "'" + " and dfin between '" + debutDateCls.getDateS() + "' and '" + finDateCls.getDateS() + "'" + " ORDER BY motf, comp_id.ddeb";
+		String strPahevcgSqlString = "From Rhthevcg " + " where identreprise = '" + cdos
+				+ "'" + " and nmat = '" + i_nmat + "'" + " and aamm = '" + i_aamm + "'" + " and nbul = " + i_nbul + " and ddeb between '" + debutDateCls.getDateS()
+				+ "' and '" + finDateCls.getDateS() + "'" + " and dfin between '" + debutDateCls.getDateS() + "' and '" + finDateCls.getDateS() + "'" + " ORDER BY motf, ddeb";
 		String selectPart = "select max(case when nume = 1 then valm else 0 end)" +
 							", max(case when nume = 4 then valm else 0 end)"+
 							", max(case when nume = 8 then valm else 0 end)";
-		String wherePart = " where comp_id.cdos = '" + cdos + "'" + " and comp_id.ctab = 22" + " and comp_id.cacc = 'MOTIF'" + " and comp_id.nume in (1, 4, 8)";
+		String wherePart = " where identreprise = '" + cdos + "'" + " and ctab = 22" + " and cacc = 'MOTIF'" + " and nume in (1, 4, 8)";
 		List oIter = null;
 		oIter = (retro == true) ? service.find(strPahevcgSqlString) : service.find(strPaevcgSqlString);
 		ElementVariableConge oPaevcgRow = null;

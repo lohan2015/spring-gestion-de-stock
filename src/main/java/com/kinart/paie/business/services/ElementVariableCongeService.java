@@ -15,5 +15,5 @@ public interface ElementVariableCongeService {
 
     void delete(Integer id);
 
-    List<ElementVariableCongeDto> findEVCongeByFilter(Optional<String> matricule, Optional<String> codemotif);
+    List<ElementVariableCongeDto> findEVCongeByFilter(String matricule, String codemotif);
 }

@@ -15,5 +15,5 @@ public interface ElementVariableService {
 
     void delete(Integer id);
 
-    List<ElementVariableDetailMoisDto> findEVByFilter(Optional<String> matricule, Optional<String> coderub);
+    List<ElementVariableDetailMoisDto> findEVByFilter(String matricule, String coderub);
 }

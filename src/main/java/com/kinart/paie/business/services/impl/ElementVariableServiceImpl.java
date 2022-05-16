@@ -13,6 +13,7 @@ import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.ErrorCodes;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,7 @@ public class ElementVariableServiceImpl implements ElementVariableService {
     }
 
     @Override
-    public List<ElementVariableDetailMoisDto> findEVByFilter(Optional<String> matricule, Optional<String> coderub) {
+    public List<ElementVariableDetailMoisDto> findEVByFilter(String matricule, String coderub) {
         List<ElementVariableDetailMoisDto> liste = new ArrayList<ElementVariableDetailMoisDto>();
         String sqlQuery = "SELECT e.*, s.nom as nomsal, s.pren as prensal, t.lrub as librub " +
                         "FROM ElementVariableDetailMois e " +
@@ -107,8 +108,8 @@ public class ElementVariableServiceImpl implements ElementVariableService {
                         "LEFT JOIN ElementSalaire t ON (t.identreprise=s.identreprise AND t.crub=e.rubq) "+
                         "WHERE 1=1";
 
-        if(matricule.isPresent()) sqlQuery += " AND upper(e.nmat) LIKE :matricule";
-        if(coderub.isPresent()) sqlQuery += " AND upper(e.rubq) LIKE :coderub";
+        if(StringUtils.isNotEmpty(matricule)) sqlQuery += " AND upper(e.nmat) LIKE :matricule";
+        if(StringUtils.isNotEmpty(coderub)) sqlQuery += " AND upper(e.rubq) LIKE :coderub";
 
         try {
             Session session = service.getSession();
@@ -119,8 +120,8 @@ public class ElementVariableServiceImpl implements ElementVariableService {
                     .addScalar("librub", StandardBasicTypes.STRING);
 
             //query.setParameter("identreprise", identreprise);
-            if(matricule.isPresent()) query.setParameter("matricule", "%"+matricule+"%");
-            if(coderub.isPresent()) query.setParameter("coderub", "%"+coderub+"%");
+            if(StringUtils.isNotEmpty(matricule)) query.setParameter("matricule", "%"+matricule+"%");
+            if(StringUtils.isNotEmpty(coderub)) query.setParameter("coderub", "%"+coderub+"%");
             List<Object[]> lst = query.getResultList();
             service.closeSession(session);
 

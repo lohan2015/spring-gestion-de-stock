@@ -34,8 +34,8 @@ public class ElementSalaireController implements ElementSalaireApi {
     }
 
     @Override
-    public ResponseEntity<ElementSalaireDto> findById(Integer id) {
-        ElementSalaireDto elementSalaireDto = elementSalaireService.findById(id);
+    public ResponseEntity<ElementSalaireDto> findById(String id) {
+        ElementSalaireDto elementSalaireDto = elementSalaireService.findById(Integer.parseInt(id));
         if(elementSalaireDto!=null) return ResponseEntity.ok(elementSalaireDto);
         return new ResponseEntity(null, HttpStatus.NO_CONTENT);
     }

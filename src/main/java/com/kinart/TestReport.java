@@ -1,5 +1,6 @@
 package com.kinart;
 
+import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
 import com.kinart.api.gestiondestock.dto.LigneCommandeClientDto;
 import com.kinart.api.gestiondestock.report.LigneCommandeReport;
 import com.kinart.paie.business.services.utils.ClsDate;
@@ -25,7 +26,7 @@ import java.util.Map;
 public class TestReport {
 
     public static void main(String[] args) {
-       executeReport2();
+       executeReport3();
     }
 
     static void methode1(){
@@ -121,7 +122,6 @@ public class TestReport {
         return parameters;
     }
 
-
     static void executeReport2(){
          try {
              String filePath = ResourceUtils.getFile("classpath:RptCommandeClientFournisseur.jrxml")
@@ -177,4 +177,123 @@ public class TestReport {
              e.printStackTrace();
          }
      }
+
+    static void executeReport3(){
+        try {
+            String filePath = ResourceUtils.getFile("classpath:RptBulletinPaie.jrxml")
+                    .getAbsolutePath();
+
+            System.out.println("Chemin report="+filePath);
+            List<CalculPaieDto> data = new ArrayList<CalculPaieDto>();
+            for(int i=1; i<=5;i++){
+                CalculPaieDto lg = new CalculPaieDto();
+                lg.setRubq("0001");
+                lg.setLibRubrique("ELEMENT SALAIRE "+i);
+                lg.setTypeRubrique("GA");
+                lg.setBasc(new BigDecimal(65000));
+                lg.setTaux(new BigDecimal(1));
+                lg.setMont(new BigDecimal(130000));
+
+                data.add(lg);
+            }
+            for(int i=1; i<=5;i++){
+                CalculPaieDto lg = new CalculPaieDto();
+                lg.setRubq("0001");
+                lg.setLibRubrique("RETENUE SALAIRE "+i);
+                lg.setTypeRubrique("RE");
+                lg.setBasc(new BigDecimal(650000));
+                lg.setTaux(new BigDecimal(1));
+                lg.setMont(new BigDecimal(1350000));
+
+                data.add(lg);
+            }
+            for(int i=1; i<=5;i++){
+                CalculPaieDto lg = new CalculPaieDto();
+                lg.setRubq("0001");
+                lg.setLibRubrique("PART PAT "+i);
+                lg.setTypeRubrique("PP");
+                lg.setBasc(new BigDecimal(65000));
+                lg.setTaux(new BigDecimal(1));
+                lg.setMont(new BigDecimal(130000));
+
+                data.add(lg);
+            }
+
+            CalculPaieDto lg2 = new CalculPaieDto();
+            lg2.setRubq("0975");
+            lg2.setLibRubrique("SALAIRE DE BASE");
+            lg2.setTypeRubrique("RE");
+            lg2.setBasc(new BigDecimal(65000));
+            lg2.setTaux(new BigDecimal(1));
+            lg2.setMont(new BigDecimal(150000));
+
+            data.add(lg2);
+
+            System.out.println("Ajout datasource");
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data);
+
+            System.out.println("Ajout paramètres");
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("NOM_SOCIETE", "KIN'ART REMAKE");
+            parameters.put("ADRESSE_SOCIETE", "B.P.: 56789 DOUALA");
+            parameters.put("CONTACT_SOCIETE", "Tél.: +237 694 45 67 23");
+            parameters.put("INFO_MATRICULE", "006788");
+            parameters.put("INFO_NOM", "MBASSI MASSOUKE CYRILLE");
+            parameters.put("INFO_NIU", "34668");
+            parameters.put("INFO_CATEGORIE", "CATEGORIE A");
+            parameters.put("INFO_ECHELON", "ECHELON 1");
+            parameters.put("INFO_CHARGE", "4");
+            parameters.put("INFO_ADRESSE", "DOUALA 1");
+            parameters.put("INFO_FONCTION", "INGENIEUR ETUDE");
+            parameters.put("INFO_DATE_ENTREE", "01/08/2020");
+            parameters.put("INFO_NUMERO_CNSS", "898865");
+            parameters.put("INFO_CPTE_VIREMENT", "6800-5667887899-56");
+            parameters.put("INFO_SEXE", "Masculin");
+            parameters.put("INFO_DIRECTION", "Informatique");
+            parameters.put("INFO_DEPARTEMENT", "Technique");
+            parameters.put("INFO_SERVICE", "Achat");
+            parameters.put("INFO_GRADE", "Cadre");
+            parameters.put("INFO_SITFAM", "Marié");
+            parameters.put("INFO_DEVISE", "F CFA");
+            parameters.put("MOIS_COL1", new BigDecimal(165000));
+            parameters.put("MOIS_COL2", new BigDecimal(125000));
+            parameters.put("MOIS_COL3", new BigDecimal(135000));
+            parameters.put("MOIS_COL4", new BigDecimal(105000));
+            parameters.put("MOIS_COL5", new BigDecimal(115000));
+            parameters.put("CUM_COL1", new BigDecimal(0));
+            parameters.put("CUM_COL2", new BigDecimal(0));
+            parameters.put("CUM_COL3", new BigDecimal(0));
+            parameters.put("CUM_COL4", new BigDecimal(0));
+            parameters.put("CUM_COL5", new BigDecimal(0));
+            parameters.put("DATE_DEBUT", "01/01/2020");
+            parameters.put("DATE_FIN", "31/01/2020");
+            parameters.put("CHEMIN_LOGO", "D:\\Programmation orientee objet\\Technologies\\Angular\\projets\\gestiondestock\\logo\\logo.jpg");
+            parameters.put("tableData", dataSource);
+            parameters.put("INFO_NAP", data.get(data.size()-1).getMont());
+
+            System.out.println("Compilation");
+            JasperReport report = JasperCompileManager.compileReport(filePath);
+
+            System.out.println("Association des données");
+            JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource(1));
+
+            String fileName = "CommandeCLientCMD0876.pdf";
+            System.out.println("Nom fihier: "+fileName);
+            String uploadDir = StringUtils.cleanPath("./generated-reports/");
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)){
+                Files.createDirectories(uploadPath);
+            }
+
+            System.out.println("Export PDF");
+            byte[] byteArray = JasperExportManager.exportReportToPdf(print);
+
+            System.out.println("Export PDF in file");
+            JasperExportManager.exportReportToPdfFile(print, uploadDir+fileName);
+
+        } catch(Exception e) {
+            System.out.println("Exception while creating report");
+            e.printStackTrace();
+        }
+    }
 }

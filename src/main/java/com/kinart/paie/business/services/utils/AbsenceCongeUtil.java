@@ -30,7 +30,7 @@ public class AbsenceCongeUtil {
 //	--          Si periode s'etend du 1 au 30                    --
 //	--          ALORS wnbja = 29                                 --
 //	---------------------------------------------------------------
-    public static long pr_compte_jours(HibernateConnexionService oService, ParamDataRepository paramDataRepository, String cdos, String cas, Date deb, Date fin, String typeBD)
+    public static long pr_compte_jours(GeneriqueConnexionService oService, ParamDataRepository paramDataRepository, String cdos, String cas, Date deb, Date fin, String typeBD)
     {
 
 //	  w_nb		NUMBER;

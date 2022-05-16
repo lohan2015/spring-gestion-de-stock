@@ -273,7 +273,7 @@ public class ElementVariableCongeServiceImpl implements ElementVariableCongeServ
     }
 
     @Override
-    public List<ElementVariableCongeDto> findEVCongeByFilter(Optional<String> matricule, Optional<String> codemotif) {
+    public List<ElementVariableCongeDto> findEVCongeByFilter(String matricule, String codemotif) {
         List<ElementVariableCongeDto> liste = new ArrayList<ElementVariableCongeDto>();
         String sqlQuery = "SELECT e.*, s.nom as nomsal, s.pren as prensal, t.vall as librub " +
                 "FROM ElementVariableCongeDto e " +
@@ -281,8 +281,8 @@ public class ElementVariableCongeServiceImpl implements ElementVariableCongeServ
                 "LEFT JOIN ParamData t ON (t.ctab=22 AND t.nume=1 AND t.identreprise=s.identreprise AND t.cacc=e.motf) "+
                 "WHERE 1=1";
 
-        if(matricule.isPresent()) sqlQuery += " AND upper(e.nmat) LIKE :matricule";
-        if(codemotif.isPresent()) sqlQuery += " AND upper(e.motf) = :codemotif";
+        if(org.apache.commons.lang3.StringUtils.isNotEmpty(matricule)) sqlQuery += " AND upper(e.nmat) LIKE :matricule";
+        if(org.apache.commons.lang3.StringUtils.isNotEmpty(codemotif)) sqlQuery += " AND upper(e.motf) = :codemotif";
 
         try {
             Session session = service.getSession();
@@ -293,8 +293,8 @@ public class ElementVariableCongeServiceImpl implements ElementVariableCongeServ
                     .addScalar("librub", StandardBasicTypes.STRING);
 
             //query.setParameter("identreprise", identreprise);
-            if(matricule.isPresent()) query.setParameter("matricule", "%"+matricule+"%");
-            if(codemotif.isPresent()) query.setParameter("codemotif", codemotif);
+            if(org.apache.commons.lang3.StringUtils.isNotEmpty(matricule)) query.setParameter("matricule", "%"+matricule+"%");
+            if(org.apache.commons.lang3.StringUtils.isNotEmpty(codemotif)) query.setParameter("codemotif", codemotif);
             List<Object[]> lst = query.getResultList();
             service.closeConnexion(session);
 

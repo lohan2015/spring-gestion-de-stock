@@ -2,6 +2,7 @@ package com.kinart.api.gestiondepaie.controller;
 
 import com.kinart.api.gestiondepaie.controller.api.ElementVariableCongeApi;
 import com.kinart.api.gestiondepaie.dto.ElementVariableCongeDto;
+import com.kinart.api.gestiondepaie.dto.RechercheDto;
 import com.kinart.paie.business.services.ElementVariableCongeService;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;
@@ -24,9 +25,9 @@ public class ElementVariableCongeController implements ElementVariableCongeApi {
     }
 
     @Override
-    public ResponseEntity<ElementVariableCongeDto> save(ElementVariableCongeDto dto, String dateFormat, String typeBD) {
+    public ResponseEntity<ElementVariableCongeDto> save(ElementVariableCongeDto dto) {
         try {
-            elementVariableCongeService.save(dto, dateFormat, typeBD);
+            elementVariableCongeService.save(dto, dto.getDateFormat(), dto.getTypeBD());
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
         }
@@ -52,8 +53,8 @@ public class ElementVariableCongeController implements ElementVariableCongeApi {
     }
 
     @Override
-    public ResponseEntity<List<ElementVariableCongeDto>> findEVCongeByFilter(Optional<String> matricule, Optional<String> codemotif) {
-        List<ElementVariableCongeDto> elementVariableCongeDto = elementVariableCongeService.findEVCongeByFilter(matricule, codemotif);
+    public ResponseEntity<List<ElementVariableCongeDto>> findEVCongeByFilter(RechercheDto dto) {
+        List<ElementVariableCongeDto> elementVariableCongeDto = elementVariableCongeService.findEVCongeByFilter(dto.nmatMin, dto.codeMotifCg);
         if(elementVariableCongeDto!=null) {
             return ResponseEntity.ok(elementVariableCongeDto);
         } else {

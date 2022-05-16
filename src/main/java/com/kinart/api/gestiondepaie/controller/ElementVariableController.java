@@ -2,12 +2,14 @@ package com.kinart.api.gestiondepaie.controller;
 
 import com.kinart.api.gestiondepaie.dto.ElementVariableDetailMoisDto;
 import com.kinart.api.gestiondepaie.controller.api.ElementVariableApi;
+import com.kinart.api.gestiondepaie.dto.RechercheDto;
 import com.kinart.paie.business.services.ElementVariableService;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -52,8 +54,8 @@ public class ElementVariableController implements ElementVariableApi {
     }
 
     @Override
-    public ResponseEntity<List<ElementVariableDetailMoisDto>> findEVByFilter(Optional<String> matricule, Optional<String> coderub) {
-        List<ElementVariableDetailMoisDto> elementVariableDetailMoisDto = elementVariableService.findEVByFilter(matricule, coderub);
+    public ResponseEntity<List<ElementVariableDetailMoisDto>> findEVByFilter(RechercheDto dto) {
+        List<ElementVariableDetailMoisDto> elementVariableDetailMoisDto = elementVariableService.findEVByFilter(dto.nmatMin, dto.rubMin);
         if(elementVariableDetailMoisDto!=null) {
             return ResponseEntity.ok(elementVariableDetailMoisDto);
         } else {

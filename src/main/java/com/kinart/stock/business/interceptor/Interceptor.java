@@ -18,10 +18,12 @@ public class Interceptor extends EmptyInterceptor {
                 && !entityName.toLowerCase().contains("roles")
                 && StringUtils.hasLength(idEntreprise)) {
 
-          if (sql.contains("where")) {
-            sql = sql + " and " + entityName + ".identreprise = " + idEntreprise;
-          } else {
-            sql = sql + " where " + entityName + ".identreprise = " + idEntreprise;
+          if(!sql.contains("ORDER BY") && !sql.contains("order by")){
+            if (sql.contains("where") || sql.contains("WHERE")) {
+              sql = sql + " and " + entityName + ".identreprise = " + idEntreprise;
+            } else {
+              sql = sql + " where " + entityName + ".identreprise = " + idEntreprise;
+            }
           }
         }
       } catch(StringIndexOutOfBoundsException e){

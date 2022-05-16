@@ -58,14 +58,14 @@ public class DossierPaieController implements DossierPaieApi {
     }
 
     @Override
-    public String getMoisDePaieCourant(Integer idEntreprise, String dateFormat) {
-        Date ddmp = dossierPaieService.getMoisDePaieCourant(idEntreprise);
-        if(ddmp!=null) return new ClsDate(new ClsDate(ddmp, dateFormat).addMonth(1)).getYearAndMonth();
+    public String getMoisDePaieCourant(String idEntreprise) {
+        Date ddmp = dossierPaieService.getMoisDePaieCourant(Integer.valueOf(idEntreprise));
+        if(ddmp!=null) return new ClsDate(new ClsDate(ddmp).addMonth(1)).getYearAndMonth();
         return null;
     }
 
     @Override
-    public Integer getNumeroBulletinPaie(Integer idEntreprise) {
-        return dossierPaieService.getNumeroBulletinPaie(idEntreprise);
+    public String getNumeroBulletinPaie(String idEntreprise) {
+        return dossierPaieService.getNumeroBulletinPaie(Integer.valueOf(idEntreprise)).toString();
     }
 }

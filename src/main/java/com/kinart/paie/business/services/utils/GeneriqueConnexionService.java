@@ -50,6 +50,52 @@ public class GeneriqueConnexionService {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see cdi.rh.dal.IDAOSAVE#update(java.lang.Object)
+     */
+    public void update ( Object entity ) throws DataAccessException {
+        // TODO Auto-generated method stub
+        Session sess=getSession();
+        Transaction tx = null;
+        try{
+            tx=sess.beginTransaction();
+            /*this.dao*/sess.update ( entity );
+            tx.commit();
+        }catch(Exception ex){
+            ex.printStackTrace();
+            if(tx!=null)
+                tx.rollback();
+        }finally{
+            sess.flush();
+            closeSession(sess);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see cdi.rh.dal.IDAOSAVE#delete(java.lang.Object)
+     */
+    public void delete ( Object entity ) throws DataAccessException {
+        // TODO Auto-generated method stub
+        Session sess=getSession();
+        Transaction tx = null;
+        try{
+            tx=sess.beginTransaction();
+            sess.delete(entity);
+            tx.commit();
+        }catch(Exception ex){
+            ex.printStackTrace();
+            if(tx!=null)
+                tx.rollback();
+        }finally{
+            sess.flush();
+            closeSession(sess);
+        }
+    }
+
     public List findByQuery ( String queryString ) throws DataAccessException {
 
         Session session = this.getSession();

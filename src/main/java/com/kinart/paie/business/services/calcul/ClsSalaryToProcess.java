@@ -39,7 +39,7 @@ public class ClsSalaryToProcess
 	// champ contenant les fonctions d'accés aux tables de nomenclature
 	protected ClsNomenclatureUtil utilNomenclature = null;
 
-	protected HibernateConnexionService service = null;
+	protected GeneriqueConnexionService service = null;
 
 	protected ElementSalaireRepository elementSalaireRepository;
 
@@ -488,7 +488,7 @@ public class ClsSalaryToProcess
 	 * @param infoSalary
 	 * @param service
 	 */
-	public ClsSalaryToProcess(ClsParameterOfPay parameter, ClsInfoSalaryClone infoSalary, HibernateConnexionService service)
+	public ClsSalaryToProcess(ClsParameterOfPay parameter, ClsInfoSalaryClone infoSalary, GeneriqueConnexionService service)
 	{
 		this.parameter = parameter;
 		this.infoSalary = infoSalary;
@@ -713,12 +713,12 @@ public class ClsSalaryToProcess
 		this.moisPaieCourant = moisPaieCourant;
 	}
 
-	public HibernateConnexionService getService()
+	public GeneriqueConnexionService getService()
 	{
 		return service;
 	}
 
-	public void setService(HibernateConnexionService service)
+	public void setService(GeneriqueConnexionService service)
 	{
 		this.service = service;
 	}
@@ -836,25 +836,25 @@ public class ClsSalaryToProcess
 		// IF retroactif THEN
 		// BEGIN
 		// SELECT DISTINCT nbul INTO w_verif_bul FROM prcalc
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND aamm = w_aamm
 		// AND nmat = wsal01.nmat
 		// AND nlot = w_nlot;
 		// EXCEPTION
 		// WHEN NO_DATA_FOUND THEN null;
 		// END;
-		String queryStringRetro = "select distinct nbul from Rhtprcalc" + " where cdos ='" + infoSalary.getComp_id().getCdos() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '"
+		String queryStringRetro = "select distinct nbul from Rhtprcalc" + " where identreprise ='" + infoSalary.getComp_id().getCdos() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '"
 				+ infoSalary.getComp_id().getNmat() + "'" + " and nlot = " + nlot;
 		// ELSE
 		// BEGIN
 		// SELECT DISTINCT nbul INTO w_verif_bul FROM pacalc
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND aamm = w_aamm
 		// AND nmat = wsal01.nmat;
 		// EXCEPTION
 		// WHEN NO_DATA_FOUND THEN null;
 		// END;
-		String queryString = "select distinct nbul from CalculPaie" + " where cdos ='" + infoSalary.getComp_id().getCdos() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat()
+		String queryString = "select distinct nbul from CalculPaie" + " where identreprise ='" + infoSalary.getComp_id().getCdos() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat()
 				+ "'";
 		// END IF;
 		// IF SQL%FOUND THEN
@@ -882,7 +882,7 @@ public class ClsSalaryToProcess
 		// IF retroactif THEN
 		// BEGIN
 		// DELETE FROM prcalc
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND aamm = w_aamm
 		// AND nmat = wsal01.nmat
 		// AND nlot = w_nlot;
@@ -894,12 +894,12 @@ public class ClsSalaryToProcess
 		// RETURN FALSE;
 		// -- erreur(err_msg) ;
 		// END;
-		queryStringRetro = "delete from Rhtprcalc" + " where cdos ='" + infoSalary.getComp_id().getCdos() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'"
+		queryStringRetro = "delete from Rhtprcalc" + " where identreprise ='" + infoSalary.getComp_id().getCdos() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'"
 				+ " and nlot = " + nlot;
 		// ELSE
 		// BEGIN
 		// DELETE FROM pacalc
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND aamm = w_aamm
 		// AND nmat = wsal01.nmat;
 		// EXCEPTION
@@ -910,7 +910,7 @@ public class ClsSalaryToProcess
 		// RETURN FALSE;
 		// -- erreur(err_msg) ;
 		// END;
-		queryString = "delete from CalculPaie" + " where cdos ='" + infoSalary.getComp_id().getCdos() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'";
+		queryString = "delete from CalculPaie" + " where identreprise ='" + infoSalary.getComp_id().getCdos() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'";
 		// END IF;
 		//
 		if (useRetroactif)
@@ -951,7 +951,7 @@ public class ClsSalaryToProcess
 	// String lastDayOfMonthS = new ClsDate(lastDayOfMonth).getDateS();
 	//	    
 	// String queryString = "from Rhteltvarconge "
-	// + " where cdos = '" + infoSalary.getComp_id().getCdos() + "'"
+	// + " where identreprise = '" + infoSalary.getComp_id().getCdos() + "'"
 	// + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'"
 	// + " and aamm = '" + monthOfPay + "'"
 	// + " and nbul = " + nbul
@@ -962,7 +962,7 @@ public class ClsSalaryToProcess
 	// + " order by motf, ddeb";
 	//
 	// String queryStringRetro = "from Rhthevcg "
-	// + " where cdos = '" + infoSalary.getComp_id().getCdos() + "'"
+	// + " where identreprise = '" + infoSalary.getComp_id().getCdos() + "'"
 	// + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'"
 	// + " and aamm = '" + monthOfPay + "'"
 	// + " and nbul = " + nbul
@@ -1004,7 +1004,7 @@ public class ClsSalaryToProcess
 	// // MAX(DECODE(nume,8,NVL(valm,0)))
 	// // INTO w_mnt1, w_mnt4, w_mnt8
 	// // from pahfnom
-	// // where cdos = PA.cdos
+	// // where identreprise = PA.identreprise
 	// // and ctab = 22
 	// // and cacc = wevcg.motf
 	// // and nume IN (1,4,8)
@@ -1015,7 +1015,7 @@ public class ClsSalaryToProcess
 	// // null;
 	// // END;
 	// String strQueryMaxValm = "select valm from Rhthfnom "
-	// + " where cdos = '" + infoSalary.getComp_id().getCdos() + "'"
+	// + " where identreprise = '" + infoSalary.getComp_id().getCdos() + "'"
 	// + " and nume in (1, 4, 8)"
 	// + " and aamm = '" + monthOfPay + "'"
 	// + " and nbul = " + nbul
@@ -1043,7 +1043,7 @@ public class ClsSalaryToProcess
 	// // MAX(DECODE(nume,8,NVL(valm,0)))
 	// // INTO w_mnt1, w_mnt4, w_mnt8
 	// // from pafnom
-	// // where cdos = PA.cdos
+	// // where identreprise = PA.identreprise
 	// // and ctab = 22
 	// // and cacc = wevcg.motf
 	// // and nume IN (1,4,8);
@@ -1052,7 +1052,7 @@ public class ClsSalaryToProcess
 	// // null;
 	// // END;
 	// String strQueryMaxValm = "select valm from Rhfnom "
-	// + " where cdos = '" + infoSalary.getComp_id().getCdos() + "'"
+	// + " where identreprise = '" + infoSalary.getComp_id().getCdos() + "'"
 	// + " and nume in (1, 4, 8)"
 	// + " and ctab = 22"
 	// + " and cacc ='" + motf + "'";
@@ -1203,14 +1203,14 @@ public class ClsSalaryToProcess
 		//
 		// CURSOR curs_evcg IS
 		// SELECT * FROM paevcg
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND nmat = wsal01.nmat
 		// AND aamm = w_aamm
 		// AND nbul = wsd_fcal1.nbul;
 		//
 		// CURSOR curs_evcg2 IS
 		// SELECT * FROM pahevcg
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND nmat = wsal01.nmat
 		// AND aamm = w_aamm
 		// AND nbul = wsd_fcal1.nbul;
@@ -1235,7 +1235,7 @@ public class ClsSalaryToProcess
 //		{
 			// CURSOR Curs_TB27 IS
 			// SELECT valt FROM pafnom
-			// WHERE cdos = wpdos.cdos
+			// WHERE identreprise = wpdos.identreprise
 			// AND ctab = 27
 			// AND cacc = wsal01.devp
 			// AND nume = 1;
@@ -1289,7 +1289,7 @@ public class ClsSalaryToProcess
 		// -- MM 03-2003 Ajout fonction calcul anciennete avec deduction des
 		// arrets paie
 		// nbr_an :=
-		// pa_paie.calc_anc(wsal01.cdos,wsal01.ddca,wsal01.nmat,w_aamm);
+		// pa_paie.calc_anc(wsal01.identreprise,wsal01.ddca,wsal01.nmat,w_aamm);
 		// -- Fin modif MM.
 		//
 		// IF nbr_an < 0 THEN
@@ -1376,7 +1376,7 @@ public class ClsSalaryToProcess
 			// -------------------------------------------------------------------------
 			// IF NOT PA_PAIE.NouB(wsal01.pmcf) AND
 			// w_fictif = 'O' AND
-			// NOT PA_PAIE.Bulletin_valide( wpdos.cdos, wsal01.nmat) AND
+			// NOT PA_PAIE.Bulletin_valide( wpdos.identreprise, wsal01.nmat) AND
 			// NOT retroactif
 			// THEN
 			// IF wsal01.pmcf = w_aamm THEN
@@ -1389,7 +1389,7 @@ public class ClsSalaryToProcess
 			// ELSE
 			// IF Mode_Test THEN pap_logins('Lancement fictif'); END IF;
 			// -- MM 08/2004 on passe le code util. sur 4 char.
-			// w_options:= wpdos.cdos || LTRIM(TO_CHAR(wsd_fcal1.nbul))
+			// w_options:= wpdos.identreprise || LTRIM(TO_CHAR(wsd_fcal1.nbul))
 			// || w_aamm
 			// || RPAD(w_cuti,4,' ')
 			// || wsal01.nmat;
@@ -1571,7 +1571,7 @@ public class ClsSalaryToProcess
 			// SELECT ddpa, dfpa
 			// INTO w_ddpa, w_dfpa
 			// FROM pahev
-			// WHERE cdos = wpdos.cdos
+			// WHERE identreprise = wpdos.identreprise
 			// AND nmat = wsal01.nmat
 			// AND aamm = w_aamm
 			// AND nbul = wsd_fcal1.nbul;
@@ -1589,7 +1589,7 @@ public class ClsSalaryToProcess
 			// SELECT ddpa, dfpa
 			// INTO w_ddpa, w_dfpa
 			// FROM paev
-			// WHERE cdos = wpdos.cdos
+			// WHERE identreprise = wpdos.identreprise
 			// AND nmat = wsal01.nmat
 			// AND aamm = w_aamm
 			// AND nbul = wsd_fcal1.nbul;
@@ -2390,7 +2390,7 @@ public class ClsSalaryToProcess
 		// -- MM 03-2003 Ajout fonction calcul anciennete avec deduction des
 		// arrets paie
 		// nbreYear :=
-		// pa_paie.calc_anc(wsal01.cdos,wsal01.ddca,wsal01.nmat,w_aamm);
+		// pa_paie.calc_anc(wsal01.identreprise,wsal01.ddca,wsal01.nmat,w_aamm);
 		nbreYear = calculateAnciennetePre(strDateFormat);
 
 		// -- Fin modif MM.
@@ -2474,8 +2474,8 @@ public class ClsSalaryToProcess
 		//
 		// CURSOR C_ARRPAIE IS
 		// SELECT ddar,dfar from paarrpai
-		// WHERE cdos = cdos_i
-		// AND mtar IN (Select cacc from pafnom where cdos = cdos_i and ctab =21
+		// WHERE identreprise = cdos_i
+		// AND mtar IN (Select cacc from pafnom where identreprise = cdos_i and ctab =21
 		// and nume = 1 and valm =1)
 		// AND nmat = mat_i
 		// AND ddar < TO_date(aamm_i,'YYYYMM')
@@ -2500,7 +2500,7 @@ public class ClsSalaryToProcess
 		nDayDeduted = 0;
 		ClsDate myMonthOfPay = new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM);
 		Date monthOfPayDate = myMonthOfPay.getDate();
-		String queryString = "select ddar, dfar from Rhtarrpaiagent" + " where cdos ='" + this.parameter.getDossier() + "'" + " and mtar in (" + " select cacc from Rhfnom" + " where cdos ='"
+		String queryString = "select ddar, dfar from Rhtarrpaiagent" + " where identreprise ='" + this.parameter.getDossier() + "'" + " and mtar in (" + " select cacc from Rhfnom" + " where identreprise ='"
 				+ this.parameter.getDossier() + "'" + " and ctab = 21" + " and nume = 1 and valm =1)" + " and nmat ='" + this.infoSalary.getComp_id().getNmat() + "'" +
 				// " and ddar < '" + myMonthOfPay.getDateS("dd-MM-yyyy")
 				// + "'" +
@@ -2718,14 +2718,14 @@ public class ClsSalaryToProcess
 						// SET mont = montant
 						// WHERE EXISTS ( SELECT codp
 						// FROM pahelfix
-						// WHERE cdos = wpdos.cdos
+						// WHERE identreprise = wpdos.identreprise
 						// AND nmat = wsal01.nmat
 						// AND codp = wajus.crub
 						// AND aamm = w_aamm
 						// AND nbul = wsd_fcal1.nbul
 						// )
 						// AND sessionid = w_sessionid;
-						String queryStringforupdate = "update ElementSalaireAjus set mont = " + montant + " where exists(" + " select codp from Rhthelfix" + " where cdos = '" + parameter.getDossier() + "'"
+						String queryStringforupdate = "update ElementSalaireAjus set mont = " + montant + " where exists(" + " select codp from Rhthelfix" + " where identreprise = '" + parameter.getDossier() + "'"
 								+ " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and codp = '" + ((ElementSalaireAjus) parubajus).getCrub() + "'" + " and aamm = '"
 								+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul() + " )" + " and sessionid = " + parameter.getSessionId();
 
@@ -2744,15 +2744,15 @@ public class ClsSalaryToProcess
 						// FROM pahelfix
 						// -- LH 240198 C'EST LA !!! ET J'AI CHERCHE PENDANT DES
 						// HEURES ....
-						// -- WHERE cdos = PA_CALCUL.wpdos.cdos
-						// WHERE cdos = wpdos.cdos
+						// -- WHERE identreprise = PA_CALCUL.wpdos.identreprise
+						// WHERE identreprise = wpdos.identreprise
 						// AND nmat = wsal01.nmat
 						// AND codp = wajus.crub
 						// AND aamm = w_aamm
 						// AND nbul = wsd_fcal1.nbul)
 						// WHERE EXISTS ( SELECT codp
 						// FROM pahelfix
-						// WHERE cdos = wpdos.cdos
+						// WHERE identreprise = wpdos.identreprise
 						// AND nmat = wsal01.nmat
 						// AND codp = wajus.crub
 						// AND aamm = w_aamm
@@ -2764,7 +2764,7 @@ public class ClsSalaryToProcess
 //						double mont = 0;
 //						if (elfix != null && elfix.getMonp().doubleValue() > 0)
 //							mont = elfix.getMonp().doubleValue();
-//						service.updateFromTable("update ElementSalaireAjus set mont = " + mont + " where exists(" + " select codp from Rhthelfix" + " where cdos = '" + parameter.getDossier() + "'" + " and nmat = '"
+//						service.updateFromTable("update ElementSalaireAjus set mont = " + mont + " where exists(" + " select codp from Rhthelfix" + " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '"
 //								+ infoSalary.getComp_id().getNmat() + "'" + " and codp = '" + ((ElementSalaireAjus) parubajus).getCrub() + "'" + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" + " and nbul = "
 //								+ this.getNbul() + " )" + " and sessionid = " + parameter.getSessionId());
 						//
@@ -2776,11 +2776,11 @@ public class ClsSalaryToProcess
 				//
 				//
 				// SELECT COUNT(*) INTO nb_evar FROM pahevar
-				// WHERE cdos = wpdos.cdos
+				// WHERE identreprise = wpdos.identreprise
 				// AND nmat = wsal01.nmat
 				// AND aamm = w_aamm
 				// AND nbul = wsd_fcal1.nbul;
-				listOfCount = service.find("select count(*) from Rhthevar" + " where cdos ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
+				listOfCount = service.find("select count(*) from Rhthevar" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
 						+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul());
 
 				if (listOfCount != null && listOfCount.size() > 0)
@@ -2798,7 +2798,7 @@ public class ClsSalaryToProcess
 				{
 					// UPDATE parubajus
 					// SET mont = ( SELECT SUM( mont ) FROM pahevar
-					// WHERE cdos = wpdos.cdos
+					// WHERE identreprise = wpdos.identreprise
 					// AND nmat = wsal01.nmat
 					// AND aamm = w_aamm
 					// AND nbul = wsd_fcal1.nbul
@@ -2806,22 +2806,22 @@ public class ClsSalaryToProcess
 					//
 					// WHERE EXISTS ( SELECT rubq
 					// FROM pahevar
-					// WHERE cdos = wpdos.cdos
+					// WHERE identreprise = wpdos.identreprise
 					// AND nmat = wsal01.nmat
 					// AND aamm = w_aamm
 					// AND nbul = wsd_fcal1.nbul
 					// AND rubq = parubajus.crub )
 					// AND sessionid = w_sessionid;
-					String queryStringforupdate = "update ElementSalaireAjus a " + "set mont = (select sum( mont ) from Rhthevar" + " where cdos ='" + parameter.getDossier() + "' and nmat = '"
+					String queryStringforupdate = "update ElementSalaireAjus a " + "set mont = (select sum( mont ) from Rhthevar" + " where identreprise ='" + parameter.getDossier() + "' and nmat = '"
 							+ infoSalary.getComp_id().getNmat() + "'" + " and rubq = a.crub " + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul() + " )" + " where exists("
-							+ " select rubq from Rhthevar" + " where cdos = '" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and rubq = a.crub " + " and aamm = '"
+							+ " select rubq from Rhthevar" + " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and rubq = a.crub " + " and aamm = '"
 							+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul() + " )" + " and sessionid = " + parameter.getSessionId();
 
 					this.addToOutputtext("\n Premiére Requete de mise é jour de la table ElementSalaireAjus " + queryStringforupdate);
 
 					session = service.getSession();
 					session.createSQLQuery(queryStringforupdate).executeUpdate();
-					service.closeConnexion(session);
+					service.closeSession(session);
 					// END IF;
 				}
 			}
@@ -2834,7 +2834,7 @@ public class ClsSalaryToProcess
 				for (String rubAAjuster : parameter.listeRubriquesAAjuster)
 				{
 					mont = 0;
-					String strLib=" select c.monp from ElementFixeSalaire c where  c.cdos ='"+parameter.getDossier()+"' and c.nmat = '"+infoSalary.getComp_id().getNmat()+"' and c.codp = '"+rubAAjuster+"'";
+					String strLib=" select c.monp from ElementFixeSalaire c where  c.identreprise ='"+parameter.getDossier()+"' and c.nmat = '"+infoSalary.getComp_id().getNmat()+"' and c.codp = '"+rubAAjuster+"'";
 					strLib+=" and ( c.ddeb is null or (c.ddeb is not null and c.ddeb <= '" + new ClsDate(myMonthOfPay.getLastDayOfMonth()).getDateS(parameter.appDateFormat) + "'))";
 					strLib+=" and ( c.dfin is null or (c.dfin is not null and c.dfin >= '" + new ClsDate(myMonthOfPay.getFirstDayOfMonth()).getDateS(parameter.appDateFormat) + "'))";
 					List<Object> lst = service.find(strLib);
@@ -2846,7 +2846,7 @@ public class ClsSalaryToProcess
 					service.updateFromTable(strQueryUpdate);
 				}
 				
-				listOfCount = service.find("select count(*) from ElementVariableDetailMois" + " where cdos ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
+				listOfCount = service.find("select count(*) from ElementVariableDetailMois" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
 						+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul());
 				count = 0;
 				if (listOfCount != null && listOfCount.size() > 0)
@@ -2858,7 +2858,7 @@ public class ClsSalaryToProcess
 					for (String rubAAjuster : parameter.listeRubriquesAAjuster)
 					{
 						mont = 0;
-						String strLib=" select sum( mont ) from ElementVariableDetailMois c where  c.cdos ='"+parameter.getDossier()+"' and c.nmat = '"+infoSalary.getComp_id().getNmat()+"' and c.rubq = '"+rubAAjuster+"'";
+						String strLib=" select sum( mont ) from ElementVariableDetailMois c where  c.identreprise ='"+parameter.getDossier()+"' and c.nmat = '"+infoSalary.getComp_id().getNmat()+"' and c.rubq = '"+rubAAjuster+"'";
 						strLib+=" and nbul = "+this.getNbul()+" and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" ;
 						
 						List<Object> lst = service.find(strLib);
@@ -2935,14 +2935,14 @@ public class ClsSalaryToProcess
 						// SET mont = w_val_mnt
 						// WHERE EXISTS ( SELECT NVL( codp, 0)
 						// FROM pahelfix
-						// WHERE cdos = wpdos.cdos
+						// WHERE identreprise = wpdos.identreprise
 						// AND nmat = wsal01.nmat
 						// AND codp = wnet.crub
 						// AND aamm = w_aamm
 						// AND nbul = wsd_fcal1.nbul
 						// )
 						// AND sessionid = w_sessionid;
-						service.updateFromTable("update ElementSalaireNet set mont = " + montant + " where exists(" + " select * from Rhthelfix" + " where cdos = '" + parameter.getDossier() + "'" + " and nmat = '"
+						service.updateFromTable("update ElementSalaireNet set mont = " + montant + " where exists(" + " select * from Rhthelfix" + " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '"
 								+ infoSalary.getComp_id().getNmat() + "'" + " and codp = '" + ((ElementSalaireNet) parubnet).getCrub() + "'" + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" + " and nbul = "
 								+ this.getNbul() + " )" + " and sessionid = " + parameter.getSessionId());
 					}
@@ -2952,12 +2952,12 @@ public class ClsSalaryToProcess
 						// UPDATE parubnet
 						// SET mont = ( SELECT NVL(monp, 0)
 						// FROM pahelfix
-						// WHERE cdos = wpdos.cdos
+						// WHERE identreprise = wpdos.identreprise
 						// AND nmat = wsal01.nmat
 						// AND codp = wnet.crub )
 						// WHERE EXISTS ( SELECT NVL( codp, 0)
 						// FROM pahelfix
-						// WHERE cdos = wpdos.cdos
+						// WHERE identreprise = wpdos.identreprise
 						// AND nmat = wsal01.nmat
 						// AND codp = wnet.crub
 						// AND aamm = w_aamm
@@ -2969,7 +2969,7 @@ public class ClsSalaryToProcess
 //						double mont = 0;
 //						if (elfix != null && elfix.getMonp().doubleValue() > 0)
 //							mont = elfix.getMonp().doubleValue();
-//						service.updateFromTable("update ElementSalaireNet set mont = " + mont + " where exists(" + " select * from Rhthelfix" + " where cdos = '" + parameter.getDossier() + "'" + " and nmat = '"
+//						service.updateFromTable("update ElementSalaireNet set mont = " + mont + " where exists(" + " select * from Rhthelfix" + " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '"
 //								+ infoSalary.getComp_id().getNmat() + "'" + " and codp = '" + ((ElementSalaireNet) parubnet).getCrub() + "'" + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" + " and nbul = "
 //								+ this.getNbul() + " )" + " and sessionid = " + parameter.getSessionId());
 					}
@@ -2981,11 +2981,11 @@ public class ClsSalaryToProcess
 				}
 				//
 				// SELECT COUNT(*) INTO nb_evar FROM pahevar
-				// WHERE cdos = wpdos.cdos
+				// WHERE identreprise = wpdos.identreprise
 				// AND nmat = wsal01.nmat
 				// AND aamm = w_aamm
 				// AND nbul = wsd_fcal1.nbul;
-				listOfCount = service.find("select count(*) from Rhthevar" + " where cdos ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
+				listOfCount = service.find("select count(*) from Rhthevar" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
 						+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul());
 				count = 0;
 				if (listOfCount != null && listOfCount.size() > 0)
@@ -3003,13 +3003,13 @@ public class ClsSalaryToProcess
 					// -- LH 051297 On peut avoir un EV en double
 					// -- SET mont = ( SELECT mont FROM paevar
 					// SET mont = ( SELECT SUM( mont) FROM pahevar
-					// WHERE cdos = wpdos.cdos
+					// WHERE identreprise = wpdos.identreprise
 					// AND nmat = wsal01.nmat
 					// AND aamm = w_aamm
 					// AND nbul = wsd_fcal1.nbul
 					// AND rubq = parubnet.crub )
 					// WHERE EXISTS ( SELECT rubq FROM pahevar
-					// WHERE cdos = wpdos.cdos
+					// WHERE identreprise = wpdos.identreprise
 					// AND nmat = wsal01.nmat
 					// AND aamm = w_aamm
 					// AND nbul = wsd_fcal1.nbul
@@ -3017,9 +3017,9 @@ public class ClsSalaryToProcess
 					// AND sessionid = w_sessionid;nbr_elmt
 					// END IF;
 
-					service.updateFromTable("update ElementSalaireNet a " + "set mont = (select sum( mont ) from Rhthevar" + " where cdos = '" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat()
+					service.updateFromTable("update ElementSalaireNet a " + "set mont = (select sum( mont ) from Rhthevar" + " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat()
 							+ "'" + " and rubq = a.crub " + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul() + " )" + " where exists(" + " select rubq from Rhthevar"
-							+ " where cdos = '" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and rubq = a.crub " + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'"
+							+ " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and rubq = a.crub " + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'"
 							+ " and nbul = " + this.getNbul() + " )" + " and sessionid = " + parameter.getSessionId());
 				}
 			}
@@ -3035,7 +3035,7 @@ public class ClsSalaryToProcess
 				for (String rubAAjouterAuNet : parameter.listeRubriquesAAjouterAuNet)
 				{
 					mont = 0;
-					String strLib=" select c.monp from ElementFixeSalaire c where  c.cdos ='"+parameter.getDossier()+"' and c.nmat = '"+infoSalary.getComp_id().getNmat()+"' and c.codp = '"+rubAAjouterAuNet+"'";
+					String strLib=" select c.monp from ElementFixeSalaire c where  c.identreprise ='"+parameter.getDossier()+"' and c.nmat = '"+infoSalary.getComp_id().getNmat()+"' and c.codp = '"+rubAAjouterAuNet+"'";
 					strLib+=" and ( c.ddeb is null or (c.ddeb is not null and c.ddeb <= '" + new ClsDate(myMonthOfPay.getLastDayOfMonth()).getDateS(parameter.appDateFormat) + "'))";
 					strLib+=" and ( c.dfin is null or (c.dfin is not null and c.dfin >= '" + new ClsDate(myMonthOfPay.getFirstDayOfMonth()).getDateS(parameter.appDateFormat) + "'))";
 					List<Object> lst = service.find(strLib);
@@ -3048,7 +3048,7 @@ public class ClsSalaryToProcess
 					service.updateFromTable(strQueryUpdate);
 				}
 
-				listOfCount = service.find("select count(*) from ElementVariableDetailMois" + " where cdos ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
+				listOfCount = service.find("select count(*) from ElementVariableDetailMois" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
 						+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul());
 				count = 0;
 				if (listOfCount != null && listOfCount.size() > 0)
@@ -3062,7 +3062,7 @@ public class ClsSalaryToProcess
 					for (String rubAAjouterAuNet : parameter.listeRubriquesAAjouterAuNet)
 					{
 						mont = 0;
-						String strLib=" select sum( mont ) from ElementVariableDetailMois c where  c.cdos ='"+parameter.getDossier()+"' and c.nmat = '"+infoSalary.getComp_id().getNmat()+"' and c.rubq = '"+rubAAjouterAuNet+"'";
+						String strLib=" select sum( mont ) from ElementVariableDetailMois c where  c.identreprise ='"+parameter.getDossier()+"' and c.nmat = '"+infoSalary.getComp_id().getNmat()+"' and c.rubq = '"+rubAAjouterAuNet+"'";
 						strLib+=" and nbul = "+this.getNbul()+" and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" ;
 						
 						List<Object> lst = service.find(strLib);
@@ -3298,7 +3298,7 @@ public class ClsSalaryToProcess
 				}
 
 				//
-				// wcalc.cdos := wpdos.cdos;
+				// wcalc.identreprise := wpdos.identreprise;
 				// wcalc.aamm := w_aamm ;
 				// wcalc.nmat := wsal01.nmat;
 				// wcalc.nbul := wsd_fcal1.nbul;
@@ -3967,7 +3967,7 @@ public class ClsSalaryToProcess
 			return minAamm;
 		}
 		
-		String strSqlQuery = "select min(aamm) from CumulPaie " + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat()
+		String strSqlQuery = "select min(aamm) from CumulPaie " + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat()
 				+ "'";
 
 		List aammmin = this.getService().find(strSqlQuery);
@@ -4032,7 +4032,7 @@ public class ClsSalaryToProcess
 		//
 		// CURSOR C_Pseudo IS
 		// SELECT rowid FROM paevar
-		// WHERE cdos = wevcg.cdos
+		// WHERE identreprise = wevcg.identreprise
 		// AND nmat = wevcg.nmat
 		// AND aamm = wevcg.aamm
 		// AND nbul = wsd_fcal1.nbul
@@ -4042,7 +4042,7 @@ public class ClsSalaryToProcess
 		//
 		// CURSOR C_Pseudo2 IS
 		// SELECT rowid FROM pahevar
-		// WHERE cdos = wevcg.cdos
+		// WHERE identreprise = wevcg.identreprise
 		// AND nmat = wevcg.nmat
 		// AND aamm = wevcg.aamm
 		// AND nbul = wsd_fcal1.nbul
@@ -4074,7 +4074,7 @@ public class ClsSalaryToProcess
 //				listOfPahevar = service.find(queryStringRetro);
 //				if (listOfPahevar.isEmpty())
 //				{
-//					// wevar.cdos := wpdos.cdos;
+//					// wevar.identreprise := wpdos.identreprise;
 //					// wevar.aamm := wevcg.aamm;
 //					// wevar.nmat := wevcg.nmat;
 //					// wevar.nbul := wsd_fcal1.nbul;
@@ -4085,7 +4085,7 @@ public class ClsSalaryToProcess
 //					// wevar.mont := Pseudo_Mnt;
 //					// INSERT INTO pahevar
 //					// (cdos,aamm,nmat,nbul,rubq,argu,nprt,ruba,mont,cuti)
-//					// VALUES (wevar.cdos, wevar.aamm, wevar.nmat, wevar.nbul,
+//					// VALUES (wevar.identreprise, wevar.aamm, wevar.nmat, wevar.nbul,
 //					// wevar.rubq, wevar.argu, wevar.nprt, wevar.ruba,
 //					// wevar.mont,'PSEU');
 //					//
@@ -4130,7 +4130,7 @@ public class ClsSalaryToProcess
 //						// + " + montant +
 //						// " where aamm ='" + o.getAamm() + "'" +
 //						// " argu = '" + o.getArgu() + "'" +
-//						// " cdos = '" + o.getCdos() + "'" +
+//						// " identreprise = '" + o.getCdos() + "'" +
 //						// " cuti = '" + o.getCuti() + "'" +
 //						// " nmat = '" + o.getNmat() + "'" +
 //						// " nprt = '" + o.getNprt() + "'" +
@@ -4174,7 +4174,7 @@ public class ClsSalaryToProcess
 				{
 					//
 					// IF C_Pseudo%NOTFOUND THEN
-					// wevar.cdos := wpdos.cdos;
+					// wevar.identreprise := wpdos.identreprise;
 					// wevar.aamm := wevcg.aamm;
 					// wevar.nmat := wevcg.nmat;
 					// wevar.nbul := wsd_fcal1.nbul;
@@ -4185,7 +4185,7 @@ public class ClsSalaryToProcess
 					// wevar.mont := Pseudo_Mnt;
 					// INSERT INTO paevar
 					// (cdos,aamm,nmat,nbul,rubq,argu,nprt,ruba,mont,cuti)
-					// VALUES (wevar.cdos, wevar.aamm, wevar.nmat, wevar.nbul,
+					// VALUES (wevar.identreprise, wevar.aamm, wevar.nmat, wevar.nbul,
 					// wevar.rubq, wevar.argu, wevar.nprt, wevar.ruba,
 					// wevar.mont,'PSEU');
 					//
@@ -4231,7 +4231,7 @@ public class ClsSalaryToProcess
 						// service.updateFromTable("update ElementVariableDetailMois mont =
 						// mont + " + montant +
 						// " where argu = '" + o.getArgu() + "'" +
-						// " cdos = '" + o.getCdos() + "'" +
+						// " identreprise = '" + o.getCdos() + "'" +
 						// " nmat = '" + o.getNmat() + "'" +
 						// " nprt = '" + o.getNprt() + "'" +
 						// " ruba = '" + o.getRuba() + "'" +
@@ -4430,7 +4430,7 @@ public class ClsSalaryToProcess
 		// SELECT 'X'
 		// INTO Variable_Bidon
 		// FROM pablq
-		// WHERE cdos = Dossier
+		// WHERE identreprise = Dossier
 		// AND nmat = Matricule
 		// AND code = 2;
 		// EXCEPTION
@@ -4493,7 +4493,7 @@ public class ClsSalaryToProcess
 			// if('O' == this.getParameter().getGenfile()) addToOutputtext("\n"+"...monthOfPay:" + monthOfPay);
 			// IF retroactif THEN
 			// DELETE FROM prcalc
-			// WHERE cdos = wpdos.cdos
+			// WHERE identreprise = wpdos.identreprise
 			// AND aamm = i_aamm
 			// AND nmat = i_nmat
 			// AND nbul = i_nbul
@@ -4501,7 +4501,7 @@ public class ClsSalaryToProcess
 			if (parameter.isUseRetroactif())
 			{
 				// service.deleteFromTable("delete from Rhtprcalc " +
-				// " where cdos = '" + parameter.getDossier() + "'" +
+				// " where identreprise = '" + parameter.getDossier() + "'" +
 				// " and aamm = '" + new ClsDate( monthOfPay,
 				// ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth()
 				// + "'" +
@@ -4509,25 +4509,25 @@ public class ClsSalaryToProcess
 				// " and nbul = " + nbul +
 				// " and nlot = " + nlot);
 				session.createQuery(
-						"delete from Rhtprcalc " + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '" + new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'"
+						"delete from Rhtprcalc " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" + new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'"
 								+ " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and nlot = " + nlot).executeUpdate();
 			}
 			// ELSE
 			else
 				// DELETE FROM pacalc
-				// WHERE cdos = wpdos.cdos
+				// WHERE identreprise = wpdos.identreprise
 				// AND aamm = i_aamm
 				// AND nmat = i_nmat
 				// AND nbul = i_nbul;
 				// service.deleteFromTable("delete from CalculPaie " +
-				// " where cdos = '" + parameter.getDossier() + "'" +
+				// " where identreprise = '" + parameter.getDossier() + "'" +
 				// " and aamm = '" + new ClsDate( monthOfPay,
 				// ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth()
 				// + "'" +
 				// " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" +
 				// " and nbul = " + nbul);
 				session.createQuery(
-						"delete from CalculPaie " + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '" + new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'"
+						"delete from CalculPaie " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" + new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'"
 								+ " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul).executeUpdate();
 		}
 		catch (Exception e)
@@ -4559,23 +4559,23 @@ public class ClsSalaryToProcess
 		addToOutputtext("\n" + "monthOfPay : " + monthOfPay);
 		// IF retroactif THEN
 		// DELETE FROM prcalc
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND aamm = i_aamm
 		// AND nmat = i_nmat
 		// AND nbul = i_nbul
 		// AND nlot = w_nlot;
 		if (parameter.isUseRetroactif())
-			service.deleteFromTable("delete from Rhtprcalc " + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '"
+			service.deleteFromTable("delete from Rhtprcalc " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '"
 					+ new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and nlot = "
 					+ nlot);
 		// ELSE
 		else
 			// DELETE FROM pacalc
-			// WHERE cdos = wpdos.cdos
+			// WHERE identreprise = wpdos.identreprise
 			// AND aamm = i_aamm
 			// AND nmat = i_nmat
 			// AND nbul = i_nbul;
-			service.deleteFromTable("delete from CalculPaie " + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '"
+			service.deleteFromTable("delete from CalculPaie " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '"
 					+ new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul);
 		// END IF;
 	}
@@ -4588,17 +4588,17 @@ public class ClsSalaryToProcess
 			addToOutputtext("\n" + ">>deleteBulletin");
 			if(!this.bulletinValide())
 			{
-				service.deleteFromTable("delete from Rhtfic where cdos = '" + parameter.getDossier() + "' and nmat = '" + infoSalary.getComp_id().getNmat() + "'" );
+				service.deleteFromTable("delete from Rhtfic where identreprise = '" + parameter.getDossier() + "' and nmat = '" + infoSalary.getComp_id().getNmat() + "'" );
 				
 				
-				String query = "DELETE FROM ElementVariableDetailMois WHERE cdos = '" + parameter.getDossier() + "' AND aamm = '" + monthOfPay+ "' AND nmat = '" + infoSalary.getComp_id().getNmat() + "' AND rubq = '"
+				String query = "DELETE FROM ElementVariableDetailMois WHERE identreprise = '" + parameter.getDossier() + "' AND aamm = '" + monthOfPay+ "' AND nmat = '" + infoSalary.getComp_id().getNmat() + "' AND rubq = '"
 				+ fictiveParameter.getFictiveRubrique() + "' and argu='AUTO'";
 				if(StringUtil.notEquals(ParameterUtil.formatRubrique, fictiveParameter.getFictiveRubrique()))
 				{
 					//System.out.println("Deleting avancge conge "+query);
 					Session session = service.getSession();
 					session.createQuery(query).executeUpdate();
-					service.closeConnexion(session);
+					service.closeSession(session);
 				}
 			}
 			// END IF;
@@ -4617,22 +4617,22 @@ public class ClsSalaryToProcess
 		// if('O' == this.getParameter().getGenfile()) addToOutputtext("\n"+">>deleteBulletin");
 		// IF retroactif THEN
 		// DELETE FROM prcalc
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND aamm = i_aamm
 		// AND nmat = i_nmat
 		// AND nbul = i_nbul
 		// AND nlot = w_nlot;
 		if (parameter.isUseRetroactif())
-			service.deleteFromTable("delete from Rhtprcalc " + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '"
+			service.deleteFromTable("delete from Rhtprcalc " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '"
 					+ new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'");
 		// ELSE
 		else
 			// DELETE FROM pacalc
-			// WHERE cdos = wpdos.cdos
+			// WHERE identreprise = wpdos.identreprise
 			// AND aamm = i_aamm
 			// AND nmat = i_nmat
 			// AND nbul = i_nbul;
-			service.deleteFromTable("delete from CalculPaie " + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '"
+			service.deleteFromTable("delete from CalculPaie " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '"
 					+ new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'");
 		// END IF;
 	}
@@ -4644,7 +4644,7 @@ public class ClsSalaryToProcess
 	{
 		try
 		{
-			String query = "DELETE FROM ElementVariableDetailMois WHERE cdos = '" + parameter.getDossier() + "' AND aamm = '" + parameter.getMonthOfPay() + "' AND nmat = '" + infoSalary.getComp_id().getNmat() + "' AND rubq = '"
+			String query = "DELETE FROM ElementVariableDetailMois WHERE identreprise = '" + parameter.getDossier() + "' AND aamm = '" + parameter.getMonthOfPay() + "' AND nmat = '" + infoSalary.getComp_id().getNmat() + "' AND rubq = '"
 					+ parameter.getRubriqueAvanceConge() + "'";
 			//System.out.println(query);
 			session = service.getSession();
@@ -4703,14 +4703,14 @@ public class ClsSalaryToProcess
 
 			// IF retroactif THEN
 			// DELETE FROM pahevar
-			// WHERE cdos = wpdos.cdos
+			// WHERE identreprise = wpdos.identreprise
 			// AND nmat = wsal01.nmat
 			// AND aamm = w_aamm
 			// AND nbul = wsd_fcal1.nbul
 			// AND argu = 'PSEUDO-EV';
 			// ELSE
 			// DELETE FROM paevar
-			// WHERE cdos = wpdos.cdos
+			// WHERE identreprise = wpdos.identreprise
 			// AND nmat = wsal01.nmat
 			// AND aamm = w_aamm
 			// AND nbul = wsd_fcal1.nbul
@@ -4721,14 +4721,14 @@ public class ClsSalaryToProcess
 			{
 
 				session.createQuery(
-						"delete from Rhthevar where cdos ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '" + parameter.getMyMonthOfPay().getYearAndMonth()
+						"delete from Rhthevar where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '" + parameter.getMyMonthOfPay().getYearAndMonth()
 								+ "'" + " and argu = 'PSEUDO-EV'" + " and nbul = " + parameter.getNumeroBulletin()).executeUpdate();
 			}
 			else
 			{
 
 				session.createQuery(
-						"delete from ElementVariableDetailMois" + " where cdos ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
+						"delete from ElementVariableDetailMois" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
 								+ parameter.getMyMonthOfPay().getYearAndMonth() + "'" + " and argu = 'PSEUDO-EV'" + " and nbul = " + parameter.getNumeroBulletin()).executeUpdate();
 			}
 		}
@@ -4754,10 +4754,10 @@ public class ClsSalaryToProcess
 			session = service.getSession();
 
 			// DELETE FROM pafic
-			// WHERE cdos = wpdos.cdos
+			// WHERE identreprise = wpdos.identreprise
 			// AND nmat = wsal01.nmat;
 
-			session.createQuery("delete from Rhtfic" + " where cdos ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'").executeUpdate();
+			session.createQuery("delete from Rhtfic" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'").executeUpdate();
 		}
 		catch (Exception e)
 		{
@@ -4844,7 +4844,7 @@ public class ClsSalaryToProcess
 
 	public boolean majTableVirements()
 	{
-		String updateString = "update Rhtvrmtagent" + " set mntdb = 0, mntdvd = 0" + " where cdos = '" + infoSalary.getComp_id().getCdos() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'";
+		String updateString = "update Rhtvrmtagent" + " set mntdb = 0, mntdvd = 0" + " where identreprise = '" + infoSalary.getComp_id().getCdos() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'";
 		try
 		{
 			this.getService().updateFromTable(updateString);
@@ -5231,7 +5231,7 @@ public class ClsSalaryToProcess
 						//
 						// BEGIN
 						// SELECT 'X' INTO char1 FROM prcalc
-						// WHERE cdos = wpdos.cdos
+						// WHERE identreprise = wpdos.identreprise
 						// AND aamm = w_aamm
 						// AND nmat = wsal01.nmat
 						// AND nbul = wsd_fcal1.nbul
@@ -5254,7 +5254,7 @@ public class ClsSalaryToProcess
 						// derniere_ligne := derniere_ligne + 1;
 						// INSERT INTO prcalc
 						// (cdos,nmat,aamm,nbul,nlig,rubq,basc,basp,taux,mont,nprt,ruba,argu,clas,trtb,nlot)
-						// VALUES (wcalc.cdos, wsal01.nmat, wcalc.aamm,
+						// VALUES (wcalc.identreprise, wsal01.nmat, wcalc.aamm,
 						// wcalc.nbul, derniere_ligne,
 						// wcalc.rubq, wcalc.basc, wcalc.basp, wcalc.taux,
 						// wcalc.mont,
@@ -5263,7 +5263,7 @@ public class ClsSalaryToProcess
 						// END;
 						// IF SQL%FOUND THEN
 						// UPDATE prcalc SET mont = t9999_mont(l)
-						// WHERE cdos = wpdos.cdos
+						// WHERE identreprise = wpdos.identreprise
 						// AND aamm = w_aamm
 						// AND nmat = wsal01.nmat
 						// AND nbul = wsd_fcal1.nbul
@@ -5274,7 +5274,7 @@ public class ClsSalaryToProcess
 						//
 						// BEGIN
 						// SELECT 'X' INTO char1 FROM pacalc
-						// WHERE cdos = wpdos.cdos
+						// WHERE identreprise = wpdos.identreprise
 						// AND aamm = w_aamm
 						// AND nmat = wsal01.nmat
 						// AND nbul = wsd_fcal1.nbul
@@ -5296,7 +5296,7 @@ public class ClsSalaryToProcess
 						// derniere_ligne := derniere_ligne + 1;
 						// INSERT INTO pacalc
 						// (cdos,nmat,aamm,nbul,nlig,rubq,basc,basp,taux,mont,nprt,ruba,argu,clas,trtb)
-						// VALUES (wcalc.cdos, wsal01.nmat, wcalc.aamm,
+						// VALUES (wcalc.identreprise, wsal01.nmat, wcalc.aamm,
 						// wcalc.nbul, derniere_ligne,
 						// wcalc.rubq, wcalc.basc, wcalc.basp, wcalc.taux,
 						// wcalc.mont,
@@ -5306,7 +5306,7 @@ public class ClsSalaryToProcess
 						//
 						// IF SQL%FOUND THEN
 						// UPDATE pacalc SET mont = t9999_mont(l)
-						// WHERE cdos = wpdos.cdos
+						// WHERE identreprise = wpdos.identreprise
 						// AND aamm = w_aamm
 						// AND nmat = wsal01.nmat
 						// AND nbul = wsd_fcal1.nbul
@@ -5318,7 +5318,7 @@ public class ClsSalaryToProcess
 						List l = null;
 						if (this.getParameter().isUseRetroactif())
 						{
-							String queryStringRetro = "select nmat from Rhtprcalc " + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '" + monthOfPay + "'"
+							String queryStringRetro = "select nmat from Rhtprcalc " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" + monthOfPay + "'"
 									+ " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and rubq = '" + parameter.getPaieAuNetAffectationEcartRubrique() + "'"
 									+ " and nlot = " + nlot;
 							//
@@ -5326,7 +5326,7 @@ public class ClsSalaryToProcess
 							if (l != null && l.size() > 0)
 							{
 								// update
-								String queryStringUpdate = "update Rhtprcalc set mont = " + rubriqueAffectationEcart.getAmount() + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '"
+								String queryStringUpdate = "update Rhtprcalc set mont = " + rubriqueAffectationEcart.getAmount() + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '"
 										+ monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and rubq = '"
 										+ parameter.getPaieAuNetAffectationEcartRubrique() + "'" + " and nlot = " + nlot;
 								//
@@ -5384,14 +5384,14 @@ public class ClsSalaryToProcess
 						}
 						else
 						{
-							String queryString1 = "select nmat from CalculPaie " + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '"
+							String queryString1 = "select nmat from CalculPaie " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '"
 									+ infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and rubq = '" + parameter.getPaieAuNetAffectationEcartRubrique() + "'";
 							//
 							l = service.find(queryString1);
 							if (l != null && l.size() > 0)
 							{
 								// update
-								String queryStringUpdate = "update CalculPaie set mont = " + rubriqueAffectationEcart.getAmount() + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '"
+								String queryStringUpdate = "update CalculPaie set mont = " + rubriqueAffectationEcart.getAmount() + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '"
 										+ monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and rubq = '"
 										+ parameter.getPaieAuNetAffectationEcartRubrique() + "'";
 								//
@@ -5463,7 +5463,7 @@ public class ClsSalaryToProcess
 						// IF retroactif THEN
 						// INSERT INTO prcalc
 						// (cdos,nmat,aamm,nbul,nlig,rubq,basc,basp,taux,mont,nprt,ruba,argu,clas,trtb,nlot)
-						// VALUES (wcalc.cdos, wsal01.nmat, wcalc.aamm,
+						// VALUES (wcalc.identreprise, wsal01.nmat, wcalc.aamm,
 						// wcalc.nbul, derniere_ligne,
 						// wcalc.rubq, wcalc.basc, wcalc.basp, wcalc.taux,
 						// wcalc.mont,
@@ -5472,7 +5472,7 @@ public class ClsSalaryToProcess
 						// ELSE
 						// INSERT INTO pacalc
 						// (cdos,nmat,aamm,nbul,nlig,rubq,basc,basp,taux,mont,nprt,ruba,argu,clas,trtb)
-						// VALUES (wcalc.cdos, wsal01.nmat, wcalc.aamm,
+						// VALUES (wcalc.identreprise, wsal01.nmat, wcalc.aamm,
 						// wcalc.nbul, derniere_ligne,
 						// wcalc.rubq, wcalc.basc, wcalc.basp, wcalc.taux,
 						// wcalc.mont,
@@ -5555,7 +5555,7 @@ public class ClsSalaryToProcess
 					// SET mont = t9999_mont(l),
 					// basc = t9999_basc(l),
 					// basp = t9999_basp(l)
-					// WHERE cdos = wpdos.cdos
+					// WHERE identreprise = wpdos.identreprise
 					// AND aamm = w_aamm
 					// AND nmat = wsal01.nmat
 					// AND nbul = wsd_fcal1.nbul
@@ -5566,7 +5566,7 @@ public class ClsSalaryToProcess
 					// SET mont = t9999_mont(l),
 					// basc = t9999_basc(l),
 					// basp = t9999_basp(l)
-					// WHERE cdos = wpdos.cdos
+					// WHERE identreprise = wpdos.identreprise
 					// AND aamm = w_aamm
 					// AND nmat = wsal01.nmat
 					// AND nbul = wsd_fcal1.nbul
@@ -5576,12 +5576,12 @@ public class ClsSalaryToProcess
 					/*
 					 * if (this.getParameter().isUseRetroactif()) { String queryStringUpdate = "update Rhtprcalc " + " set mont = " +
 					 * rubriqueAffectationEcart.getAmount() + " ,basc = " + rubriqueAffectationEcart.getBase() + " ,basp = " +
-					 * rubriqueAffectationEcart.getBasePlafonnee() + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '" +
+					 * rubriqueAffectationEcart.getBasePlafonnee() + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" +
 					 * monthOfPay+ "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and rubq = '" +
 					 * parameter.getPaieAuNetAffectationEcartRubrique() + "'" + " and nlot = " + this.getNlot(); //
 					 * service.updateFromTable(queryStringUpdate); } else { String queryStringUpdate = "update CalculPaie " + " set mont = " +
 					 * rubriqueAffectationEcart.getAmount() + " ,basc = " + rubriqueAffectationEcart.getBase() + " ,basp = " +
-					 * rubriqueAffectationEcart.getBasePlafonnee() + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '" +
+					 * rubriqueAffectationEcart.getBasePlafonnee() + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" +
 					 * monthOfPay+ "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and rubq = '" +
 					 * parameter.getPaieAuNetAffectationEcartRubrique() + "'"; // service.updateFromTable(queryStringUpdate); }
 					 */
@@ -5589,7 +5589,7 @@ public class ClsSalaryToProcess
 					if (this.getParameter().isUseRetroactif())
 					{
 						String queryStringUpdate = "update Rhtprcalc " + " set mont = " + rubriqueNet.getAmount() + " ,basc = " + rubriqueNet.getBase() + " ,basp = " + rubriqueNet.getBasePlafonnee()
-								+ " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'"
+								+ " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'"
 								+ " and nbul = " + nbul + " and rubq = '" + parameter.getPaieAuNetRubrique() + "'" + " and nlot = " + this.getNlot();
 						//
 						session = service.getSession();
@@ -5599,7 +5599,7 @@ public class ClsSalaryToProcess
 					else
 					{
 						String queryStringUpdate = "update CalculPaie " + " set mont = " + rubriqueNet.getAmount() + " ,basc = " + rubriqueNet.getBase() + " ,basp = " + rubriqueNet.getBasePlafonnee()
-								+ " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'"
+								+ " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'"
 								+ " and nbul = " + nbul + " and rubq = '" + parameter.getPaieAuNetRubrique() + "'";
 						//
 
@@ -5881,12 +5881,12 @@ public class ClsSalaryToProcess
 	{
 //		// if('O' == this.getParameter().getGenfile()) addToOutputtext("\n"+"<<<<<<<<<<<<<<<<<<<<<<<<<<chargerInfoSalaryHistorique<<<<<<<<<<<<<<<<<<<<<<<<<<");
 //		String nmat = this.getInfoSalary().getComp_id().getNmat();
-//		String queryString = "from Rhthsal" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + nmat + "'" + " and nbul = " + this.getNbul() + " and aamm = '"
+//		String queryString = "from Rhthsal" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + nmat + "'" + " and nbul = " + this.getNbul() + " and aamm = '"
 //				+ this.getMyMonthOfPay().getYearAndMonth() + "'";
 //		// whsal PAHSAL%ROWTYPE;
 //		// CURSOR C_HSAL IS
 //		// SELECT * FROM pahsal
-//		// WHERE cdos = PA_CALCUL.wpdos.cdos
+//		// WHERE identreprise = PA_CALCUL.wpdos.identreprise
 //		// AND nmat = PA_CALCUL.wsal01.nmat
 //		// AND nbul = PA_CALCUL.wsd_fcal1.nbul
 //		// AND aamm = PA_CALCUL.w_aamm;
@@ -6544,7 +6544,7 @@ public class ClsSalaryToProcess
 	 */
 	public double calculNombreDJourSuppl()
 	{
-		String cdos = getInfoSalary().getComp_id().getCdos();
+		String identreprise = getInfoSalary().getComp_id().getCdos();
 		int montant = 0;
 		double taux1 = 0;
 		double taux2 = 0;
@@ -6609,7 +6609,7 @@ public class ClsSalaryToProcess
 			// IF PA_CALCUL.comptage_enfant THEN
 			// /*
 			// SELECT COUNT(*) INTO nb_enf FROM paenfan
-			// WHERE cdos = PA_CALCUL.wpdos.cdos
+			// WHERE identreprise = PA_CALCUL.wpdos.identreprise
 			// AND nmat = PA_CALCUL.wsal01.nmat
 			// AND dtna > SYSDATE - ( age_max_enfant UNITS YEAR );
 			// */
@@ -6629,7 +6629,7 @@ public class ClsSalaryToProcess
 					
 					String dtna = new ClsDate(date_min, parameter.getAppDateFormat()).getDateS();
 					
-					String query="select count(*) from Rhtenfantagent" + " where cdos = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "'" + " and achg = 'O'" + " and dtna > '" + dtna + "'";
+					String query="select count(*) from Rhtenfantagent" + " where identreprise = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "'" + " and achg = 'O'" + " and dtna > '" + dtna + "'";
 					nbreEnfant = new Integer(service.find(query).get(0).toString());
 				}
 				catch (Exception e)
@@ -6650,24 +6650,24 @@ public class ClsSalaryToProcess
 		// nbj_deco := 0;
 		int nbreJourDeco = 0;
 		// SELECT SUM(valt) INTO nbj_deco from pahfnom
-		// WHERE cdos = PA_CALCUL.wpdos.cdos
+		// WHERE identreprise = PA_CALCUL.wpdos.identreprise
 		// AND ctab = 18
 		// AND nume = 1
 		// AND cacc IN (SELECT UNIQUE cdis FROM padistin
-		// WHERE cdos = PA_CALCUL.wpdos.cdos
+		// WHERE identreprise = PA_CALCUL.wpdos.identreprise
 		// AND nmat = PA_CALCUL.wsal01.nmat);
 		// SELECT SUM(valt) INTO nbj_deco from pafnom
-		// WHERE cdos = PA_CALCUL.wpdos.cdos
+		// WHERE identreprise = PA_CALCUL.wpdos.identreprise
 		// AND ctab = 18
 		// AND nume = 1
 		// AND cacc IN (SELECT UNIQUE cdis FROM padistin
-		// WHERE cdos = PA_CALCUL.wpdos.cdos
+		// WHERE identreprise = PA_CALCUL.wpdos.identreprise
 		// AND nmat = PA_CALCUL.wsal01.nmat);
 		List l = getParameter().isUseRetroactif() ? getService().find(
-				"select coalesce(sum(valt),0) from Rhthfnom" + " where cdos = '" + cdos + "'" + " and ctab = 18 " + " and nume = 1 " + " and cacc in (select distinct cdis from Rhtdistinctionagent "
-						+ " where cdos = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "')") : getService().find(
-				"select coalesce(sum(valt),0) from Rhfnom" + " where cdos = '" + cdos + "'" + " and ctab = 18 " + " and nume = 1 " + " and cacc in (select distinct cdis from Rhtdistinctionagent "
-						+ " where cdos = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "')");
+				"select coalesce(sum(valt),0) from Rhthfnom" + " where identreprise = '" + cdos + "'" + " and ctab = 18 " + " and nume = 1 " + " and cacc in (select distinct cdis from Rhtdistinctionagent "
+						+ " where identreprise = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "')") : getService().find(
+				"select coalesce(sum(valt),0) from Rhfnom" + " where identreprise = '" + cdos + "'" + " and ctab = 18 " + " and nume = 1 " + " and cacc in (select distinct cdis from Rhtdistinctionagent "
+						+ " where identreprise = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "')");
 		if (!ClsObjectUtil.isListEmty(l))
 			nbreJourDeco = new BigDecimal(l.get(0).toString()).intValue();
 		nbreJourSuppl += nbreJourDeco;
@@ -6692,7 +6692,7 @@ public class ClsSalaryToProcess
 	 */
 	public void annulation(HibernateConnexionService service, String cdos, String nmat, String aamm, Integer nbul)
 	{
-		String queryString = "from CumulPaie" + " where cdos = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and aamm = '" + aamm + "'" + " and nbul = " + nbul;
+		String queryString = "from CumulPaie" + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and aamm = '" + aamm + "'" + " and nbul = " + nbul;
 		try
 		{
 			List<CumulPaie> l = service.find(queryString);
@@ -6705,7 +6705,7 @@ public class ClsSalaryToProcess
 				tx = session.beginTransaction();
 
 				session.createSQLQuery(
-						"delete from CalculPaie " + " where cdos = '" + cdos + "'" + " and aamm = '" + new ClsDate(aamm, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'" + " and nmat = '" + nmat
+						"delete from CalculPaie " + " where identreprise = '" + cdos + "'" + " and aamm = '" + new ClsDate(aamm, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'" + " and nmat = '" + nmat
 								+ "'" + " and nbul = " + nbul).executeUpdate();
 
 				for (CumulPaie cum : l)
@@ -6754,7 +6754,7 @@ public class ClsSalaryToProcess
 	{
 		//this.annulation(service, infoSalary.getComp_id().getCdos(), getInfoSalary().getComp_id().getNmat(), this.getMonthOfPay(), getParameter().getNumeroBulletin());
 
-		// String queryString = "from CumulPaie" + " where cdos = '" + infoSalary.getComp_id().getCdos() + "'" + " and nmat = '" +
+		// String queryString = "from CumulPaie" + " where identreprise = '" + infoSalary.getComp_id().getCdos() + "'" + " and nmat = '" +
 		// getInfoSalary().getComp_id().getNmat() + "'" + " and aamm = '"
 		// + this.getMonthOfPay() + "'" + " and nbul = " + getParameter().getNumeroBulletin();
 		// try
@@ -6770,7 +6770,7 @@ public class ClsSalaryToProcess
 		// tx = session.beginTransaction();
 		//
 		// session.createSQLQuery(
-		// "delete from CalculPaie " + " where cdos = '" + parameter.getDossier() + "'" + " and aamm = '" + new ClsDate(monthOfPay,
+		// "delete from CalculPaie " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" + new ClsDate(monthOfPay,
 		// ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'"
 		// + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul).executeUpdate();
 		//
@@ -6793,7 +6793,7 @@ public class ClsSalaryToProcess
 		//
 		// // -- MAJ 99
 		// // UPDATE pacumu SET mont = mont - wcumu.mont
-		// // WHERE cdos = wcumu.cdos
+		// // WHERE identreprise = wcumu.identreprise
 		// // AND nmat = wcumu.nmat
 		// // AND nbul = wcumu.nbul
 		// // AND rubq = wcumu.rubq
@@ -6832,27 +6832,27 @@ public class ClsSalaryToProcess
 		List listOfElementVariable = new ArrayList();
 		// CURSOR curs_evar IS
 		// SELECT mont, argu, nprt, ruba FROM paevar
-		// WHERE cdos = PA_CALCUL.wpdos.cdos
+		// WHERE identreprise = PA_CALCUL.wpdos.identreprise
 		// AND nmat = PA_CALCUL.wsal01.nmat
 		// AND aamm = PA_CALCUL.w_aamm
 		// AND nbul = PA_CALCUL.wsd_fcal1.nbul
 		// AND rubq = PA_CALCUL.t_rub.crub;
 		//
-		String queryString = "select rubq, mont, argu, nprt, ruba from ElementVariableDetailMois" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
+		String queryString = "select rubq, mont, argu, nprt, ruba from ElementVariableDetailMois" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
 				+ " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = " + this.getNbul();
 		
-//		String queryString = "select rubq, sum(mont) as mont, argu, nprt, ruba from ElementVariableDetailMois" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
+//		String queryString = "select rubq, sum(mont) as mont, argu, nprt, ruba from ElementVariableDetailMois" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
 //		+ " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = " + this.getNbul()+" group by rubq,argu,nprt,ruba";
 		// CURSOR curs_evar2 IS
 		// SELECT mont, argu, nprt, ruba FROM pahevar
-		// WHERE cdos = PA_CALCUL.wpdos.cdos
+		// WHERE identreprise = PA_CALCUL.wpdos.identreprise
 		// AND nmat = PA_CALCUL.wsal01.nmat
 		// AND aamm = PA_CALCUL.w_aamm
 		// AND nbul = PA_CALCUL.wsd_fcal1.nbul
 		// AND rubq = PA_CALCUL.t_rub.crub;
-		String queryStringRetro = "select rubq, mont, argu, nprt, ruba from Rhthevar" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
+		String queryStringRetro = "select rubq, mont, argu, nprt, ruba from Rhthevar" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
 				+ " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = " + this.getNbul();
-//		String queryStringRetro = "select rubq, sum(mont) as mont, argu, nprt, ruba from Rhthevar" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
+//		String queryStringRetro = "select rubq, sum(mont) as mont, argu, nprt, ruba from Rhthevar" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
 //		+ " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = " + this.getNbul()+" group by rubq,argu,nprt,ruba";
 		
 		//
@@ -6887,7 +6887,7 @@ public class ClsSalaryToProcess
 		Map<String, List<Object>> map = new HashMap<String, List<Object>>();
 		// BEGIN
 		// SELECT monp INTO PA_CALCUL.w_transit FROM paelfix
-		// WHERE cdos = PA_CALCUL.wpdos.cdos
+		// WHERE identreprise = PA_CALCUL.wpdos.identreprise
 		// AND nmat = PA_CALCUL.wsal01.nmat
 		// AND codp = PA_CALCUL.t_rub.crub
 		// AND (ddeb IS NULL OR
@@ -6935,18 +6935,18 @@ public class ClsSalaryToProcess
 		cumul4 = new HashMap<String, Object[]>();
 		//
 		String nmat = infoSalary.getComp_id().getNmat();
-		String cdos = parameter.getDossier();
+		String identreprise = parameter.getDossier();
 
-		String strSqlQuery1 = "select rubq, sum(mont), sum(taux), sum(basp) , aamm from CumulPaie " + " where cdos = '" + cdos + "'" + " and nmat = '" + nmat
+		String strSqlQuery1 = "select rubq, sum(mont), sum(taux), sum(basp) , aamm from CumulPaie " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat
 				+ "' and nbul != 0 and " + wherePart + " and ( mont != 0 or taux != 0 or basp != 0) group by aamm, rubq";
 
-		String strSqlQuery2 = "select rubq, sum(mont), sum(taux), sum(basp) , aamm from Rhtprcumu " + " where cdos = '" + cdos + "'" + " and nmat = '" + nmat
+		String strSqlQuery2 = "select rubq, sum(mont), sum(taux), sum(basp) , aamm from Rhtprcumu " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat
 				+ "' and nbul != 0  and " + wherePart + " and ( mont != 0 or taux != 0 or basp != 0)  group by aamm, rubq";
 
-		String strSqlQuery3 = "select rubq, sum(mont), sum(taux), sum(basp) , aamm from CumulPaie " + " where cdos = '" + cdos + "'" + " and nmat = '" + nmat + "' and nbul = "
+		String strSqlQuery3 = "select rubq, sum(mont), sum(taux), sum(basp) , aamm from CumulPaie " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "' and nbul = "
 				+ nbul + " and " + wherePart + " and ( mont != 0 or taux != 0 or basp != 0)  group by aamm, rubq";
 
-		String strSqlQuery4 = "select rubq, sum(mont), sum(taux), sum(basp) , aamm from Rhtprcumu " + " where cdos = '" + cdos + "'" + " and nmat = '" + nmat + "' and nbul = "
+		String strSqlQuery4 = "select rubq, sum(mont), sum(taux), sum(basp) , aamm from Rhtprcumu " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "' and nbul = "
 				+ nbul + " and " + wherePart + " and ( mont != 0 or taux != 0 or basp != 0)  group by aamm, rubq";
 
 		List ListOfRow = null;
@@ -7075,7 +7075,7 @@ public class ClsSalaryToProcess
 	{
 		listLignePretMap = new HashMap<String, List<Object>>();
 		// CURSOR curs_preti IS SELECT lg FROM paprets
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND nmat = wsal01.nmat
 		// AND crub = t_rub.crub
 		// AND premrb <= w_aamm
@@ -7085,7 +7085,7 @@ public class ClsSalaryToProcess
 		// NVL(mtmens,0) != 0 )
 		// )
 		// ORDER BY lg;
-		String complexQuery = "select crub, lg from Rhtpretsagent" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
+		String complexQuery = "select crub, lg from Rhtpretsagent" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
 				+ " and premrb <= '" + this.getMonthOfPay() + "'" + " and etatpr = 'D'" + " and (((case when mtpr is null then 0 else mtpr end) != (case when mtremb is null then 0 else mtremb end))"
 				+ " or (((case when mtpr is null then 0 else mtpr end) = 0) and ((case when mtmens is null then 0 else mtmens end) != 0)))" + " order by lg";
 		List l = this.getService().find(complexQuery);
@@ -7110,14 +7110,14 @@ public class ClsSalaryToProcess
 		listNumeroPretMap = new HashMap<String, List<Object>>();
 		//
 		// CURSOR curs_pretx IS SELECT nprt FROM paprent
-		// WHERE paprent.cdos = wpdos.cdos
+		// WHERE paprent.identreprise = wpdos.identreprise
 		// AND paprent.nmat = wsal01.nmat
 		// AND paprent.crub = t_rub.crub
 		// -- AND paprent.per1 <= w_aamm
 		// AND paprent.pact = 'O'
 		// AND paprent.etpr = 'D'
 		// AND paprent.resr != 0;
-		String complexQuery = "select crub, nprt from Rhtpretent" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'" +
+		String complexQuery = "select crub, nprt from Rhtpretent" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'" +
 		
 		// " and per1 <= '" +
 				// salary.getMyMonthOfPay().getDateS(ParameterUtil.SESSION_FORMAT_DATE)
@@ -7149,7 +7149,7 @@ public class ClsSalaryToProcess
 
 	public void buildSpecifiqueCumul99Map(String debutPeriode, String finPeriode, String periode99)
 	{
-		String cdos = this.getParameter().getDossier();
+		String identreprise = this.getParameter().getDossier();
 		String nmat = this.getInfoSalary().getComp_id().getNmat();
 		HibernateConnexionService serv = this.getService();
 		String queryString = StringUtils.EMPTY;
@@ -7167,7 +7167,7 @@ public class ClsSalaryToProcess
 		{
 			listSpecifiqueCumul99Map1 = new HashMap<String, Object[]>();
 			
-			queryString = "select rubq, sum(basc), sum(mont) from CumulPaie where cdos = '" + cdos + "'";
+			queryString = "select rubq, sum(basc), sum(mont) from CumulPaie where identreprise = '" + cdos + "'";
 			queryString+=" and nmat = '" + nmat + "' and aamm >= '" + debutPeriode + "'";
 			queryString+="  and aamm <= '" + finPeriode + "'" + " and aamm != '" + periode99 + "'  and nbul != 0" + " group by  rubq";
 	
@@ -7193,7 +7193,7 @@ public class ClsSalaryToProcess
 		{
 			listSpecifiqueCumul99Map2 = new HashMap<String, Object>();
 			
-			queryString = "select rubq, sum(mont) from CumulPaie where cdos = '" + cdos + "' and nmat = '" + nmat + "'" ;
+			queryString = "select rubq, sum(mont) from CumulPaie where identreprise = '" + cdos + "' and nmat = '" + nmat + "'" ;
 			queryString+=" and aamm >= '" + debutPeriode + "'" + " and aamm <= '";
 			queryString+= finPeriode + "'" + " and aamm != '" + periode99 + "'  and nbul != 0" + " group by  rubq";
 	
@@ -7213,7 +7213,7 @@ public class ClsSalaryToProcess
 		{
 			listSpecifiqueCumul99Map3 = new HashMap<String, Object>();
 			
-			queryString = "select rubq, count(*) from CumulPaie" + " where cdos = '" + cdos + "'" + " and nmat = '" + nmat + "'";
+			queryString = "select rubq, count(*) from CumulPaie" + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "'";
 			queryString+=" and aamm >= '" + debutPeriode + "'" + " and aamm < '" + finPeriode + "'" + " and aamm != '" + periode99 + "'";
 			queryString+="  and nbul = 9" + " group by  rubq";
 	
@@ -7260,7 +7260,7 @@ public class ClsSalaryToProcess
 		//
 		// SELECT SUM(basc), SUM(mont) INTO cum_basc, cum_coti
 		// FROM prcumu
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND nmat = wsal01.nmat
 		// AND aamm >= c_aamm_cum
 		// AND aamm <= c_fin_periode
@@ -7270,13 +7270,13 @@ public class ClsSalaryToProcess
 		String yearAndMonthCumulS = ClsStringUtil.formatNumber(yearAndMonthCumul, "000000");
 		String finPeriodeS = ClsStringUtil.formatNumber(fin_periode, "000000");
 		String cum99S = ClsStringUtil.formatNumber(cum99, "000000");
-		String queryString = "select rubq, sum(basc), sum(mont) from CumulPaie" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
+		String queryString = "select rubq, sum(basc), sum(mont) from CumulPaie" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
 				+ " and aamm >= '" + yearAndMonthCumulS + "'" + " and aamm <= '" + finPeriodeS + "'" + " and aamm != '" + cum99S + "'" +
 				 //" and rubq = '" +rubriqueRegul+ "'" +
 				" and nbul != 0" + " group by  rubq";
 
 		addToOutputtext("\n" + "..Query for map 1: " + queryString);
-		String queryStringRetro = "select rubq, sum(basc), sum(mont) from Rhtprcumu" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat()
+		String queryStringRetro = "select rubq, sum(basc), sum(mont) from Rhtprcumu" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat()
 				+ "'" + " and aamm >= '" + yearAndMonthCumulS + "'" + " and aamm <= '" + finPeriodeS + "'" + " and aamm != '" + cum99S + "'" +
 				// " and rubq = '" + rubriqueRegul + "'" +
 				" and nbul != 0" + " group by  rubq";
@@ -7294,13 +7294,13 @@ public class ClsSalaryToProcess
 		}
 		//
 
-		queryString = "select rubq, sum(mont) from CumulPaie" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'" + " and aamm >= '"
+		queryString = "select rubq, sum(mont) from CumulPaie" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'" + " and aamm >= '"
 				+ yearAndMonthCumulS + "'" + " and aamm <= '" + finPeriodeS + "'" + " and aamm != '" + cum99S + "'" +
 				 //" and rubq = '" + rubriqueRegul + "'" +
 				" and nbul != 0" + " group by  rubq";
 
 		addToOutputtext("\n" + "..Query for map 2: " + queryString);
-		queryStringRetro = "select rubq, sum(mont) from Rhtprcumu" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
+		queryStringRetro = "select rubq, sum(mont) from Rhtprcumu" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
 				+ " and aamm >= '" + yearAndMonthCumulS + "'" + " and aamm <= '" + finPeriodeS + "'" + " and aamm != '" + cum99S + "'" +
 				 //" and rubq = '" + rubriqueRegul + "'" +
 				" and nbul != 0" + " group by  rubq";
@@ -7312,13 +7312,13 @@ public class ClsSalaryToProcess
 			listSpecifiqueCumul99Map21.put((String) ((Object[]) object)[0], ((Object[]) object)[1]);
 		}
 		//
-		queryString = "select rubq, count(*) from CumulPaie" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'" + " and aamm >= '"
+		queryString = "select rubq, count(*) from CumulPaie" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'" + " and aamm >= '"
 				+ yearAndMonthCumulS + "'" + " and aamm < '" + finPeriodeS + "'" + " and aamm != '" + cum99S + "'" +
 				 //" and rubq = '" + rubriqueRegul+ "'" +
 				" and nbul = 9" + " group by  rubq";
 
 		addToOutputtext("\n" + "..Query for map 3: " + queryString);
-		queryStringRetro = "select rubq, count(*) from Rhtprcumu" + " where cdos = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
+		queryStringRetro = "select rubq, count(*) from Rhtprcumu" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
 				+ " and aamm >= '" + yearAndMonthCumulS + "'" + " and aamm < '" + finPeriodeS + "'" + " and aamm != '" + cum99S + "'" +
 				 //" and rubq = '" +  rubriqueRegul + "'" +
 				" and nbul = 9" + " group by  rubq";
@@ -7373,30 +7373,30 @@ public class ClsSalaryToProcess
 
 		// CURSOR C_evars_1 IS
 		// SELECT rowid FROM paevar
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND nmat = wsal01.nmat
 		// AND aamm = w_aamm
 		// AND nbul = wsd_fcal1.nbul
 		// AND rubq = w_rpaieacq;
-		String queryEVCount = "Select count(*) From ElementVariableDetailMois where cdos = :cdos and nmat = :nmat and aamm = :aamm and nbul = :nbul and rubq = :rubq";
+		String queryEVCount = "Select count(*) From ElementVariableDetailMois where identreprise = :cdos and nmat = :nmat and aamm = :aamm and nbul = :nbul and rubq = :rubq";
 
 		// CURSOR C_evars_2 IS
 		// SELECT mont FROM paevar
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND nmat = wsal01.nmat
 		// AND aamm = w_aamm
 		// AND nbul = wsd_fcal1.nbul
 		// AND rubq = w_rubacqz;
-		String queryEVMont = "Select mont From ElementVariableDetailMois where cdos = :cdos and nmat = :nmat and aamm = :aamm and nbul = :nbul and rubq = :rubq";
+		String queryEVMont = "Select mont From ElementVariableDetailMois where identreprise = :cdos and nmat = :nmat and aamm = :aamm and nbul = :nbul and rubq = :rubq";
 
 		// CURSOR C_elfix IS
 		// SELECT monp FROM paelfix
-		// WHERE cdos = wpdos.cdos
+		// WHERE identreprise = wpdos.identreprise
 		// AND nmat = wsal01.nmat
 		// AND codp = w_rubacqz
 		// AND (ddeb is null OR (ddeb is not null and ddeb <= to_date(w_aamm,'YYYYMM') ) )
 		// AND (dfin IS NULL OR (dfin is not null and dfin >= to_date(w_aamm,'YYYYMM') ) );
-		String queryEF = "Select monp From ElementFixeSalaire where cdos = :cdos and nmat = :nmat and codp = :codp ";
+		String queryEF = "Select monp From ElementFixeSalaire where identreprise = :cdos and nmat = :nmat and codp = :codp ";
 		queryEF += " and (ddeb is null or (ddeb is not null and ddeb <= :ddeb)) ";
 		queryEF += " and (dfin is null or (dfin is not null and dfin>= :dfin)) ";
 
@@ -7425,7 +7425,7 @@ public class ClsSalaryToProcess
 				// SELECT count(*)
 				// INTO w_count
 				// FROM paev
-				// WHERE cdos = wpdos.cdos
+				// WHERE identreprise = wpdos.identreprise
 				// AND nmat = wsal01.nmat
 				// AND aamm = w_aamm
 				// AND nbul = wsd_fcal1.nbul;
@@ -7434,7 +7434,7 @@ public class ClsSalaryToProcess
 				// END;
 				// IF w_count = 0 THEN
 				// INSERT INTO paev (cdos,aamm,nmat,nbul,ddpa,dfpa,bcmo)
-				// VALUES (wpdos.cdos,w_aamm, wsal01.nmat, wsd_fcal1.nbul,w_ddpa,w_dfpa,'N');
+				// VALUES (wpdos.identreprise,w_aamm, wsal01.nmat, wsd_fcal1.nbul,w_ddpa,w_dfpa,'N');
 				// END IF;
 				String queryEVEnt = "Select count(*) From ElementVariableEnteteMois where identreprise = :cdos and nmat = :nmat and aamm = :aamm and nbul = :nbul";
 				q = session.createSQLQuery(queryEVEnt);
@@ -7505,7 +7505,7 @@ public class ClsSalaryToProcess
 					if (montantEF < montant)
 						montant = montantEF;
 					//
-					// wevar.cdos := wpdos.cdos;
+					// wevar.identreprise := wpdos.identreprise;
 					// wevar.aamm := w_aamm;
 					// wevar.nmat := wsal01.nmat;
 					// wevar.nbul := wsd_fcal1.nbul;
@@ -7515,7 +7515,7 @@ public class ClsSalaryToProcess
 					// wevar.ruba := ' ';
 					// wevar.mont := w_Mnt;
 					// INSERT INTO paevar (cdos,aamm,nmat,nbul,rubq,argu,nprt,ruba,mont,cuti)
-					// VALUES (wevar.cdos, wevar.aamm, wevar.nmat, wevar.nbul,
+					// VALUES (wevar.identreprise, wevar.aamm, wevar.nmat, wevar.nbul,
 					// wevar.rubq, wevar.argu, wevar.nprt, wevar.ruba,
 					// wevar.mont,w_cuti);
 					ElementVariableDetailMois det = new ElementVariableDetailMois();
@@ -7548,7 +7548,7 @@ public class ClsSalaryToProcess
 					if (montantEvar < montant)
 						montant = montantEvar;
 					//
-					// wevar.cdos := wpdos.cdos;
+					// wevar.identreprise := wpdos.identreprise;
 					// wevar.aamm := w_aamm;
 					// wevar.nmat := wsal01.nmat;
 					// wevar.nbul := wsd_fcal1.nbul;
@@ -7558,7 +7558,7 @@ public class ClsSalaryToProcess
 					// wevar.ruba := ' ';
 					// wevar.mont := w_Mnt;
 					// INSERT INTO paevar (cdos,aamm,nmat,nbul,rubq,argu,nprt,ruba,mont,cuti)
-					// VALUES (wevar.cdos, wevar.aamm, wevar.nmat, wevar.nbul,
+					// VALUES (wevar.identreprise, wevar.aamm, wevar.nmat, wevar.nbul,
 					// wevar.rubq, wevar.argu, wevar.nprt, wevar.ruba,
 					// wevar.mont,w_cuti);
 					
@@ -7619,7 +7619,7 @@ public class ClsSalaryToProcess
 
 	public double calculDuNBJSUPP(double cgprinc)
 	{
-		String cdos = getInfoSalary().getComp_id().getCdos();
+		String identreprise = getInfoSalary().getComp_id().getCdos();
 		int montant = 0;
 		int taux1 = 0;
 		int taux2 = 0;
@@ -7668,7 +7668,7 @@ public class ClsSalaryToProcess
 					
 					String dtna = new ClsDate(date_min, parameter.getAppDateFormat()).getDateS();
 					
-					String query="select count(*) from Rhtenfantagent" + " where cdos = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "'" + " and achg = 'O'" + " and dtna > '" + dtna + "'";
+					String query="select count(*) from Rhtenfantagent" + " where identreprise = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "'" + " and achg = 'O'" + " and dtna > '" + dtna + "'";
 					nbreEnfant = new Integer(service.find(query).get(0).toString());
 				}
 				catch (Exception e)
@@ -7695,8 +7695,8 @@ public class ClsSalaryToProcess
 			try
 			{
 				
-				String cdos = getInfoSalary().getComp_id().getCdos();
-				String query="select sum(nbjrc-nbjrd) from Spcongesabc where cdos = '" + cdos + "' and nmat = '" + getInfoSalary().getComp_id().getNmat() + "' ";
+				String identreprise = getInfoSalary().getComp_id().getCdos();
+				String query="select sum(nbjrc-nbjrd) from Spcongesabc where identreprise = '" + cdos + "' and nmat = '" + getInfoSalary().getComp_id().getNmat() + "' ";
 				
 				nbj_reliq = new Integer(service.find(query).get(0).toString());
 			}

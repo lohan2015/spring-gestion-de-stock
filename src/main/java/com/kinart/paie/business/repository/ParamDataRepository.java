@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ParamDataRepository extends JpaRepository<ParamData, Integer> {
 
-    @Query("select a from ParamData a where ctab = :ctab")
+    @Query("select a from ParamData a where ctab = :ctab and nume=1")
     List<ParamData> findByCodeTable(@Param("ctab") Integer ctab);
 
     @Query("select a from ParamData a where ctab = :ctab and cacc = :cacc")

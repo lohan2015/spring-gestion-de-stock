@@ -24,17 +24,16 @@ public interface ElementSalaireApi {
     })
     ResponseEntity<ElementSalaireDto> save(@RequestBody ElementSalaireDto dto);
 
-    @GetMapping(value = APP_ROOT_PAIE + "/elementsalaire/search/{idelement}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = APP_ROOT_PAIE + "/elementsalaire/search/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Rechercher un salarié par ID", notes = "Cette methode permet de chercher un salarié par son ID", response = ElementSalaireDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'article a ete trouve dans la BDD"),
             @ApiResponse(code = 404, message = "Aucun salarié n'existe dans la BDD avec l'ID fourni")
     })
-    ResponseEntity<ElementSalaireDto> findById(@PathVariable("idSalarie") Integer id);
+    ResponseEntity<ElementSalaireDto> findById(@PathVariable("id") String id);
 
     @GetMapping(value = APP_ROOT_PAIE + "/elementsalaire/filter1/{code}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @ApiOperation(value = "Rechercher un élément par code", notes = "Cette methode permet de chercher un salarié par son CODE", response =
-            ElementSalaireDto.class)
+    @ApiOperation(value = "Rechercher un élément par code", notes = "Cette methode permet de chercher un salarié par son CODE")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément a ete trouve dans la BDD"),
             @ApiResponse(code = 404, message = "Aucun élément n'existe dans la BDD avec le CODE fourni")
@@ -42,8 +41,7 @@ public interface ElementSalaireApi {
     ResponseEntity<List<ElementSalaireDto>> findByCode(@PathVariable("code") String code);
 
     @GetMapping(value = APP_ROOT_PAIE + "/elementsalaire/filter2/{libelle}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @ApiOperation(value = "Rechercher un élément par libellé", notes = "Cette methode permet de chercher un salarié par son CODE", response =
-            ElementSalaireDto.class)
+    @ApiOperation(value = "Rechercher un élément par libellé", notes = "Cette methode permet de chercher un salarié par son CODE")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément a ete trouve dans la BDD"),
             @ApiResponse(code = 404, message = "Aucun élément n'existe dans la BDD avec le libellé fourni")
@@ -58,10 +56,10 @@ public interface ElementSalaireApi {
     })
     ResponseEntity<List<ElementSalaireDto>> findAll();
 
-    @DeleteMapping(value = APP_ROOT_PAIE + "/elementsalaire/delete/{idelement}")
+    @DeleteMapping(value = APP_ROOT_PAIE + "/elementsalaire/delete/{id}")
     @ApiOperation(value = "Supprimer un élément", notes = "Cette methode permet de supprimer un élément par ID")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément a ete supprime")
     })
-    void delete(@PathVariable("idelement") Integer id);
+    void delete(@PathVariable("id") Integer id);
 }

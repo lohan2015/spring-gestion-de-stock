@@ -1,9 +1,12 @@
 package com.kinart.api.gestiondepaie.dto;
 
 import com.kinart.paie.business.model.ElementVariableConge;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -11,7 +14,12 @@ import java.util.Date;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ElementVariableCongeDto implements Serializable {
+    private String dateFormat;
+    private String typeBD;
+
     private Integer id;
     private Integer idEntreprise;
     private String aamm;
@@ -29,42 +37,6 @@ public class ElementVariableCongeDto implements Serializable {
     private String enddate;
     private String nomsalarie;
     private String libmotif;
-
-    public ElementVariableCongeDto() {
-    }
-
-    public ElementVariableCongeDto(Integer idEntreprise, String aamm, String nmat, Integer nbul, Date ddeb, Date dfin, BigDecimal nbjc, BigDecimal nbja, String motf, BigDecimal mont, String cuti) {
-        this.idEntreprise = idEntreprise;
-        this.aamm = aamm;
-        this.nmat = nmat;
-        this.nbul = nbul;
-        this.ddeb = ddeb;
-        this.dfin = dfin;
-        this.nbjc = nbjc;
-        this.nbja = nbja;
-        this.motf = motf;
-        this.mont = mont;
-        this.cuti = cuti;
-    }
-
-    public ElementVariableCongeDto(Integer id, Integer idEntreprise, String aamm, String nmat, Integer nbul, Date ddeb, Date dfin, BigDecimal nbjc, BigDecimal nbja, String motf, BigDecimal mont, String cuti, String startdate, String enddate, String nomsalarie, String libmotif) {
-        this.id = id;
-        this.idEntreprise = idEntreprise;
-        this.aamm = aamm;
-        this.nmat = nmat;
-        this.nbul = nbul;
-        this.ddeb = ddeb;
-        this.dfin = dfin;
-        this.nbjc = nbjc;
-        this.nbja = nbja;
-        this.motf = motf;
-        this.mont = mont;
-        this.cuti = cuti;
-        this.startdate = startdate;
-        this.enddate = enddate;
-        this.nomsalarie = nomsalarie;
-        this.libmotif = libmotif;
-    }
 
     public static ElementVariableCongeDto fromEntity(ElementVariableConge elementVariableConge) {
         if (elementVariableConge == null) {

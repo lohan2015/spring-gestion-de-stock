@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.kinart.paie.business.model.*;
+import com.kinart.paie.business.services.impl.CalculPaieServiceImpl;
 import com.kinart.paie.business.services.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -27,7 +28,7 @@ import org.springframework.dao.DataAccessException;
 
 public class ClsParameterOfPay
 {
-	public ClsLanceurCalcul lanceur;
+	public CalculPaieServiceImpl lanceur;
 	
 	public boolean formulelitterale = false;
 	
@@ -259,7 +260,7 @@ public class ClsParameterOfPay
 	protected ClsEnumeration.EnModePaiement modePaiement = ClsEnumeration.EnModePaiement.UNKNOWN;
 
 	// le service d'acc�s � la bd
-	protected HibernateConnexionService service = null;
+	protected GeneriqueConnexionService service = null;
 
 	// param�tres de calcul
 	protected String calcul = "N";
@@ -534,12 +535,12 @@ public class ClsParameterOfPay
 		this.utilNomenclature = utilNomenclature;
 	}
 
-	public HibernateConnexionService getService()
+	public GeneriqueConnexionService getService()
 	{
 		return service;
 	}
 
-	public void setService(HibernateConnexionService service)
+	public void setService(GeneriqueConnexionService service)
 	{
 		this.service = service;
 	}
@@ -1496,7 +1497,7 @@ public class ClsParameterOfPay
 	 * @param modePaiement
 	 *            le mode de paiement (V, E, C)
 	 */
-	public ClsParameterOfPay(HibernateConnexionService service, ClsNomenclatureUtil utilNomenclature, boolean useRetroactif, int numeroBulletin, String periodPay, String clas, int sessionId, ClsEnumeration.EnModePaiement modePaiement)
+	public ClsParameterOfPay(GeneriqueConnexionService service, ClsNomenclatureUtil utilNomenclature, boolean useRetroactif, int numeroBulletin, String periodPay, String clas, int sessionId, ClsEnumeration.EnModePaiement modePaiement)
 	{
 		this.useRetroactif = useRetroactif;
 		this.numeroBulletin = numeroBulletin;
@@ -1522,14 +1523,14 @@ public class ClsParameterOfPay
 		// must use hTauxAppliedToRubriqueAbsence
 		// CURSOR curs_txabs IS
 		// SELECT cacc, valm FROM pafnom
-		// WHERE cdos = wpdos.cdos
+		// WHERE cdos = wpdos.identreprise
 		// AND ctab = 22
 		// AND nume = 8
 		// AND NVL(valm,0) != 0;
 		//
 		// CURSOR curs_txabs2 IS
 		// SELECT cacc, valm FROM pahfnom
-		// WHERE cdos = wpdos.cdos
+		// WHERE cdos = wpdos.identreprise
 		// AND ctab = 22
 		// AND nume = 8
 		// AND aamm = w_aamm
@@ -1602,7 +1603,7 @@ public class ClsParameterOfPay
 		// INSERT INTO parubnet
 		// SELECT w_session_id, crub, NVL(ajnu,0) ajnu, 0 mont
 		// FROM parubq
-		// WHERE cdos = wpdos.cdos
+		// WHERE cdos = wpdos.identreprise
 		// AND calc = 'O'
 		// AND snet = 'O';
 		// EXCEPTION
@@ -1613,20 +1614,20 @@ public class ClsParameterOfPay
 		// @Add by yannick : proposition de suppression de la table avant tout traitement
 		Session session = service.getSession();
 		session.createQuery("Delete From ElementSalaireNet where sessionId =" + sessionId).executeUpdate();
-		service.closeConnexion(session);
+		service.closeSession(session);
 		
 		String queryString = "select 0, crub, ajnu from ElementSalaire a " + " where cdos ='" + dossier + "'" + " and calc = 'O'" + " and snet = 'O'";
 		if("ClsEntreprise.BGFIGE".equalsIgnoreCase(nomClient) || "ClsEntreprise.SONIBANK".equalsIgnoreCase(nomClient)){
 			queryString += " and (exists (";
 			queryString += " select 'X' from ElementVariableDetailMois c";
-			queryString += " where c.cdos = a.cdos";
+			queryString += " where c.identreprise = a.identreprise";
 			queryString += " and c.rubq = a.crub";
 			queryString += " and c.aamm = '"+getMoisPaieCourant()+"'";
 			queryString += " and c.nbul = '"+getNumeroBulletin()+"'";
 			queryString += " )";
 			queryString += " or exists (";
 			queryString += " select 'X' from ElementFixeSalaire c";
-			queryString += " where c.cdos = a.cdos";
+			queryString += " where c.identreprise = a.identreprise";
 			queryString += " and c.codp = a.crub";
 			queryString += " )";
 			queryString += " )";
@@ -1672,7 +1673,7 @@ public class ClsParameterOfPay
 		// INSERT INTO parubajus
 		// SELECT w_session_id, crub, NVL(ajnu,0) ajnu, 0 mont
 		// FROM parubq
-		// WHERE cdos = wpdos.cdos
+		// WHERE cdos = wpdos.identreprise
 		// AND calc = 'O'
 		// AND ajus = 'O';
 		// EXCEPTION
@@ -1683,7 +1684,7 @@ public class ClsParameterOfPay
 		// @Add by yannick : proposition de suppression de la table avant tout traitement
 		session = service.getSession();
 		session.createQuery("Delete From ElementSalaireAjus where sessionId =" + sessionId).executeUpdate();
-		service.closeConnexion(session);
+		service.closeSession(session);
 
 		queryString = "select " + sessionId + ", crub, ajnu from ElementSalaire a " + "where cdos ='" + dossier + "'" + " and calc = 'O'" + " and ajus = 'O'";
 		if("ClsEntreprise.BGFIGE".equalsIgnoreCase(nomClient) || "ClsEntreprise.SONIBANK".equalsIgnoreCase(nomClient)){
@@ -1692,14 +1693,14 @@ public class ClsParameterOfPay
 			else queryString += " and a.snet = 'N'";
 			queryString += " and (exists (";
 			queryString += " select 'X' from ElementVariableDetailMois c";
-			queryString += " where c.cdos = a.cdos";
+			queryString += " where c.identreprise = a.identreprise";
 			queryString += " and c.rubq = a.crub";
 			queryString += " and c.aamm = '"+getMoisPaieCourant()+"'";
 			queryString += " and c.nbul = '"+getNumeroBulletin()+"'";
 			queryString += " )";
 			queryString += " or exists (";
 			queryString += " select 'X' from ElementFixeSalaire c";
-			queryString += " where c.cdos = a.cdos";
+			queryString += " where c.identreprise = a.identreprise";
 			queryString += " and c.codp = a.crub";
 			queryString += " )";
 			queryString += " )";
@@ -1802,7 +1803,7 @@ public class ClsParameterOfPay
 		// must use listOfRubriqueToCalculate
 		// CURSOR curs_rubreg IS
 		// SELECT rcon FROM parubq
-		// WHERE cdos = wpdos.cdos
+		// WHERE cdos = wpdos.identreprise
 		// AND rreg = 'O'
 		// AND rman = 'N'
 		// ORDER BY cdos, crub;
@@ -1810,7 +1811,7 @@ public class ClsParameterOfPay
 		String queryString = "select rcon from ElementSalaire where cdos ='" + dossier + "'" + " and rreg = 'O'" + " and rman = 'N'" + " order by cdos, crub";
 		// CURSOR curs_rubreg2 IS
 		// SELECT rcon FROM pahrubq
-		// WHERE cdos = wpdos.cdos
+		// WHERE cdos = wpdos.identreprise
 		// AND rreg = 'O'
 		// AND rman = 'N'
 		// AND aamm = w_aamm
@@ -1889,7 +1890,7 @@ public class ClsParameterOfPay
 		// -- Curseur sur les banques
 		// CURSOR Curs_TB10 IS
 		// SELECT cacc, vall, NVL(valm, 0) FROM pafnom
-		// WHERE cdos = wpdos.cdos
+		// WHERE cdos = wpdos.identreprise
 		// AND ctab = 10
 		// AND nume = 3
 		// ORDER BY cacc;
@@ -1899,7 +1900,7 @@ public class ClsParameterOfPay
 		// -- Curseur sur les banques
 		// CURSOR Curs_TB10_2 IS
 		// SELECT cacc, vall, NVL(valm, 0) FROM pahfnom
-		// WHERE cdos = wpdos.cdos
+		// WHERE cdos = wpdos.identreprise
 		// AND ctab = 10
 		// AND nume = 3
 		// AND aamm = w_aamm
@@ -1912,7 +1913,7 @@ public class ClsParameterOfPay
 		// -- Curseur sur les devises
 		// CURSOR Curs_TB27 IS
 		// SELECT valt, valm FROM pafnom
-		// WHERE cdos = wpdos.cdos
+		// WHERE cdos = wpdos.identreprise
 		// AND ctab = 27
 		// AND cacc = Devise_Banque
 		// AND nume = 1;
@@ -1923,7 +1924,7 @@ public class ClsParameterOfPay
 		// -- Curseur sur les devises
 		// CURSOR Curs_TB27_2 IS
 		// SELECT valt, valm FROM pahfnom
-		// WHERE cdos = wpdos.cdos
+		// WHERE cdos = wpdos.identreprise
 		// AND ctab = 27
 		// AND cacc = Devise_Banque
 		// AND aamm = w_aamm
@@ -1935,11 +1936,11 @@ public class ClsParameterOfPay
 		//
 		ClsInfoOfBank oInfoOfBank = null;
 		String queryString10Retro = "SELECT banque.cacc as codebanque, banque.vall as devisebanque, banque.valm as virmini , " + " devise.valt as tauxchange, devise.valm as nbdecimale " + "FROM Rhthfnom banque "
-				+ "Left join Rhthfnom devise on( " + "banque.cdos=devise.cdos and devise.ctab=27 and devise.nume=1 and devise.cacc=banque.vall " + "and banque.aamm = devise.aamm and banque.nbul = devise.nbul) "
-				+ "WHERE banque.cdos = '" + dossier + "' " + "AND banque.ctab = 10 " + "AND banque.nume = 3 " + "AND devise.aamm = '" + monthOfPay + "' " + "AND banque.nbul = " + numeroBulletin + " "
+				+ "Left join Rhthfnom devise on( " + "banque.identreprise=devise.identreprise and devise.ctab=27 and devise.nume=1 and devise.cacc=banque.vall " + "and banque.aamm = devise.aamm and banque.nbul = devise.nbul) "
+				+ "WHERE banque.identreprise = '" + dossier + "' " + "AND banque.ctab = 10 " + "AND banque.nume = 3 " + "AND devise.aamm = '" + monthOfPay + "' " + "AND banque.nbul = " + numeroBulletin + " "
 				+ "ORDER BY banque.cacc ";
 		String queryString10 = "SELECT banque.cacc as codebanque, banque.vall as devisebanque, banque.valm as virmini , " + " devise.valt as tauxchange, devise.valm as nbdecimale " + "FROM ParamData banque "
-				+ "Left join ParamData devise on( " + "banque.cdos=devise.cdos and devise.ctab=27 and devise.nume=1 and devise.cacc=banque.vall) " + "WHERE banque.cdos = '" + dossier + "' " + "AND banque.ctab = 10 "
+				+ "Left join ParamData devise on( " + "banque.identreprise=devise.identreprise and devise.ctab=27 and devise.nume=1 and devise.cacc=banque.vall) " + "WHERE banque.identreprise = '" + dossier + "' " + "AND banque.ctab = 10 "
 				+ "AND banque.nume = 3 " + "ORDER BY banque.cacc ";
 
 		Session session = service.getSession();
@@ -1972,7 +1973,7 @@ public class ClsParameterOfPay
 
 			listOfBank.add(oInfoOfBank);
 		}
-		service.closeConnexion(session);
+		service.closeSession(session);
 
 		// List listOfRatesAndAmount10 = (useRetroactif) ? service.find(queryString10Retro) : service.find(queryString10);
 		// List listOfRatesAndAmount27 = (useRetroactif) ? service.find(queryString27Retro) : service.find(queryString27);
@@ -3203,7 +3204,7 @@ public class ClsParameterOfPay
 		
 		String query = " SELECT count(*)  FROM ParamData WHERE cdos = '" + dossier + "' and ctab=91 and cacc = '" + cods + "' and nume = 1";
 		Integer count = Integer.valueOf(session.createSQLQuery(query).list().get(0).toString());
-		service.closeConnexion(session);
+		service.closeSession(session);
 		if(count==0)
 		{
 			calculatePremierEtDernierJourMoisPaie(periodOfPay);
@@ -3953,12 +3954,12 @@ public class ClsParameterOfPay
 		this.dtDfex = dtDfex;
 	}
 
-	public ClsLanceurCalcul getLanceur()
+	public CalculPaieServiceImpl getLanceur()
 	{
 		return lanceur;
 	}
 
-	public void setLanceur(ClsLanceurCalcul lanceur)
+	public void setLanceur(CalculPaieServiceImpl lanceur)
 	{
 		this.lanceur = lanceur;
 	}

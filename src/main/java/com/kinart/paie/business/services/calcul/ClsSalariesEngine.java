@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import com.kinart.paie.business.model.Salarie;
 import com.kinart.paie.business.model.SuspensionPaie;
+import com.kinart.paie.business.services.impl.CalculPaieServiceImpl;
 import com.kinart.paie.business.services.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
@@ -34,7 +35,7 @@ public class ClsSalariesEngine
 
 	ExecutorService poolSrev = null;
 
-	private HibernateConnexionService service = null;
+	private GeneriqueConnexionService service = null;
 
 	// contenant les param�tres de fonctionnement du moteur de paie
 	private ClsParameterOfPay parameterOfSalary = null;
@@ -51,7 +52,7 @@ public class ClsSalariesEngine
 
 	//public UICalculBulletin ui;
 
-	public ClsLanceurCalcul lanceur;
+	public CalculPaieServiceImpl lanceur;
 
 	public Integer nbrSalaries = 0;
 
@@ -90,12 +91,12 @@ public class ClsSalariesEngine
 		this.listOfParubq = listOfParubq;
 	}
 
-	public HibernateConnexionService getService()
+	public GeneriqueConnexionService getService()
 	{
 		return service;
 	}
 
-	public void setService(HibernateConnexionService service)
+	public void setService(GeneriqueConnexionService service)
 	{
 		this.service = service;
 	}
@@ -257,7 +258,7 @@ public class ClsSalariesEngine
 		} catch (Exception e) {
 			// TODO: handle exception
 		} finally {
-			service.closeConnexion(session);
+			service.closeSession(session);
 		}
 		
 //		System.out.println("PAIE AU NET: "+paieAuNet+"............................................");
@@ -1975,12 +1976,12 @@ public class ClsSalariesEngine
 		return nbrSalariesTraite;
 	}
 
-	public ClsLanceurCalcul getLanceur()
+	public CalculPaieServiceImpl getLanceur()
 	{
 		return lanceur;
 	}
 
-	public void setLanceur(ClsLanceurCalcul lanceur)
+	public void setLanceur(CalculPaieServiceImpl lanceur)
 	{
 		this.lanceur = lanceur;
 	}

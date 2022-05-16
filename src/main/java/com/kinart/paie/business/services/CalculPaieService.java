@@ -1,6 +1,8 @@
 package com.kinart.paie.business.services;
 
 import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
+import com.kinart.api.gestiondepaie.dto.RechercheDto;
+import com.kinart.api.gestiondepaie.dto.SalarieDto;
 
 import java.util.List;
 
@@ -16,5 +18,10 @@ public interface CalculPaieService {
 
     void delete(Integer id);
 
-    boolean calculPaieSalarie(String nmat, String aamm, Integer nbul);
+    boolean calculPaieSalarie(RechercheDto dto);
+
+    List<CalculPaieDto> findResultCalculByFilter(RechercheDto dto);
+
+    List<SalarieDto> findListeSalarieByFilter(RechercheDto dto);
+
 }

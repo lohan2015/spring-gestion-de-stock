@@ -17,7 +17,7 @@ public class DossierPaieValidator {
       errors.add("Veuillez renseigner le dernier mois de paie");
       errors.add("Veuillez renseigner la date de début d'exerice");
       errors.add("Veuillez renseigner la date de fin d'exerice");
-      errors.add("Veuillez renseigner la dernier bulletin calculé");
+      errors.add("Veuillez renseigner le dernier bulletin calculé");
       return errors;
     }
 
@@ -37,7 +37,7 @@ public class DossierPaieValidator {
       errors.add("Veuillez renseigner la date de fin d'exerice");
     }
     if (dto.getDnbu()==null) {
-      errors.add("Veuillez renseigner la dernier bulletin calculé");
+      errors.add("Veuillez renseigner le dernier bulletin calculé");
     }
 
     return errors;

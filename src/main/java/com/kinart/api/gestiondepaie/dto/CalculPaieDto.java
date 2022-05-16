@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @ApiModel(description = "Model de gestion des calculs")
 public class CalculPaieDto {
     private Integer id;
@@ -42,27 +44,11 @@ public class CalculPaieDto {
 
     private String trtb;
 
-    public CalculPaieDto() {
-    }
+    private String nomSalarie;
 
-    public CalculPaieDto(Integer id, Integer idEntreprise, Integer nlig, String nmat, String aamm, Integer nbul, String rubq, BigDecimal basc, BigDecimal basp, BigDecimal taux, BigDecimal mont, String nprt, String ruba, String argu, String clas, String trtb) {
-        this.id = id;
-        this.idEntreprise = idEntreprise;
-        this.nlig = nlig;
-        this.nmat = nmat;
-        this.aamm = aamm;
-        this.nbul = nbul;
-        this.rubq = rubq;
-        this.basc = basc;
-        this.basp = basp;
-        this.taux = taux;
-        this.mont = mont;
-        this.nprt = nprt;
-        this.ruba = ruba;
-        this.argu = argu;
-        this.clas = clas;
-        this.trtb = trtb;
-    }
+    private String libRubrique;
+
+    private String typeRubrique;
 
     public static CalculPaieDto fromEntity(CalculPaie calculPaie) {
         if (calculPaie == null) {

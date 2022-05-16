@@ -54,7 +54,7 @@ public interface DossierPaieApi {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Le mois de paie en cours")
     })
-    String getMoisDePaieCourant(@PathVariable("idEntreprise") Integer idEntreprise, @PathVariable("dateFormat") String dateFormat);
+    String getMoisDePaieCourant(@RequestParam("idEntreprise") String idEntreprise);
 
     @GetMapping(value = APP_ROOT_PAIE + "/dossierpaie/numbul", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Renvoi le numéro de bulletin en cours", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
@@ -62,5 +62,5 @@ public interface DossierPaieApi {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Le numérode bulletin de paie en cours")
     })
-    Integer getNumeroBulletinPaie(@PathVariable("idEntreprise") Integer idEntreprise);
+    String getNumeroBulletinPaie(@RequestParam("idEntreprise") String idEntreprise);
 }

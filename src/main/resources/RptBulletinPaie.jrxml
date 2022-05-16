@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RptBulletinPaie" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="de577cb4-9d72-4fde-8356-abbb41dbb844">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Dataset1" uuid="b7ed2db3-2977-4533-b76d-44db10cfe782">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="rubq" class="java.lang.String"/>
+		<field name="libRubrique" class="java.lang.String"/>
+		<field name="basc" class="java.math.BigDecimal"/>
+		<field name="taux" class="java.math.BigDecimal"/>
+		<field name="mont" class="java.math.BigDecimal"/>
+		<field name="typeRubrique" class="java.lang.String"/>
+		<variable name="TOTAL_GAIN" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{typeRubrique}.equalsIgnoreCase("GA")?$F{mont}:0]]></variableExpression>
+		</variable>
+		<variable name="TOTAL_RETENUE" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{typeRubrique}.equalsIgnoreCase("RE")?$F{mont}:0]]></variableExpression>
+		</variable>
+		<variable name="TOTAL_PP" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{typeRubrique}.equalsIgnoreCase("PP")?$F{mont}:0]]></variableExpression>
+		</variable>
+	</subDataset>
+	<parameter name="CHEMIN_LOGO" class="java.lang.String"/>
+	<parameter name="NOM_SOCIETE" class="java.lang.String"/>
+	<parameter name="ADRESSE_SOCIETE" class="java.lang.String"/>
+	<parameter name="CONTACT_SOCIETE" class="java.lang.String"/>
+	<parameter name="DATE_DEBUT" class="java.lang.String"/>
+	<parameter name="DATE_FIN" class="java.lang.String"/>
+	<parameter name="INFO_NOM" class="java.lang.String"/>
+	<parameter name="INFO_NIU" class="java.lang.String"/>
+	<parameter name="INFO_CATEGORIE" class="java.lang.String"/>
+	<parameter name="INFO_ECHELON" class="java.lang.String"/>
+	<parameter name="INFO_FONCTION" class="java.lang.String"/>
+	<parameter name="INFO_DATE_ENTREE" class="java.lang.String"/>
+	<parameter name="INFO_NUMERO_CNSS" class="java.lang.String"/>
+	<parameter name="INFO_CPTE_VIREMENT" class="java.lang.String"/>
+	<parameter name="INFO_DEVISE" class="java.lang.String"/>
+	<parameter name="INFO_NAP" class="java.math.BigDecimal"/>
+	<parameter name="MOIS_COL1" class="java.math.BigDecimal"/>
+	<parameter name="MOIS_COL2" class="java.math.BigDecimal"/>
+	<parameter name="MOIS_COL3" class="java.math.BigDecimal"/>
+	<parameter name="MOIS_COL4" class="java.math.BigDecimal"/>
+	<parameter name="MOIS_COL5" class="java.math.BigDecimal"/>
+	<parameter name="CUM_COL1" class="java.math.BigDecimal"/>
+	<parameter name="CUM_COL2" class="java.math.BigDecimal"/>
+	<parameter name="CUM_COL3" class="java.math.BigDecimal"/>
+	<parameter name="CUM_COL4" class="java.math.BigDecimal"/>
+	<parameter name="CUM_COL5" class="java.math.BigDecimal"/>
+	<parameter name="INFO_SEXE" class="java.lang.String"/>
+	<parameter name="INFO_DIRECTION" class="java.lang.String"/>
+	<parameter name="INFO_DEPARTEMENT" class="java.lang.String"/>
+	<parameter name="INFO_SERVICE" class="java.lang.String"/>
+	<parameter name="INFO_GRADE" class="java.lang.String"/>
+	<parameter name="INFO_SITFAM" class="java.lang.String"/>
+	<parameter name="INFO_MATRICULE" class="java.lang.String"/>
+	<parameter name="INFO_ADRESSE" class="java.lang.String"/>
+	<parameter name="INFO_TELEPHONE" class="java.lang.String"/>
+	<parameter name="INFO_CHARGE" class="java.lang.String"/>
+	<parameter name="tableData" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="77" splitType="Stretch">
+			<frame>
+				<reportElement x="4" y="10" width="469" height="64" uuid="d59f5108-46d9-469d-b02f-a4b0758c709b"/>
+				<image>
+					<reportElement x="0" y="0" width="70" height="61" uuid="45a30170-c542-44d1-9d43-0d05e8075046"/>
+					<imageExpression><![CDATA[$P{CHEMIN_LOGO}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="76" y="0" width="201" height="15" uuid="50419a37-e8d9-42ae-8697-9f6ca7f691c5"/>
+					<textElement>
+						<font fontName="Bookman Old Style" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{NOM_SOCIETE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="76" y="18" width="201" height="13" uuid="f6f37880-47da-4980-b3ef-7efce6dffe20">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Bookman Old Style" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{ADRESSE_SOCIETE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="76" y="35" width="201" height="13" uuid="c87ed214-75a2-4a7e-8f8c-0e9bf00f8d8f">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Bookman Old Style" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{CONTACT_SOCIETE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="296" y="0" width="171" height="15" uuid="479de355-e3ff-4f62-b96b-c07d25fa5f7a">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Bookman Old Style" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[BULLETIN DE PAIE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="298" y="20" width="41" height="13" uuid="0ce827d7-21e3-4364-a94a-e753e95a2ed1">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Bookman Old Style" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Du:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="298" y="36" width="41" height="13" uuid="dd4212b6-80eb-4002-9dbe-c0e49d6c8657">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Bookman Old Style" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Au:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="338" y="20" width="131" height="13" uuid="2490cfd3-199a-4e31-83e9-60fd99f00d49">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Bookman Old Style"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{DATE_DEBUT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="338" y="36" width="131" height="13" uuid="2f93830a-1549-4cdf-841b-965cce4a8f8f">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Bookman Old Style"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{DATE_FIN}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="173" splitType="Stretch">
+			<staticText>
+				<reportElement x="302" y="5" width="58" height="13" uuid="19ba4f32-c03d-41d5-90e9-07ba7f27dfe1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Matricule:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="302" y="25" width="68" height="13" uuid="330f4621-5d14-4384-b0d7-8a9f00306ddb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date entrée:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="302" y="41" width="68" height="13" uuid="5cc03848-1cdf-463a-927c-46b2f3bf6060">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grade:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="302" y="59" width="68" height="13" uuid="b3b16b92-1665-490e-b338-ebc890f53621">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Categ./Ech:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="380" y="26" width="170" height="13" uuid="ee302178-e19d-477c-bf56-fbbe3afdf672">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_DATE_ENTREE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="5" width="170" height="13" uuid="017e83bf-1221-4347-a249-1b03ff9b8078">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_MATRICULE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="379" y="43" width="170" height="13" uuid="6090b302-8eea-4c61-ac6e-f509f8528650">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_GRADE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="61" width="170" height="13" uuid="0434420b-c110-4af6-8a9a-f98ac7c5e5c8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_CATEGORIE}+" "+$P{INFO_ECHELON}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="240" y="79" width="90" height="90" uuid="ae6e2c71-5e17-4ba0-ba72-e5d6baeca8c0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="256" y="84" width="68" height="13" uuid="f7c16ea0-b3c6-4767-8473-010d498498cd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Congés]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="243" y="99" width="68" height="13" uuid="ffaece1f-4149-4eb3-918d-460d14479f26">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Acquis:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="243" y="115" width="68" height="13" uuid="cc3797e2-497d-4ae3-a978-485953e6d072">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pris:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="243" y="131" width="68" height="13" uuid="a82a3f8c-b508-4998-a5b1-6175b21fdae1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Restant:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="337" y="79" width="211" height="90" uuid="bbc43551-3b1e-4133-a4dc-904b021ca659"/>
+			</rectangle>
+			<textField>
+				<reportElement x="343" y="84" width="191" height="13" uuid="6de0b2bd-b82f-4c00-a424-7412ff86f0ba">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_NOM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="343" y="100" width="68" height="13" uuid="af437146-18b4-4174-8777-a8dac086d6f4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Adresse:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="343" y="116" width="68" height="13" uuid="d4283133-c34b-4ad0-ba1b-b3e0cb5d06f8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Téléphone:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="343" y="133" width="68" height="13" uuid="e5dcc8cc-138f-458e-82bc-8359e07a695c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sexe:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="343" y="150" width="68" height="13" uuid="1ff8c771-5bbf-46f5-aea8-4d149ca28c3b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sit. famille:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="417" y="100" width="130" height="13" uuid="81b40124-7f64-4d51-b186-321fe4afcc5e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_ADRESSE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="416" y="116" width="130" height="13" uuid="5a16fc37-37af-4326-bca3-f9bf6111fb0e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_TELEPHONE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="417" y="131" width="130" height="13" uuid="0939ff2a-51cd-448a-8337-588f502001b4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_SEXE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="417" y="149" width="130" height="13" uuid="b27f1a77-818a-4289-8b91-7b025ea54761">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_SITFAM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="7" width="76" height="13" uuid="0befbaa4-beaa-4d18-9d84-b8a8d94d56a0"/>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Direction:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="26" width="76" height="13" uuid="df8b99c3-f16a-462b-952a-063f1cd730ff">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Département:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="44" width="76" height="13" uuid="93fc9635-dc7d-462f-b481-f0b295b130b6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Service:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="61" width="76" height="13" uuid="1a772f7f-71a3-4d2d-b6db-34f82d14ca48">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fonction:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="78" width="76" height="13" uuid="03cb16d8-ac18-454f-8f86-163dc495455c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N° NIU:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="94" width="76" height="13" uuid="9e2be100-2c00-4379-8cf9-193fce5d342a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N° CNSS:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="112" width="76" height="13" uuid="c904ee11-bb35-428d-a41f-5334305995c2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pers. à charge:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="84" y="6" width="191" height="13" uuid="deedfb25-06c6-401e-96be-05ed2043a046">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_DIRECTION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="27" width="191" height="13" uuid="f99fbc31-6ce4-4361-84cc-c8b4669643e9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_DEPARTEMENT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="43" width="191" height="13" uuid="13cc4ff4-76c0-4634-b926-4f38f8d4f815">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_SERVICE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="82" y="59" width="195" height="13" uuid="08e76ee4-629e-40b5-a2e3-587dd6a3e451">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_FONCTION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="85" y="78" width="101" height="13" uuid="b2605cfa-40db-4d5e-8701-f83670ffbb96">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_NIU}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="85" y="95" width="140" height="13" uuid="eba076d0-1b9b-4494-bff6-574da29cc7c9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_NUMERO_CNSS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="85" y="112" width="101" height="13" uuid="605d0800-aba1-47be-861f-073be7255f9e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INFO_CHARGE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="242" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.grid.JSSGridBagLayout"/>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="242" uuid="40e76cc6-1c4e-486f-b649-98d5e0a86468"/>
+				<componentElement>
+					<reportElement x="0" y="0" width="555" height="242" uuid="1f74c3eb-187a-4f1c-a3da-38fbedadcd42">
+						<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+						<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+						<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+						<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+					</reportElement>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="Dataset1" uuid="6d82269d-0827-403e-b0e0-02e1eda4f995">
+							<dataSourceExpression><![CDATA[$P{tableData}]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="35" uuid="37849f01-471a-4fb8-ac95-f074f295adc7">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne1"/>
+							<jr:tableHeader style="Table_TH" height="0" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</jr:tableHeader>
+							<jr:tableFooter style="Table_TH" height="20" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</jr:tableFooter>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<staticText>
+									<reportElement x="0" y="0" width="35" height="20" uuid="97dfb43b-1a89-4516-a27f-681061f59a43"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[CODE]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="Table_CH" height="0" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</jr:columnFooter>
+							<jr:detailCell style="Table_TD" height="20">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<textField>
+									<reportElement x="0" y="0" width="35" height="20" uuid="a067b1e3-b6ec-491a-a55f-65169c1255a1"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{rubq}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="180" uuid="71816f8a-4031-4e07-a29e-05963866213c">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne2"/>
+							<jr:tableHeader style="Table_TH" height="0" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</jr:tableHeader>
+							<jr:tableFooter style="Table_TH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="180" height="20" uuid="4247aef3-e706-41db-a0e6-9ab22d95fcf5"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TOTAL]]></text>
+								</staticText>
+							</jr:tableFooter>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="180" height="20" uuid="3dfb421e-2889-4457-be97-6cdf1deb1e44"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[DESIGNATION]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="Table_CH" height="0" rowSpan="1"/>
+							<jr:detailCell style="Table_TD" height="20">
+								<textField>
+									<reportElement x="0" y="0" width="180" height="20" uuid="279ad820-188e-459c-9fbd-21ac8a8d1b75"/>
+									<textElement textAlignment="Left" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[" "+$F{libRubrique}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="80" uuid="375f4226-9ebf-46f2-a302-c88a25718d43">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne3"/>
+							<jr:tableHeader style="Table_TH" height="0" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</jr:tableHeader>
+							<jr:tableFooter style="Table_TH" height="20" rowSpan="1"/>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="80" height="20" uuid="c452bf3e-559a-4c26-a1a8-abed985b8a93"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[BASE]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="Table_CH" height="0" rowSpan="1"/>
+							<jr:detailCell style="Table_TD" height="20">
+								<textField>
+									<reportElement x="0" y="0" width="80" height="20" uuid="740a821b-c38e-4833-99fc-e493976b46af"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($F{basc})+" "]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="45" uuid="39dee2bb-461f-4c00-8ca3-fa37d9cdf9bb">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne4"/>
+							<jr:tableHeader style="Table_TH" height="0" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</jr:tableHeader>
+							<jr:tableFooter style="Table_TH" height="20" rowSpan="1"/>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="45" height="20" uuid="ed845191-8bcb-4281-ac29-fe5c07806476"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TX/NB]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="Table_CH" height="0" rowSpan="1"/>
+							<jr:detailCell style="Table_TD" height="20">
+								<textField>
+									<reportElement x="0" y="0" width="45" height="20" uuid="32865224-b8ee-4823-b641-ea87c6502b2f"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($F{taux})+" "]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="70" uuid="069601e7-4f37-4313-a84c-0de8f8ba5ead">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne5"/>
+							<jr:tableHeader style="Table_TH" height="0" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</jr:tableHeader>
+							<jr:tableFooter style="Table_TH" height="20" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="70" height="20" uuid="88d4ccd3-90c0-4c89-9012-b0a9d1be8360"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($V{TOTAL_GAIN})]]></textFieldExpression>
+								</textField>
+							</jr:tableFooter>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="70" height="20" uuid="340e98a8-1a62-4d3c-b41d-29f35eed3c31"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[GAIN]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="Table_CH" height="0" rowSpan="1"/>
+							<jr:detailCell style="Table_TD" height="20">
+								<textField>
+									<reportElement x="0" y="0" width="70" height="20" uuid="1d41ddf9-a2f6-4712-b7d3-cfd91bcf64b4"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{typeRubrique}.equalsIgnoreCase("GA")?new java.text.DecimalFormat("#,###").format($F{mont})+" ":""]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="70" uuid="e30a5e59-085f-4946-83a8-2085665a3f20">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne6"/>
+							<jr:tableHeader style="Table_TH" height="0" rowSpan="1"/>
+							<jr:tableFooter style="Table_TH" height="20" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="70" height="20" uuid="d35e83dc-e5ad-4727-9135-b59884869d27"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($V{TOTAL_RETENUE})]]></textFieldExpression>
+								</textField>
+							</jr:tableFooter>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="70" height="20" uuid="130f7ab7-b943-4d3f-a448-676bc53d296b"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[RETENUE]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="Table_CH" height="0" rowSpan="1"/>
+							<jr:detailCell style="Table_TD" height="20">
+								<textField>
+									<reportElement x="0" y="0" width="70" height="20" uuid="903358ed-aaad-42b9-a631-ea5985cd1ddc"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{typeRubrique}.equalsIgnoreCase("RE")?new java.text.DecimalFormat("#,###").format($F{mont})+" ":""]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="70" uuid="002f4f9d-dab1-4e55-94af-3e2f047fca35">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne7"/>
+							<jr:tableHeader style="Table_TH" height="0" rowSpan="1">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</jr:tableHeader>
+							<jr:tableFooter style="Table_TH" height="20" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="70" height="20" uuid="5d90c824-9aa7-4965-b113-912083d65c1f"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($V{TOTAL_PP})]]></textFieldExpression>
+								</textField>
+							</jr:tableFooter>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="70" height="20" uuid="826a3b56-3852-47ac-a547-bce47451ab63"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Part Patr.]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter style="Table_CH" height="0" rowSpan="1"/>
+							<jr:detailCell style="Table_TD" height="20">
+								<textField>
+									<reportElement x="0" y="0" width="70" height="20" uuid="07cd5c2e-6498-4acb-bc49-ef769cd94f02"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Bookman Old Style" size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{typeRubrique}.equalsIgnoreCase("PP")?new java.text.DecimalFormat("#,###").format($F{mont})+" ":""]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="14" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="29" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="84" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="5" width="544" height="15" uuid="147b7934-2a5e-46db-aa00-1c0db488665a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA["REGLEMENT : "+$P{INFO_CPTE_VIREMENT}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="385" y="24" width="163" height="55" uuid="0ba71f81-2057-4fbd-9879-ea20cc5b8546"/>
+			</rectangle>
+			<line>
+				<reportElement x="386" y="51" width="161" height="1" uuid="f9a369ce-5068-4182-a09d-ffb9e7326c30"/>
+			</line>
+			<staticText>
+				<reportElement x="415" y="30" width="111" height="15" uuid="64045b9a-be0e-4f3e-8ade-11327fb8aa37">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NET A PAYER]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="407" y="61" width="129" height="15" uuid="44568004-3214-41a0-9aac-9417e27e8940">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{INFO_NAP})+" FCFA"]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="1" y="24" width="48" height="47" uuid="04f8dca2-ab4f-4a61-9892-268d7b335d4f"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="49" y="24" width="74" height="47" uuid="46a7bef6-1984-4b36-afa5-cba3923b0578"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="123" y="24" width="74" height="47" uuid="b3b2d802-c64a-4b86-b58a-74c50eb54342"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="197" y="24" width="74" height="47" uuid="7c9f2c24-4c6e-4b9c-b6fe-c7a992a31acd"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="271" y="24" width="74" height="47" uuid="725fe52b-c075-43ed-b2c3-2c65852e408e"/>
+			</rectangle>
+			<line>
+				<reportElement x="3" y="49" width="342" height="1" uuid="05948eed-320a-411b-b2bf-41569693382f"/>
+			</line>
+			<staticText>
+				<reportElement x="6" y="31" width="39" height="13" uuid="abd513b7-f63e-4efe-a90b-cae7d2cce13a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOIS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="55" width="39" height="13" uuid="2f9beedd-4ab5-48df-8664-84eb402196d3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ANNEE]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="57" y="30" width="61" height="13" uuid="00b3f9ee-2afe-4cfe-a4e3-b602ed8b47b4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{MOIS_COL1})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="30" width="64" height="13" uuid="4a434720-a042-4cd6-affa-561117e605fe">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{MOIS_COL2})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="206" y="31" width="61" height="13" uuid="5a8906a0-47cf-4b72-928a-8e2a48ed3303">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{MOIS_COL3})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="279" y="31" width="61" height="13" uuid="3a3a9fc1-56f8-4661-b987-360ae7397195">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{MOIS_COL4})]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -44,7 +44,7 @@ public class Salarie extends AbstractEntity {
     @Column(name = "cals", length = 10)
     private String cals;
 
-    @Column(name = "clas", length = 1)
+    @Column(name = "clas", length = 10)
     private String clas;
 
     @Column(name = "nom", length = 100)
@@ -314,7 +314,7 @@ public class Salarie extends AbstractEntity {
     @Column(name = "dfes")
     private Date dfes;
 
-    @Column(name = "stor", length = 10)
+    @Column(name = "stor", length = 100)
     private String stor;
 
     @Column(name = "nbjtr")
@@ -329,10 +329,10 @@ public class Salarie extends AbstractEntity {
     @Column(name = "drenv")
     private Date drenv;
 
-    @Column(name = "noss", length = 10)
+    @Column(name = "noss", length = 20)
     private String noss;
 
-    @Column(name = "cont", length = 10)
+    @Column(name = "cont", length = 20)
     private String cont;
 
     @Column(name = "nbjsm")
