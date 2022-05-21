@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "CongeFictif")
 @Table(name = "congefic")
 public class CongeFictif extends AbstractEntity {
 

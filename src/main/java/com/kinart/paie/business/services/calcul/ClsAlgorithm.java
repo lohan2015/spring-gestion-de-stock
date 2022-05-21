@@ -88,7 +88,7 @@ public class ClsAlgorithm implements IAlgorithm
 		String cdos = salary.parameter.dossier;
 		String nmat = salary.getInfoSalary().getComp_id().getNmat();
 		long algo = rubrique.getRubrique().getAlgo();
-		String queryParam = "From ParamData where cdos='"+cdos+"' and ctab = "+tabl+"  and cacc = '"+cleAcces+"' order by nume ";
+		String queryParam = "From ParamData where identreprise='"+cdos+"' and ctab = "+tabl+"  and cacc = '"+cleAcces+"' order by nume ";
 		List<ParamData> lst = salary.service.find(queryParam);
 		if(lst.isEmpty())
 		{
@@ -139,7 +139,7 @@ public class ClsAlgorithm implements IAlgorithm
 			return false;
 		}
 		
-		String queryEnd="Select "+fonction+" From "+table+" Where cdos = '"+cdos+"' and nmat = '"+ nmat +"'";
+		String queryEnd="Select "+fonction+" From "+table+" Where identreprise='"+cdos+"' and nmat = '"+ nmat +"'";
 		String colonne;
 		String signe;
 		String valeur;
@@ -229,7 +229,7 @@ public class ClsAlgorithm implements IAlgorithm
 		}
 		finally
 		{
-			salary.getService().closeConnexion(session);
+			salary.getService().closeSession(session);
 		}
 		if(nbreenfant!= null && ! nbreenfant.isEmpty())
 		{
@@ -257,7 +257,7 @@ public class ClsAlgorithm implements IAlgorithm
 		String cdos = salary.parameter.dossier;
 		String nmat = salary.getInfoSalary().getComp_id().getNmat();
 		long algo = rubrique.getRubrique().getAlgo();
-		String queryParam = "From ParamData where cdos='"+cdos+"' and ctab = "+tabl+"  and cacc = '"+cleAcces+"' and nume>1 order by nume ";
+		String queryParam = "From ParamData where identreprise='"+cdos+"' and ctab = "+tabl+"  and cacc = '"+cleAcces+"' and nume>1 order by nume ";
 		List<ParamData> lst = salary.service.find(queryParam);
 		if(lst.isEmpty())
 		{
@@ -330,7 +330,7 @@ public class ClsAlgorithm implements IAlgorithm
 		}
 		finally
 		{
-			salary.getService().closeConnexion(session);
+			salary.getService().closeSession(session);
 		}
 		if(liste!= null && ! liste.isEmpty())
 		{
@@ -574,7 +574,7 @@ public class ClsAlgorithm implements IAlgorithm
 		}
 		finally
 		{
-			salary.service.closeConnexion(session);
+			salary.service.closeSession(session);
 		}
 		nMonthDeducted = nDayDeduted / 30;
 		ClsDate myDdca = new ClsDate(salary.infoSalary.getDdca());
@@ -659,7 +659,7 @@ public class ClsAlgorithm implements IAlgorithm
 		String codeRubrique = rubrique.getRubrique().getComp_id().getCrub();
 		String cdos = salary.getInfoSalary().getComp_id().getCdos();
 		String nmat = this.salary.getInfoSalary().getComp_id().getNmat();
-		HibernateConnexionService service = salary.getService();
+		GeneriqueConnexionService service = salary.getService();
 		if(StringUtils.isBlank(rubrique.getRubrique().getTabl()))
 		{
 			// logger
@@ -702,11 +702,11 @@ public class ClsAlgorithm implements IAlgorithm
 		String ddeb = new ClsDate(salary.parameter.getFirstDayOfMonth()).getDateS(salary.parameter.appDateFormat);
 		String dfin = new ClsDate(salary.parameter.getLastDayOfMonth()).getDateS(salary.parameter.appDateFormat);
 		
-		String query="select sum("+colonne+") from ElementVariableConge where cdos = '" + cdos + "' and nmat = '" + nmat+ "'  and nbul = " + salary.getNbul()+" and motf = '"+motif+"'";
+		String query="select sum("+colonne+") from ElementVariableConge where identreprise='" + cdos + "' and nmat = '" + nmat+ "'  and nbul = " + salary.getNbul()+" and motf = '"+motif+"'";
 		if(fnom.getValm() == 0)
 			query+=" and ddeb >= '"+ddeb+"' and dfin <= '"+dfin+"'";
 		List l = service.find( query);
-		//List l = service.find( "select sum("+colonne+") from ElementVariableConge where cdos = '" + cdos + "' and nmat = '" + nmat+ "' and aamm = '" + salary.getPeriodOfPay() + "'" + " and nbul = " + salary.getNbul()+" and ddeb >= '"+ddeb+"' and dfin <= '"+dfin+"' and motf = '"+motif+"'" );
+		//List l = service.find( "select sum("+colonne+") from ElementVariableConge where identreprise='" + cdos + "' and nmat = '" + nmat+ "' and aamm = '" + salary.getPeriodOfPay() + "'" + " and nbul = " + salary.getNbul()+" and ddeb >= '"+ddeb+"' and dfin <= '"+dfin+"' and motf = '"+motif+"'" );
 		double amountValue = 0;
 		if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 			amountValue = (Double)(((BigDecimal) l.get(0)).doubleValue());
@@ -743,7 +743,7 @@ public class ClsAlgorithm implements IAlgorithm
 		Date firstDate = salary.infoSalary.getDtes();
 		Date lastDate = salary.parameter.getFirstDayOfMonth();
 		
-		String query="Select a.* From HistoCongeSalarie a where a.cdos ='"+cdos+"' and a.nmat = '"+nmat+"' and a.cmcg='"+motifCongeAnnuel+"' and a.ddcg=(select max(b.ddcg) ";
+		String query="Select a.* From HistoCongeSalarie a where a.identreprise='"+cdos+"' and a.nmat = '"+nmat+"' and a.cmcg='"+motifCongeAnnuel+"' and a.ddcg=(select max(b.ddcg) ";
 		query+=" From HistoCongeSalarie b where a.cdos=b.cdos and a.nmat=b.nmat and a.cmcg=b.cmcg) ";
 		
 		Session session = salary.service.getSession();
@@ -754,7 +754,7 @@ public class ClsAlgorithm implements IAlgorithm
 			if(! lst.isEmpty())
 				firstDate = lst.get(0).getDfcg();
 			
-			query="Select a.* From ElementVariableConge a where a.cdos ='"+cdos+"' and a.nmat = '"+nmat+"' and a.motf='"+motifCongeAnnuel+"' and a.ddeb=(select min(b.ddeb) ";
+			query="Select a.* From ElementVariableConge a where a.identreprise='"+cdos+"' and a.nmat = '"+nmat+"' and a.motf='"+motifCongeAnnuel+"' and a.ddeb=(select min(b.ddeb) ";
 			query+=" From ElementVariableConge b where a.cdos=b.cdos and a.nmat=b.nmat and a.motf=b.motf) ";
 			q = session.createSQLQuery(query).addEntity("a", ElementVariableConge.class);
 			List<ElementVariableConge> lste = q.list();
@@ -768,7 +768,7 @@ public class ClsAlgorithm implements IAlgorithm
 		}
 		finally
 		{
-			salary.service.closeConnexion(session);
+			salary.service.closeSession(session);
 		}
 		Integer base = Double.valueOf(ClsDate.getDateS(firstDate, "ddMMyy")).intValue();
 		Integer taux = Double.valueOf(ClsDate.getDateS(lastDate, "ddMMyy")).intValue();
@@ -798,7 +798,7 @@ public class ClsAlgorithm implements IAlgorithm
 		String crubJoursPris = null;
 		int nbrRubrique = 8;
 		
-		String query = "Select nume,valm From ParamData where cdos = '" + cdos + "' and ctab = 99 and cacc = '" + cacc1 + "' order by nume";
+		String query = "Select nume,valm From ParamData where identreprise='" + cdos + "' and ctab = 99 and cacc = '" + cacc1 + "' order by nume";
 		List<Object[]> lst = salary.service.find(query);
 		for (Object[] o : lst)
 		{
@@ -807,7 +807,7 @@ public class ClsAlgorithm implements IAlgorithm
 				rubMP[Integer.valueOf(o[0].toString())-1]= ClsStringUtil.formatNumber(Integer.valueOf(o[1].toString()), ParameterUtil.formatRubrique);
 			}
 		}
-		query = "Select nume,valm From ParamData where cdos = '" + cdos + "' and ctab = 99 and cacc = '" + cacc2 + "' order by nume";
+		query = "Select nume,valm From ParamData where identreprise='" + cdos + "' and ctab = 99 and cacc = '" + cacc2 + "' order by nume";
 		lst = salary.service.find(query);
 		for (Object[] o : lst)
 		{
@@ -817,7 +817,7 @@ public class ClsAlgorithm implements IAlgorithm
 			}
 		}
 		
-		query = "Select nume,valm From ParamData where cdos = '" + cdos + "' and ctab = 99 and cacc = '" + cacc6 + "' order by nume";
+		query = "Select nume,valm From ParamData where identreprise='" + cdos + "' and ctab = 99 and cacc = '" + cacc6 + "' order by nume";
 		lst = salary.service.find(query);
 		for (Object[] o : lst)
 		{
@@ -829,7 +829,7 @@ public class ClsAlgorithm implements IAlgorithm
 		
 		//Recherche de la rubrique du nombre de jours total de congés pris
 		String cacc3="JOURCGPRIS";
-		query = "Select valm From ParamData where cdos = '" + cdos + "' and ctab = 99 and cacc = '" + cacc3 + "' and nume = 1 ";
+		query = "Select valm From ParamData where identreprise='" + cdos + "' and ctab = 99 and cacc = '" + cacc3 + "' and nume = 1 ";
 		List lst1 = salary.service.find(query);
 		if(!lst1.isEmpty() && lst1.get(0) != null && !"0".equalsIgnoreCase(lst1.get(0).toString()))
 			crubJoursPris = ClsStringUtil.formatNumber(Integer.valueOf(lst1.get(0).toString()), ParameterUtil.formatRubrique);
@@ -841,7 +841,7 @@ public class ClsAlgorithm implements IAlgorithm
 		}
 		double joursacquismois = 2;
 		String cacc4="NBJC-DEF";
-		query = "Select valt From ParamData where cdos = '" + cdos + "' and ctab = 99 and cacc = '" + cacc4 + "' and nume = 1 ";
+		query = "Select valt From ParamData where identreprise='" + cdos + "' and ctab = 99 and cacc = '" + cacc4 + "' and nume = 1 ";
 		lst1 = salary.service.find(query);
 		if(!lst1.isEmpty() && lst1.get(0) != null && !"0".equalsIgnoreCase(lst1.get(0).toString()))
 			joursacquismois = Double.valueOf(lst1.get(0).toString());
@@ -876,7 +876,7 @@ public class ClsAlgorithm implements IAlgorithm
 						//Recherche de la rubrique du nombre de congé par an
 						String cacc7="JOURCGAN";
 						String crubJCGAn  = null;
-						query = "Select valm From ParamData where cdos = '" + cdos + "' and ctab = 99 and cacc = '" + cacc7 + "' and nume = 1 ";
+						query = "Select valm From ParamData where identreprise='" + cdos + "' and ctab = 99 and cacc = '" + cacc7 + "' and nume = 1 ";
 						lst1 = salary.service.find(query);
 						if(!lst1.isEmpty() && lst1.get(0) != null && !"0".equalsIgnoreCase(lst1.get(0).toString()))
 							crubJCGAn = ClsStringUtil.formatNumber(Integer.valueOf(lst1.get(0).toString()), ParameterUtil.formatRubrique);
@@ -953,7 +953,7 @@ public class ClsAlgorithm implements IAlgorithm
 		}
 		if(StringUtils.isNotBlank(rubq))
 		{
-			query="delete from CalculPaie where cdos = '"+cdos+"' and nmat = '"+nmat+"' and rubq in ("+rubq+") and aamm = '"+aamm+"'";
+			query="delete from CalculPaie where identreprise='"+cdos+"' and nmat = '"+nmat+"' and rubq in ("+rubq+") and aamm = '"+aamm+"'";
 			salary.service.deleteFromTable(query);
 		}
 		// fin suppression des anciennes lignes
@@ -1276,7 +1276,7 @@ public class ClsAlgorithm implements IAlgorithm
 		// AND crub = PA_CALCUL.t_rub.crub
 		// ORDER BY cdos , crub , nume;
 		// String queryString = "from ElementSalaireBareme "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " order by cdos , crub , nume";
 		//
@@ -1289,7 +1289,7 @@ public class ClsAlgorithm implements IAlgorithm
 		// AND nbul = PA_CALCUL.wsd_fcal1.nbul
 		// ORDER BY cdos , crub , nume;
 		// String queryStringRetro = "from Rhthrubbarem "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " and aamm = '" + this.salary.getPeriodOfPay() + "'"
 		// + " and nbul = " + this.salary.getNbul()
@@ -1297,7 +1297,7 @@ public class ClsAlgorithm implements IAlgorithm
 		// ------------------------------------------------------------------------------
 		// -- Abattement
 		// -------------------------------------------------------------------------------
-		if (!ClsObjectUtil.isNull(rubrique.getRubrique().getPcab()))
+		if (rubrique.getRubrique()!=null && rubrique.getRubrique().getPcab()!=null)
 		{
 			if('O' == salary.getParameter().getGenfile()) outputtext += "\nRubrique.pcab is not null";
 			val = salary.getValeurRubriquePartage().getBase() * rubrique.getRubrique().getPcab().doubleValue() / 100;
@@ -1389,7 +1389,7 @@ public class ClsAlgorithm implements IAlgorithm
 //				int nbul = salary.getNbul();
 //				RhthrubbaremPK pk = null;// new RhthrubbaremPK(cdos, rubrique.getRubrique().getComp_id().getCrub(), 1, salary.getPeriodOfPay(), nbul);
 //
-//				String _strQueryForFirstElement = "From Rhthrubbarem where cdos='" + cdos + "' and crub='" + rubrique.getRubrique().getComp_id().getCrub() + "' and aamm ='"
+//				String _strQueryForFirstElement = "From Rhthrubbarem where identreprise='" + cdos + "' and crub='" + rubrique.getRubrique().getComp_id().getCrub() + "' and aamm ='"
 //						+ salary.getPeriodOfPay() + "' and nbul=" + nbul + " order by nume";
 //
 //				List<Rhthrubbarem> _l_Result = salary.getService().find(_strQueryForFirstElement);
@@ -1410,7 +1410,7 @@ public class ClsAlgorithm implements IAlgorithm
 				if('O' == salary.getParameter().getGenfile()) outputtext += "\nRecherche de la premiére ligne de bare";
 				ElementSalaireBareme pk1 = null;
 
-				String _strQueryForFirstElement = "From ElementSalaireBareme where cdos='" + cdos + "' and crub='" + rubrique.getRubrique().getComp_id().getCrub()
+				String _strQueryForFirstElement = "From ElementSalaireBareme where identreprise='" + cdos + "' and crub='" + rubrique.getRubrique().getComp_id().getCrub()
 						+ "' order by nume";
 
 				List<ElementSalaireBareme> _l_Result = salary.getService().find(_strQueryForFirstElement);
@@ -1699,7 +1699,7 @@ public class ClsAlgorithm implements IAlgorithm
 				}
 				if(StringUtils.isNotBlank(formuleRubriques))
 				{
-					String query="SELECT sum(mont)  FROM CumulPaie WHERE cdos = '"+cdos+"' and nmat = '"+nmat+"' ";
+					String query="SELECT sum(mont)  FROM CumulPaie WHERE identreprise='"+cdos+"' and nmat = '"+nmat+"' ";
 					query+=" and aamm  like '"+annee+"%' and aamm not like '%99' and rubq in ("+formuleRubriques+") and nbul >0";
 					w_mont = 0;
 					List lst = salary.getService().find(query);
@@ -1710,7 +1710,7 @@ public class ClsAlgorithm implements IAlgorithm
 				}
 				if(StringUtils.isNotBlank(formuleRubriques))
 				{
-					String query="SELECT sum(mont)  FROM CalculPaie WHERE cdos = '"+cdos+"' and nmat = '"+nmat+"' ";
+					String query="SELECT sum(mont)  FROM CalculPaie WHERE identreprise='"+cdos+"' and nmat = '"+nmat+"' ";
 					query+=" and aamm  = '"+salary.parameter.getMonthOfPay()+"' and rubq in ("+formuleRubriques+") and nbul >0";
 					w_mont = 0;
 					List lst = salary.getService().find(query);
@@ -1775,7 +1775,7 @@ public class ClsAlgorithm implements IAlgorithm
 		}
 		
 		//Deuxiéme abattement 15%/5% suivant tranches
-		List<ParamData> baremes = salary.getService().find("From ParamData where cdos = '"+cdos+"' and ctab = "+table+" and nume=1  and cacc like 'B%' order by valm ");
+		List<ParamData> baremes = salary.getService().find("From ParamData where identreprise='"+cdos+"' and ctab = "+table+" and nume=1  and cacc like 'B%' order by valm ");
 		double min;
 		double max;
 		double tx;
@@ -1918,7 +1918,7 @@ public class ClsAlgorithm implements IAlgorithm
 //				int nbul = salary.getNbul();
 //				RhthrubbaremPK pk = null;// new RhthrubbaremPK(cdos, rubrique.getRubrique().getComp_id().getCrub(), 1, salary.getPeriodOfPay(), nbul);
 //
-//				String _strQueryForFirstElement = "From Rhthrubbarem where cdos='" + cdos + "' and crub='" + rubrique.getRubrique().getComp_id().getCrub() + "' and aamm ='"
+//				String _strQueryForFirstElement = "From Rhthrubbarem where identreprise='" + cdos + "' and crub='" + rubrique.getRubrique().getComp_id().getCrub() + "' and aamm ='"
 //						+ salary.getPeriodOfPay() + "' and nbul=" + nbul + " order by nume";
 //
 //				List<Rhthrubbarem> _l_Result = salary.getService().find(_strQueryForFirstElement);
@@ -1936,7 +1936,7 @@ public class ClsAlgorithm implements IAlgorithm
 				if('O' == salary.getParameter().getGenfile()) outputtext += "\nRecherche de la premiére ligne de bare";
 				ElementSalaireBareme pk1 = null;
 
-				String _strQueryForFirstElement = "From ElementSalaireBareme where cdos='" + cdos + "' and crub='" + rubrique.getRubrique().getComp_id().getCrub()
+				String _strQueryForFirstElement = "From ElementSalaireBareme where identreprise='" + cdos + "' and crub='" + rubrique.getRubrique().getComp_id().getCrub()
 						+ "' order by nume";
 
 				List<ElementSalaireBareme> _l_Result = salary.getService().find(_strQueryForFirstElement);
@@ -2392,7 +2392,7 @@ public class ClsAlgorithm implements IAlgorithm
 		else
 			return true;
 		// on prend le premier prét de la liste des préts de ce salarié
-		Object obj = salary.getService().find("FROM PretInterne WHERE cdos='"+cdos+"' AND nmat='"+salary.getInfoSalary().getComp_id().getNmat()+"' AND identreprise="+((Integer) rubrique.getListOfLoanNumber().get(0)).intValue());
+		Object obj = salary.getService().find("FROM PretInterne WHERE identreprise='"+cdos+"' AND nmat='"+salary.getInfoSalary().getComp_id().getNmat()+"' AND identreprise="+((Integer) rubrique.getListOfLoanNumber().get(0)).intValue());
 		if (obj == null)
 			return true;
 		PretInterne pret = (PretInterne) obj;
@@ -2891,11 +2891,11 @@ public class ClsAlgorithm implements IAlgorithm
 		String crub = rubrique.getRubrique().getComp_id().getCrub();
 
 		// String queryString = "from ElementSalaireBareme "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " order by cdos , crub , nume";
 		// String queryStringRetro = "from Rhthrubbarem "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " and aamm = '" + salary.getPeriodOfPay() + "'"
 		// + " and nbul = " + salary.getNbul()
@@ -3019,7 +3019,7 @@ public class ClsAlgorithm implements IAlgorithm
 			return true;
 		
 		List listOfRhtprentagent = salary.getService().find(
-				"from PretExterneEntete" + " where cdos = '" + cdos + "'" + " and nprt = " + rubrique.getListOfLoanNumber().get(0) + " and nmat = '"
+				"from PretExterneEntete" + " where identreprise='" + cdos + "'" + " and nprt = " + rubrique.getListOfLoanNumber().get(0) + " and nmat = '"
 						+ salary.getInfoSalary().getComp_id().getNmat() + "'");
 		if (listOfRhtprentagent == null || listOfRhtprentagent.size() == 0)
 			return true;
@@ -3033,7 +3033,7 @@ public class ClsAlgorithm implements IAlgorithm
 		else
 		{
 			// -- Lecture de la mensualite
-			List listOfPretExterneDetail = salary.getService().find("from PretExterneDetail" + " where cdos = '" + cdos + "'" + " and nprt = " + wpaprent.getNprt());
+			List listOfPretExterneDetail = salary.getService().find("from PretExterneDetail" + " where identreprise='" + cdos + "'" + " and nprt = " + wpaprent.getNprt());
 			for (Object prlig : listOfPretExterneDetail)
 			{
 				if (salary.getPeriodOfPay().equals(new ClsDate(((PretExterneDetail) prlig).getPerb()).getYearAndMonth()))
@@ -3322,7 +3322,7 @@ public class ClsAlgorithm implements IAlgorithm
 		if (ClsObjectUtil.isListEmty(rubrique.getListOfLoanNumber()))
 			return true;
 		List listOfRhtprentagent = salary.getService().find(
-				"from PretExterneEntete" + " where cdos = '" + cdos + "'" + " and nprt = " + rubrique.getListOfLoanNumber().get(0) + " and nmat = '"
+				"from PretExterneEntete" + " where identreprise='" + cdos + "'" + " and nprt = " + rubrique.getListOfLoanNumber().get(0) + " and nmat = '"
 						+ salary.getInfoSalary().getComp_id().getNmat() + "'");
 		if (ClsObjectUtil.isListEmty(listOfRhtprentagent))
 			return true;
@@ -3350,7 +3350,7 @@ public class ClsAlgorithm implements IAlgorithm
 			wpaprlig = new PretExterneDetail();
 			//
 			listOfPretExterneDetail = salary.getService().find(
-					"select echo, echr, inte, taxe, perb from PretExterneDetail" + " where cdos = '" + cdos + "'" + " and nprt = " + wpaprent.getNprt());
+					"select echo, echr, inte, taxe, perb from PretExterneDetail" + " where identreprise='" + cdos + "'" + " and nprt = " + wpaprent.getNprt());
 			Object[] row = null;
 			double echo = 0;
 			double echr = 0;
@@ -3401,7 +3401,7 @@ public class ClsAlgorithm implements IAlgorithm
 			// wpaprlig.taxe := 0;
 			// END;
 			listOfPretExterneDetail = salary.getService().find(
-					"from PretExterneDetail" + " where cdos = '" + wpaprent.getIdEntreprise().intValue() + "'" + " and nprt = " + wpaprent.getNprt());
+					"from PretExterneDetail" + " where identreprise='" + wpaprent.getIdEntreprise().intValue() + "'" + " and nprt = " + wpaprent.getNprt());
 			PretExterneDetail row = null;
 			Date perb = null;
 			for (Object prlig : listOfPretExterneDetail)
@@ -3802,7 +3802,7 @@ public class ClsAlgorithm implements IAlgorithm
 		double droitsRestant = 0;
 		String cdos = salary.parameter.dossier;
 		String nmat = salary.infoSalary.getComp_id().getNmat();
-		List<String> lst = salary.service.find("Select vall From ParamData where cdos='"+cdos+"' and ctab = 99  and cacc = 'FRACTIONCG' and nume = 2");
+		List<String> lst = salary.service.find("Select vall From ParamData where identreprise='"+cdos+"' and ctab = 99  and cacc = 'FRACTIONCG' and nume = 2");
 		if(!lst.isEmpty() && StringUtils.isNotBlank(lst.get(0)))
 			fractionConge = StringUtils.equals("O", lst.get(0));
 		
@@ -3829,7 +3829,7 @@ public class ClsAlgorithm implements IAlgorithm
 			base = droitsAcquis * nbrJoursPris / nbrJoursAcquis;
 			droitsRestant = droitsAcquis - base;
 			
-			String query="Update Rhpagent set zli10 = '"+droitsRestant+"' where cdos = '"+cdos+"' and nmat = '"+nmat+"'";
+			String query="Update Rhpagent set zli10 = '"+droitsRestant+"' where identreprise='"+cdos+"' and nmat = '"+nmat+"'";
 			try
 			{
 				salary.service.updateFromTable(query);
@@ -3909,7 +3909,7 @@ public class ClsAlgorithm implements IAlgorithm
 		// ORDER BY cdos, crub, nume;
 		// RhprubriquePK t_rubPK = this.rubriquePKFromEngine;
 		// String queryString = " from ElementSalaireBareme "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " order by cdos , crub , nume";
 		//
@@ -3922,7 +3922,7 @@ public class ClsAlgorithm implements IAlgorithm
 		// AND nbul = PA_CALCUL.wsd_fcal1.nbul
 		// ORDER BY cdos, crub, nume;
 		// String queryStringRetro = " from Rhthrubbarem "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " and aamm = '" + salary.getPeriodOfPay() + "'"
 		// + " and nbul = " + salary.getNbul()
@@ -4099,12 +4099,12 @@ public class ClsAlgorithm implements IAlgorithm
 		String c_cum99 = "";
 		//
 		// String queryString = " from ElementSalaireBareme "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " order by cdos , crub , nume";
 		// //
 		// String queryStringRetro = " from Rhthrubbarem "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " and aamm = '" + salary.getPeriodOfPay() + "'"
 		// + " and nbul = " + salary.getNbul()
@@ -4133,7 +4133,7 @@ public class ClsAlgorithm implements IAlgorithm
 			//
 
 			List l = salary.getService().find(
-					"select count(*) from CumulPaie" + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and aamm >= '"
+					"select count(*) from CumulPaie" + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and aamm >= '"
 							+ oClsDate.getYearAndMonth() + "'" + " and aamm < '" + oClsDate.getYearAndMonth() + "'" + " and aamm != '" + c_cum99 + "'" + " and rubq = '"
 							+ salary.getParameter().getBrutRubrique() + "'" + " and nbul = 9");
 			if (!ClsObjectUtil.isListEmty(l))
@@ -4495,20 +4495,20 @@ public class ClsAlgorithm implements IAlgorithm
 			ddcf = "'" + new ClsDate(salary.getInfoSalary().getDdcf()).getDateS(salary.parameter.appDateFormat) + "'";
 		
 		String requete=!salary.getParameter().isUseRetroactif() ?
-			"select max(ddcg) from HistoCongeSalarie " + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+			"select max(ddcg) from HistoCongeSalarie " + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
 			+ " and ddcg < " + ddcf + "" + " and cmcg in (select a.cacc from ParamData a, ParamData b " + " where b.cacc = a.cacc "
-			+ " and b.ctab = b.ctab" + " and b.cdos = '" + cdos + "'" + " and a.cdos = '" + cdos + "'" + " and a.ctab = 22 "
+			+ " and b.ctab = b.ctab" + " and b.identreprise='" + cdos + "'" + " and a.identreprise='" + cdos + "'" + " and a.ctab = 22 "
 			+ " and b.ctab = 22 " + " and a.nume = 1 " + " and b.nume = 3 " + " and a.valm = 1 " + " and b.valm = 0 )" :
-	"select max(ddcg) from HistoCongeSalarie " + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+	"select max(ddcg) from HistoCongeSalarie " + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
 			+ " and ddcg < " + ddcf + "" + " and cmcg in (select a.cacc from Rhthfnom a, Rhthfnom b "
-			+ " where b.cacc = a.cacc " + " and b.ctab = b.ctab" + " and b.cdos = '" + cdos + "'" + " and a.cdos = '" + cdos + "'"
+			+ " where b.cacc = a.cacc " + " and b.ctab = b.ctab" + " and b.identreprise='" + cdos + "'" + " and a.identreprise='" + cdos + "'"
 			+ " and a.ctab = 22 " + " and b.ctab = 22 " + " and a.nume = 1 " + " and b.nume = 3 " + " and a.valm = 1 " + " and b.valm = 0 )";
 	
 		Session session = salary.getService().getSession();
 		Query q = session.createSQLQuery(requete);
 		
 		List l = q.list();
-		salary.getService().closeConnexion(session);
+		salary.getService().closeSession(session);
 		if (!ClsObjectUtil.isListEmty(l))
 		{
 			if (!ClsObjectUtil.isNull(l.get(0)))
@@ -4791,7 +4791,7 @@ public class ClsAlgorithm implements IAlgorithm
 		
 		
 		double tau = 0;
-		String query="select sum(nvl(nbjc,0)) from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and aamm = '"+salary.getMoisPaieCourant()+"' ";
+		String query="select sum(nvl(nbjc,0)) from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and aamm = '"+salary.getMoisPaieCourant()+"' ";
 		query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf = '01' ";
 		List lst = salary.getService().find(query);
 		
@@ -4921,10 +4921,10 @@ public class ClsAlgorithm implements IAlgorithm
 		// numero de ligne pour la banque principale
 		Integer nligPrincipal = -1;
 
-//		String queryString = "select nlig, bqag, pourc, mont, dvd, txchg, mntdb, mntdvd, aamm, princ, guic, comp from VirementSalaire " + " where cdos = '"
+//		String queryString = "select nlig, bqag, pourc, mont, dvd, txchg, mntdb, mntdvd, aamm, princ, guic, comp from VirementSalaire " + " where identreprise='"
 //				+ salary.getInfoSalary().getComp_id().getCdos() + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " order by cdos, nmat, nlig";
-		String queryString = "From VirementSalaire " + " where cdos = '"
-		+ salary.getInfoSalary().getComp_id().getCdos() + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " order by cdos, nmat, nlig";
+		String queryString = "From VirementSalarie " + " where identreprise='"
+		+ salary.getInfoSalary().getComp_id().getCdos() + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " order by identreprise, nmat, nlig";
 		//
 		// BEGIN
 		//
@@ -4972,7 +4972,7 @@ public class ClsAlgorithm implements IAlgorithm
 			// PA_CALCUL.err_msg := PA_PAIE.erreurp('ERR-90072',PA_CALCUL.w_clang,PA_CALCUL.t_rub.algo,PA_CALCUL.wsal01.nmat);
 			// RETURN FALSE;
 			// END;
-			String updateString = "update VirementSalaire" + " set mntdb = 0, mntdvd = 0" + " where cdos = '" + salary.getInfoSalary().getComp_id().getCdos() + "'" + " and nmat = '"
+			String updateString = "update VirementSalarie" + " set mntdb = 0, mntdvd = 0" + " where identreprise='" + salary.getInfoSalary().getComp_id().getCdos() + "'" + " and nmat = '"
 					+ salary.getInfoSalary().getComp_id().getNmat() + "'";
 			// salary.getService().bulkUpdate(updateString);
 			try
@@ -5351,7 +5351,7 @@ public class ClsAlgorithm implements IAlgorithm
 			/** ****par yannick ************** */
 //			String updateString = "update VirementSalaire set txchg  = " + virement.getTxchg() + ",mntdb  = mntdb + " + virement.getMntdb() + ",mntdvd = mntdvd + " + virement.getMntdvd() + ",aamm   ="
 //					+ salary.getPeriodOfPay();
-//			updateString += " where cdos = '" + salary.getInfoSalary().getComp_id().getCdos() + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "' and nlig=" + nligPrincipal;
+//			updateString += " where identreprise='" + salary.getInfoSalary().getComp_id().getCdos() + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "' and nlig=" + nligPrincipal;
 //			try
 //			{
 //				salary.getService().updateFromTable(updateString);
@@ -5658,12 +5658,12 @@ public class ClsAlgorithm implements IAlgorithm
 		double inter = 0;
 		//
 		// String queryString = " from ElementSalaireBareme "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " order by cdos , crub , nume";
 		// //
 		// String queryStringRetro = " from Rhthrubbarem "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " and aamm = '" + salary.getPeriodOfPay() + "'"
 		// + " and nbul = " + salary.getNbul()
@@ -6136,12 +6136,12 @@ public class ClsAlgorithm implements IAlgorithm
 		double taux = 0;
 		//
 		// String queryString = " from ElementSalaireBareme "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " order by cdos , crub , nume";
 		// //
 		// String queryStringRetro = " from Rhthrubbarem "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " and aamm = '" + salary.getPeriodOfPay() + "'"
 		// + " and nbul = " + salary.getNbul()
@@ -6423,13 +6423,13 @@ public class ClsAlgorithm implements IAlgorithm
 			// WHEN NO_DATA_FOUND THEN null;
 			// END;
 			l = salary.getService().find(
-					"select sum(valm) from Rhthfnom" + " where cdos = '" + cdos + "'" + " and ctab = " + rubrique.getRubrique().getTabl() + " and cacc = '"
+					"select sum(valm) from Rhthfnom" + " where identreprise='" + cdos + "'" + " and ctab = " + rubrique.getRubrique().getTabl() + " and cacc = '"
 							+ salary.getInfoSalary().getCat() + "'" + " and aamm = '" + salary.getPeriodOfPay() + "'" + " and nbul = " + salary.getNbul() + " and nume = 1");
 			if (!ClsObjectUtil.isListEmty(l))
 				divBaseConge = (Double) l.get(0);
 			//
 			l = salary.getService().find(
-					"select sum(valm) from Rhthfnom" + " where cdos = '" + cdos + "'" + " and ctab = '" + rubrique.getRubrique().getTabl() + "'" + " and cacc = '"
+					"select sum(valm) from Rhthfnom" + " where identreprise='" + cdos + "'" + " and ctab = '" + rubrique.getRubrique().getTabl() + "'" + " and cacc = '"
 							+ salary.getInfoSalary().getCat() + "'" + " and aamm = '" + salary.getPeriodOfPay() + "'" + " and nbul = " + salary.getNbul() + " and nume = 2");
 			if (!ClsObjectUtil.isListEmty(l))
 				divBaseSex = (Double) l.get(0);
@@ -6450,13 +6450,13 @@ public class ClsAlgorithm implements IAlgorithm
 			// WHEN NO_DATA_FOUND THEN null;
 			// END;
 			l = salary.getService().find(
-					"select sum(valm) from ParamData" + " where cdos = '" + cdos + "'" + " and ctab = '" + rubrique.getRubrique().getTabl() + "'" + " and cacc = '"
+					"select sum(valm) from ParamData" + " where identreprise='" + cdos + "'" + " and ctab = '" + rubrique.getRubrique().getTabl() + "'" + " and cacc = '"
 							+ salary.getInfoSalary().getCat() + "'" + " and nume = 1");
 			if (!ClsObjectUtil.isListEmty(l))
 				divBaseConge = (Double) l.get(0);
 			//
 			l = salary.getService().find(
-					"select sum(valm) from ParamData" + " where cdos = '" + cdos + "'" + " and ctab = '" + rubrique.getRubrique().getTabl() + "'" + " and cacc = '"
+					"select sum(valm) from ParamData" + " where identreprise='" + cdos + "'" + " and ctab = '" + rubrique.getRubrique().getTabl() + "'" + " and cacc = '"
 							+ salary.getInfoSalary().getCat() + "'" + " and nume = 2");
 			if (!ClsObjectUtil.isListEmty(l) &&  l.get(0) != null)
 				divBaseSex = (Double) l.get(0);
@@ -6795,7 +6795,7 @@ public class ClsAlgorithm implements IAlgorithm
 			if(tempNumber != null) montantParEnfant = tempNumber.doubleValue();
 			
 			int nbec = 0;
-			String query = "select count(*) from Rhtenfantagent" + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and achg='O' ";
+			String query = "select count(*) from Rhtenfantagent" + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and achg='O' ";
 //			if(TypeBDUtil.typeBD.equalsIgnoreCase(TypeBDUtil.IN))
 				query+=" and months_between(last_day(to_date('"+this.salary.getMoisPaieCourant()+"01','%Y%m%d')),dtna)/12 <= "+ageEnfantACharge;
 //			else query+=" and months_between(last_day(to_date("+this.salary.getMoisPaieCourant()+",'yyyymm')),dtna)/12 <= "+ageEnfantACharge;
@@ -7038,7 +7038,7 @@ public class ClsAlgorithm implements IAlgorithm
 		String cdos = rubrique.getRubrique().getComp_id().getCdos();
 		String nmat = this.salary.getInfoSalary().getComp_id().getNmat();
 		String aamm = this.salary.getMonthOfPay();
-		String query="SELECT sum(mont)  FROM CumulPaie WHERE cdos = '"+cdos+"' and nmat = '"+nmat+"' ";
+		String query="SELECT sum(mont)  FROM CumulPaie WHERE identreprise='"+cdos+"' and nmat = '"+nmat+"' ";
 		query+=" and aamm >= '"+w_prem+"' and aamm < '"+aamm+"' and aamm != '"+c_cum99+"' and rubq = '"+ClsStringUtil.formatNumber(w4,ParameterUtil.formatRubrique)+"' and nbul = 9";
 		
 		List lst = salary.getService().find(query);
@@ -7319,7 +7319,7 @@ public class ClsAlgorithm implements IAlgorithm
 				return false;
 			}
 			//-- Lecture des dates adhesion et radiation
-			String sql = "From CaisseMutuelleSalarie where cdos = '" + rub.getComp_id().getCdos() + "'";
+			String sql = "From CaisseMutuelleSalarie where identreprise='" + rub.getComp_id().getCdos() + "'";
 			sql += " and nmat = '" + info.getComp_id().getNmat() + "'";
 			sql += " (and rscm = '" + A61_Rubq + "' or rpcm ='" + A61_Rubq + "')";
 			List<CaisseMutuelleSalarie> lst = salary.service.find(sql);
@@ -7572,7 +7572,7 @@ public class ClsAlgorithm implements IAlgorithm
 		sql += " sum(case nume when 9 then valt else 0 end), ";
 		sql += " sum(case nume when 10 then valt else 0 end) ";
 
-		sql += " From ParamData Where cdos = '" + rubq.getComp_id().getCdos() + "' and ctab = " + num_table + " and cacc = '" + cle10 + "' and nume in (1,2,3,4,5,6,7,8,9,10)";
+		sql += " From ParamData Where identreprise='" + rubq.getComp_id().getCdos() + "' and ctab = " + num_table + " and cacc = '" + cle10 + "' and nume in (1,2,3,4,5,6,7,8,9,10)";
 
 		List listOfMaxsum = salary.getService().find(sql);
 		if (listOfMaxsum.isEmpty())
@@ -7738,7 +7738,7 @@ public class ClsAlgorithm implements IAlgorithm
 		complexQuery += ", sum(case when nume = 4 then valm else 0 end)";
 		complexQuery += ", sum(case when nume = 5 then valm else 0 end)";
 		complexQuery += ", sum(case when nume = 6 then valm else 0 end)";
-		complexQuery += " from ParamData" + " where cdos = '" + cdos + "'" + " and ctab = " + tabl + " and cacc = '" + accesKey + "'" + " and nume in (2, 3, 4, 5, 6)";
+		complexQuery += " from ParamData" + " where identreprise='" + cdos + "'" + " and ctab = " + tabl + " and cacc = '" + accesKey + "'" + " and nume in (2, 3, 4, 5, 6)";
 		List listOfMaxsum = salary.getService().find(complexQuery);
 		if (listOfMaxsum == null)
 		{
@@ -8171,7 +8171,7 @@ public class ClsAlgorithm implements IAlgorithm
 			// PA_ALGO.Pb_Calcul := TRUE;
 			// RETURN FALSE;
 			// END;
-			complexQuery = "select count(*) from Rhtenfantagent" + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and nucj between "
+			complexQuery = "select count(*) from Rhtenfantagent" + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and nucj between "
 					+ nucj1 + " and " + nucj2 + " and sexe like '" + sexe + "'" + " and pnai like '" + pnai + "'" + " and scol like '" + scol + "'" + " and achg like '" + achg + "'";
 			nbreenfant = salary.getService().find(complexQuery);
 			if (nbreenfant == null)
@@ -8205,7 +8205,7 @@ public class ClsAlgorithm implements IAlgorithm
 			// PA_ALGO.Pb_Calcul := TRUE;
 			// RETURN FALSE;
 			// END;
-			complexQuery = "select count(*) from Rhtenfantagent" + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and dtna is null";
+			complexQuery = "select count(*) from Rhtenfantagent" + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and dtna is null";
 			nbreenfant = salary.getService().find(complexQuery);
 			// IF Nb_enfants > 0
 			// THEN
@@ -8242,7 +8242,7 @@ public class ClsAlgorithm implements IAlgorithm
 			Date dtna11 = new ClsDate(dtna1, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getFirstDayOfMonth();
 			Date dtna22 = new ClsDate(dtna2, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getLastDayOfMonth();
 
-			complexQuery = "select count(*) from Rhtenfantagent" + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and nucj between "
+			complexQuery = "select count(*) from Rhtenfantagent" + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and nucj between "
 					+ nucj1 + " and " + nucj2 + " and sexe like '" + sexe + "'" + " and dtna between '" + new ClsDate(dtna11).getDateS(salary.parameter.appDateFormat) + "' and '"
 					+ new ClsDate(dtna22).getDateS(salary.parameter.appDateFormat) + "'" + " and pnai like '" + pnai + "'" + " and scol like '" + scol + "'" + " and achg like '"
 					+ achg + "'";
@@ -8296,7 +8296,7 @@ public class ClsAlgorithm implements IAlgorithm
 		
 		String cleAcces = rubrique.getRubrique().getComp_id().getCrub();
 		String cdos = salary.parameter.dossier;
-		List<ParamData> lst = salary.service.find("From ParamData where cdos='"+cdos+"' and ctab = "+rubrique.getRubrique().getTabl()+"  and cacc = '"+cleAcces+"' order by nume");
+		List<ParamData> lst = salary.service.find("From ParamData where identreprise='"+cdos+"' and ctab = "+rubrique.getRubrique().getTabl()+"  and cacc = '"+cleAcces+"' order by nume");
 		if(lst.isEmpty())
 		{
 			error = "ALGO" + rubrique.getRubrique().getAlgo() + ", Sal " + salary.getInfoSalary().getComp_id().getNmat() + ", Rbq " + cleAcces + ": Parametre " + cleAcces + ", Mq en T "
@@ -8720,8 +8720,8 @@ public class ClsAlgorithm implements IAlgorithm
 		}
 		else
 		{
-			String queryString = "select sum(mont), count(*) from table" + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and aamm >= '" + periodeDebut + "' and aamm < '" + dateBase + "'" + " and aamm not like '%99'" + " and rubq = '" + c4 + "'" + " and nbul != 0";
-//			queryString = "select sum(mont), count(*) from table" + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and aamm >= '" + periodeDebut + "' and aamm < '" + dateBase + "'" + " and substring(aamm, 5, 2) != '99'" + " and rubq = '" + c4 + "'" + " and nbul != 0";
+			String queryString = "select sum(mont), count(*) from table" + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and aamm >= '" + periodeDebut + "' and aamm < '" + dateBase + "'" + " and aamm not like '%99'" + " and rubq = '" + c4 + "'" + " and nbul != 0";
+//			queryString = "select sum(mont), count(*) from table" + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'" + " and aamm >= '" + periodeDebut + "' and aamm < '" + dateBase + "'" + " and substring(aamm, 5, 2) != '99'" + " and rubq = '" + c4 + "'" + " and nbul != 0";
 			queryString = salary.getParameter().isUseRetroactif() ? queryString.replace("table", "Rhtprcumu") : queryString.replace("table", "CumulPaie");
 			if ('O' == salary.getParameter().getGenfile())
 				outputtext += "\n" + "................query: " + queryString;
@@ -9148,7 +9148,7 @@ public class ClsAlgorithm implements IAlgorithm
 //		           WHERE cdos = PA_CALCUL.wpdos.cdos 
 //		             AND nmat = PA_CALCUL.wsal01.nmat
 //		           ORDER BY lg, crub;
-		String curs_pretint = "From PretInterne where cdos='"+salary.getParameter().getDossier()+"' and nmat='"+salary.getInfoSalary().getComp_id().getNmat()+"' order by lg, crub";
+		String curs_pretint = "From PretInterne where identreprise='"+salary.getParameter().getDossier()+"' and nmat='"+salary.getInfoSalary().getComp_id().getNmat()+"' order by lg, crub";
 //
 //		CURSOR curs_pretexe IS        
 //			     SELECT *
@@ -9156,7 +9156,7 @@ public class ClsAlgorithm implements IAlgorithm
 //		           WHERE cdos = PA_CALCUL.wpdos.cdos 
 //		             AND nmat = PA_CALCUL.wsal01.nmat
 //		           ORDER BY nprt, crub;
-		String curs_pretexe = "From PretExterneEntete where cdos='"+salary.getParameter().getDossier()+"' and nmat='"+salary.getInfoSalary().getComp_id().getNmat()+"' order by nprt ,crub";
+		String curs_pretexe = "From PretExterneEntete where identreprise='"+salary.getParameter().getDossier()+"' and nmat='"+salary.getInfoSalary().getComp_id().getNmat()+"' order by nprt ,crub";
 //
 //		CURSOR curs_pretexl IS        
 //		           SELECT *
@@ -9164,7 +9164,7 @@ public class ClsAlgorithm implements IAlgorithm
 //		           WHERE cdos = wpretexe.cdos 
 //		             AND nprt = wpretexe.nprt
 //		             AND TO_CHAR(perb,'YYYYMM') = PA_ALGO.w_aamm;
-		String curs_pretexl = "From PretExterneDetail where cdos='"+salary.getParameter().getDossier()+"' and nprt= :nprt order by nprt";
+		String curs_pretexl = "From PretExterneDetail where identreprise='"+salary.getParameter().getDossier()+"' and nprt= :nprt order by nprt";
 //		perb = row.getComp_id().getPerb();
 //		if (new ClsDate(perb, this.salary.getParameter().getAppDateFormat()).getYearAndMonth().equals(salary.getPeriodOfPay()))
 		
@@ -9393,7 +9393,7 @@ public class ClsAlgorithm implements IAlgorithm
 				{
 //
 //		              OPEN curs_pretexl;
-					curs_pretexl = "From PretExterneDetail where cdos='"+salary.getParameter().getDossier()+"' and nprt= '"+pretexe.getNprt()+"' order by nprt";
+					curs_pretexl = "From PretExterneDetail where identreprise='"+salary.getParameter().getDossier()+"' and nprt= '"+pretexe.getNprt()+"' order by nprt";
 					pretligs = salary.getService().find(curs_pretexl);
 //		              LOOP
 					for (PretExterneDetail pretexl: pretligs)
@@ -9462,7 +9462,7 @@ public class ClsAlgorithm implements IAlgorithm
 
 		String cleAcces = rubrique.getRubrique().getComp_id().getCrub();
 		String cdos = salary.parameter.dossier;
-		List<ParamData> lst = salary.service.find("From ParamData where cdos='" + cdos + "' and ctab = " + rubrique.getRubrique().getTabl() + "  and cacc = '" + cleAcces
+		List<ParamData> lst = salary.service.find("From ParamData where identreprise='" + cdos + "' and ctab = " + rubrique.getRubrique().getTabl() + "  and cacc = '" + cleAcces
 				+ "' order by nume");
 		if (lst.isEmpty())
 		{
@@ -9765,12 +9765,12 @@ public class ClsAlgorithm implements IAlgorithm
 		}
 		//
 		// String queryString = " from ElementSalaireBareme "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " order by cdos , crub , nume";
 		// //
 		// String queryStringRetro = " from Rhthrubbarem "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " and aamm = '" + salary.getPeriodOfPay() + "'"
 		// + " and nbul = " + salary.getNbul()
@@ -10283,13 +10283,13 @@ public class ClsAlgorithm implements IAlgorithm
 		}
 		// END IF;
 		//
-//		String queryString = " from ElementSalaireBareme " + " where cdos = '" + cdos + "'" + " and crub = '" + crub + "'" + " and val1 <= '" + Base_mensuelle + "'" + " and val2 >= '"
+//		String queryString = " from ElementSalaireBareme " + " where identreprise='" + cdos + "'" + " and crub = '" + crub + "'" + " and val1 <= '" + Base_mensuelle + "'" + " and val2 >= '"
 //				+ Base_mensuelle + "'" + " order by cdos , crub , nume";
-//		String queryStringRetro = " from Rhthrubbarem " + " where cdos = '" + cdos + "'" + " and crub = '" + crub + "'" + " and aamm = '" + salary.getPeriodOfPay() + "'"
+//		String queryStringRetro = " from Rhthrubbarem " + " where identreprise='" + cdos + "'" + " and crub = '" + crub + "'" + " and aamm = '" + salary.getPeriodOfPay() + "'"
 //				+ " and nbul = " + salary.getNbul() + " and val1 <= '" + Base_mensuelle + "'" + " and val2 >= '" + Base_mensuelle + "'"
 //				+ " order by cdos , crub , nume";
-		String queryString = " from ElementSalaireBareme " + " where cdos = '" + cdos + "'" + " and crub = '" + crub + "' order by cdos , crub , nume";
-		String queryStringRetro = " from Rhthrubbarem " + " where cdos = '" + cdos + "'" + " and crub = '" + crub + "'" + " and aamm = '" + salary.getPeriodOfPay() + "'"
+		String queryString = " from ElementSalaireBareme " + " where identreprise='" + cdos + "'" + " and crub = '" + crub + "' order by cdos , crub , nume";
+		String queryStringRetro = " from Rhthrubbarem " + " where identreprise='" + cdos + "'" + " and crub = '" + crub + "'" + " and aamm = '" + salary.getPeriodOfPay() + "'"
 		+ " and nbul = " + salary.getNbul() + " order by cdos , crub , nume";
 		//
 		l = salary.getParameter().isUseRetroactif() ? salary.getService().find(queryStringRetro) : salary.getService().find(queryString);
@@ -10377,7 +10377,7 @@ public class ClsAlgorithm implements IAlgorithm
 			if (salary.getParameter().isUseRetroactif())
 			{
 				l = salary.getService().find(
-						"select sum(mont) from Rhtprcumu" + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+						"select sum(mont) from Rhtprcumu" + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
 								+ " and aamm >= '" + Periode_debut + "'" + " and aamm < '" + salary.getPeriodOfPay() + "'" + " and rubq = '" + rubrique.getRubrique().getRcon()
 								+ "'" + " and nbul != 0");
 				if (!ClsObjectUtil.isListEmty(l))
@@ -10386,7 +10386,7 @@ public class ClsAlgorithm implements IAlgorithm
 			else
 			{
 				l = salary.getService().find(
-						"select sum(mont) from CumulPaie" + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+						"select sum(mont) from CumulPaie" + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
 								+ " and aamm >= '" + Periode_debut + "'" + " and aamm < '" + salary.getPeriodOfPay() + "'" + " and rubq = '" + rubrique.getRubrique().getRcon()
 								+ "'" + " and nbul != 0");
 				if (!ClsObjectUtil.isListEmty(l) &&  l.get(0) != null)
@@ -10558,11 +10558,11 @@ public class ClsAlgorithm implements IAlgorithm
 		double Montant_tranche = 0;
 		//
 		// String queryString = " from ElementSalaireBareme "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " order by cdos , crub , nume";
 		// String queryStringRetro = " from Rhthrubbarem "
-		// + " where cdos = '" + cdos + "'"
+		// + " where identreprise='" + cdos + "'"
 		// + " and crub = '" + crub + "'"
 		// + " and aamm = '" + salary.getPeriodOfPay() + "'"
 		// + " and nbul = " + salary.getNbul()
@@ -10706,14 +10706,14 @@ public class ClsAlgorithm implements IAlgorithm
 			if (salary.getParameter().isUseRetroactif())
 			{
 				l = salary.getService().find(
-						"select sum(mont) from Rhtprcumu" + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+						"select sum(mont) from Rhtprcumu" + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
 								+ " and aamm >= '" + Periode_debut + "'" + " and aamm < '" + salary.getPeriodOfPay() + "'" + " and rubq = '" + rubrique.getRubrique().getRcon()
 								+ "'" + " and nbul != 0");
 			}
 			else
 			{
 				l = salary.getService().find(
-						"select sum(mont) from CumulPaie" + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+						"select sum(mont) from CumulPaie" + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
 								+ " and aamm >= '" + Periode_debut + "'" + " and aamm < '" + salary.getPeriodOfPay() + "'" + " and rubq = '" + rubrique.getRubrique().getRcon()
 								+ "'" + " and nbul != 0");
 			}
@@ -10951,7 +10951,7 @@ public class ClsAlgorithm implements IAlgorithm
 		}
 		finally
 		{
-			salary.parameter.service.closeConnexion(session);
+			salary.parameter.service.closeSession(session);
 		}
 
 		return true;
@@ -12493,11 +12493,11 @@ public class ClsAlgorithm implements IAlgorithm
 	    
 		String requete = "select ag.nmat, dp.valm, nf.vall from rhtdiplomeagent ag, ParamData dp "+ 
 						 "left join ParamData nf on (nf.cdos=dp.cdos and nf.ctab=dp.ctab and nf.cacc=dp.cacc and nf.nume=2) "+
-				         "where ag.cdos=dp.cdos and ag.cdip=dp.cacc and dp.ctab=16 and dp.nume=1 and ag.cdos='"+cdos+"' and ag.nmat='"+nmat+"' order by dp.valm desc";
+				         "where ag.cdos=dp.cdos and ag.cdip=dp.cacc and dp.ctab=16 and dp.nume=1 and ag.identreprise='"+cdos+"' and ag.nmat='"+nmat+"' order by dp.valm desc";
 		
 		Session session  = salary.service.getSession();
 		List<Object[]> objs = session.createSQLQuery(requete).list();
-		salary.service.closeConnexion(session);
+		salary.service.closeSession(session);
 		
 		if(objs==null || objs.size()==0){
 			this.salary.getValeurRubriquePartage().setAmount(nbrePoints.doubleValue());
@@ -12555,7 +12555,7 @@ public class ClsAlgorithm implements IAlgorithm
 		      return false;
 		 }
 		 int anneepasse = salary.getParameter().getMyMonthOfPay().getYear()-1;
-		 String query = "SELECT sum(mont)  FROM CumulPaie WHERE cdos = '" + cdos + "' and nmat = '" + nmat + "' ";
+		 String query = "SELECT sum(mont)  FROM CumulPaie WHERE identreprise='" + cdos + "' and nmat = '" + nmat + "' ";
 		 query = query + " and aamm not like '%99' and aamm like '" + anneepasse + "%'  and rubq = '" + rubBaseConge + "' and nbul = " + this.salary.getNbul() + " ";
 	      double mont_base_conge = 0.0D;
 	        
@@ -12616,7 +12616,7 @@ public class ClsAlgorithm implements IAlgorithm
 		 }
 		 listeRub = "("+listeRub+")";
 		 int anneepasse = salary.getParameter().getMyMonthOfPay().getYear()-1;
-		 String query = "SELECT sum(mont)  FROM CumulPaie WHERE cdos = '" + cdos + "' and nmat = '" + nmat + "' ";
+		 String query = "SELECT sum(mont)  FROM CumulPaie WHERE identreprise='" + cdos + "' and nmat = '" + nmat + "' ";
 		 query = query + " and aamm not like '%99' and aamm like '" + anneepasse + "%'  and rubq in " + listeRub + " and nbul = " + this.salary.getNbul() + " ";
 	      double mont_base_bilan = 0.0D;
 	        
@@ -12666,20 +12666,20 @@ public class ClsAlgorithm implements IAlgorithm
 //		Date date_debcg = null;
 //		
 //		String requete=!salary.getParameter().isUseRetroactif() ?
-//			"select max(ddcg) from HistoCongeSalarie " + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+//			"select max(ddcg) from HistoCongeSalarie " + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
 //			+ " and cmcg in (select a.cacc from ParamData a, ParamData b " + " where b.cacc = a.cacc "
-//			+ " and b.ctab = b.ctab" + " and b.cdos = '" + cdos + "'" + " and a.cdos = '" + cdos + "'" + " and a.ctab = 22 "
+//			+ " and b.ctab = b.ctab" + " and b.identreprise='" + cdos + "'" + " and a.identreprise='" + cdos + "'" + " and a.ctab = 22 "
 //			+ " and b.ctab = 22 " + " and a.nume = 1 " + " and b.nume = 3 " + " and a.valm = 1 " + " and b.valm = 0 )" :
-//	"select max(ddcg) from HistoCongeSalarie " + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+//	"select max(ddcg) from HistoCongeSalarie " + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
 //			+ " and cmcg in (select a.cacc from Rhthfnom a, Rhthfnom b "
-//			+ " where b.cacc = a.cacc " + " and b.ctab = b.ctab" + " and b.cdos = '" + cdos + "'" + " and a.cdos = '" + cdos + "'"
+//			+ " where b.cacc = a.cacc " + " and b.ctab = b.ctab" + " and b.identreprise='" + cdos + "'" + " and a.identreprise='" + cdos + "'"
 //			+ " and a.ctab = 22 " + " and b.ctab = 22 " + " and a.nume = 1 " + " and b.nume = 3 " + " and a.valm = 1 " + " and b.valm = 0 )";
 //	
 //		Session session = salary.getService().getSession();
 //		Query q = session.createSQLQuery(requete);
 //		
 //		List l = q.list();
-//		salary.getService().closeConnexion(session);
+//		salary.getService().closeSession(session);
 //		if (!ClsObjectUtil.isListEmty(l))
 //		{
 //			if (!ClsObjectUtil.isNull(l.get(0)))
@@ -12746,33 +12746,33 @@ public class ClsAlgorithm implements IAlgorithm
 			ParamData typeBGFI = (ParamData) salary.parameter.service.find("FROM ParamData WHERE identreprise="+cdos+" AND ctab=99 and nume=2 and cacc='PAYSBGFI'");
 
 			if(typeBGFI !=null && StringUtils.isNotEmpty(typeBGFI.getVall()) && "CONGO".equalsIgnoreCase(typeBGFI.getVall())){
-				query = "select cast(sum(nvl(nbjc,0)) as int) nb from ElementVariableConge where cdos = '" + this.salary.getInfoSalary().getComp_id().getCdos() + "' and year(ddeb)||lpad(month(ddeb),2,'0') <= '" + this.salary.getMoisPaieCourant() + "' ";
+				query = "select cast(sum(nvl(nbjc,0)) as int) nb from ElementVariableConge where identreprise='" + this.salary.getInfoSalary().getComp_id().getCdos() + "' and year(ddeb)||lpad(month(ddeb),2,'0') <= '" + this.salary.getMoisPaieCourant() + "' ";
 			    query = query + " and nmat = '" + this.salary.getInfoSalary().getComp_id().getNmat() + "' and nbul = " + this.salary.getNbul() + " AND motf = '01' ";
 			} else {
-				query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and to_char(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
+				query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and to_char(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
 				query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a, ParamData b "+
-																	 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
+																	 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
 																	 "and a.ctab = 22 and b.ctab = 22 and a.nume = 1  and b.nume = 3 and a.valm = 1 and b.valm = 0 ) ";
 				
 				if (StringUtils.equals(TypeBDUtil.typeBD, TypeBDUtil.IN))
 				{
-					query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and to_char1(ddeb,'YYYYMM') <= '"+salary.getMoisPaieCourant()+"' ";
+					query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and to_char1(ddeb,'YYYYMM') <= '"+salary.getMoisPaieCourant()+"' ";
 					query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a, ParamData b "+
-																		 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
+																		 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
 																		 "and a.ctab = 22 and b.ctab = 22 and a.nume = 1  and b.nume = 3 and a.valm = 1 and b.valm = 0 ) ";
 				}
 				if (StringUtils.equals(TypeBDUtil.typeBD, TypeBDUtil.MS))
 				{
-					query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and dbo.formaterDateEnChaine(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
+					query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and dbo.formaterDateEnChaine(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
 					query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a, ParamData b "+
-																		 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
+																		 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
 																		 "and a.ctab = 22 and b.ctab = 22 and a.nume = 1  and b.nume = 3 and a.valm = 1 and b.valm = 0 ) ";
 				}
 				if (StringUtils.equals(TypeBDUtil.typeBD, TypeBDUtil.MY))
 				{
-					query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and date_format(ddeb,'%Y%m') <= '"+salary.getMoisPaieCourant()+"' ";
+					query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and date_format(ddeb,'%Y%m') <= '"+salary.getMoisPaieCourant()+"' ";
 					query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a, ParamData b "+
-																		 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
+																		 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
 																		 "and a.ctab = 22 and b.ctab = 22 and a.nume = 1  and b.nume = 3 and a.valm = 1 and b.valm = 0 ) ";
 				}
 			}
@@ -12787,7 +12787,7 @@ public class ClsAlgorithm implements IAlgorithm
 		} catch (Exception e) {
 			// TODO: handle exception
 		} finally {
-			salary.parameter.service.closeConnexion(session);
+			salary.parameter.service.closeSession(session);
 		}
 		
 		salary.getValeurRubriquePartage().setRates(tau);
@@ -12828,7 +12828,7 @@ public class ClsAlgorithm implements IAlgorithm
 			if(tempNumber != null){
 				double diviseur = tempNumber.doubleValue();
 				String cleRub = ClsStringUtil.formatNumber(tempNumber, ParameterUtil.formatRubrique);
-				String query="select cast(sum(nvl(mont,0)) as int) nb from Rhteltvardet where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and aamm = '"+salary.getMoisPaieCourant()+"' ";
+				String query="select cast(sum(nvl(mont,0)) as int) nb from Rhteltvardet where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and aamm = '"+salary.getMoisPaieCourant()+"' ";
 				query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" and rubq='"+cleRub+"'";
 				Session session = salary.parameter.service.getSession();
 				try {
@@ -12840,7 +12840,7 @@ public class ClsAlgorithm implements IAlgorithm
 				} catch (Exception e) {
 					// TODO: handle exception
 				} finally {
-					salary.parameter.service.closeConnexion(session);
+					salary.parameter.service.closeSession(session);
 				}
 			}
 		
@@ -12961,16 +12961,16 @@ public class ClsAlgorithm implements IAlgorithm
 		Date ddebfinex = new ClsDate(salary.getPeriodOfPay()+"01", "yyyyMMdd").getFirstDayOfYear();
 		if(dtes.getTime()>ddebfinex.getTime()) ddebfinex = dtes;
 		String ddcf = "'" + new ClsDate(ddebfinex).getDateS(salary.parameter.appDateFormat) + "'";
-		String requete = "select sum(nvl(nbjc,0)) from HistoCongeSalarie " + " where cdos = '" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+		String requete = "select sum(nvl(nbjc,0)) from HistoCongeSalarie " + " where identreprise='" + cdos + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
 						+ " and ddcg > " + ddcf + "" + "  and cmcg in (select a.cacc from ParamData a, ParamData b " + " where b.cacc = a.cacc "
-						+ " and b.ctab = b.ctab" + " and b.cdos = '" + cdos + "'" + " and a.cdos = '" + cdos + "'" + " and a.ctab = 22 "
+						+ " and b.ctab = b.ctab" + " and b.identreprise='" + cdos + "'" + " and a.identreprise='" + cdos + "'" + " and a.ctab = 22 "
 						+ " and b.ctab = 22 " + " and a.nume = 1 " + " and b.nume = 3 " + " and a.valm = 1 " + " and b.valm = 0 )";
 	
 		Session session = salary.getService().getSession();
 		Query q = session.createSQLQuery(requete);
 		
 		List l = q.list();
-		salary.getService().closeConnexion(session);
+		salary.getService().closeSession(session);
 		BigDecimal nbCOnge = BigDecimal.ZERO;
 		if (!ClsObjectUtil.isListEmty(l))
 		{
@@ -13007,32 +13007,32 @@ public class ClsAlgorithm implements IAlgorithm
 			Query q = null;
 			
 		
-		String query="select cast(sum(nvl(nbjc,0)) as int) nb from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and to_char(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
+		String query="select cast(sum(nvl(nbjc,0)) as int) nb from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and to_char(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
 		query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a, ParamData b "+
-															 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
+															 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
 															 "and a.ctab = 22 and b.ctab = 22 and a.nume = 1  and b.nume = 3 and a.valm = 1 and b.valm = 0 ) ";
 		
 		if (StringUtils.equals(TypeBDUtil.typeBD, TypeBDUtil.IN))
 		{
-			query="select cast(sum(nvl(nbjc,0)) as int) nb from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and to_char1(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
+			query="select cast(sum(nvl(nbjc,0)) as int) nb from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and to_char1(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
 			query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a, ParamData b "+
-																 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
+																 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
 																 "and a.ctab = 22 and b.ctab = 22 and a.nume = 1  and b.nume = 3 and a.valm = 1 and b.valm = 0 ) ";
 			
 		}
 		
 		if (StringUtils.equals(TypeBDUtil.typeBD, TypeBDUtil.MS))
 		{
-			query="select cast(sum(nvl(nbjc,0)) as int) nb from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and dbo.formaterDateEnChaine(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
+			query="select cast(sum(nvl(nbjc,0)) as int) nb from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and dbo.formaterDateEnChaine(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
 			query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a, ParamData b "+
-																 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
+																 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
 																 "and a.ctab = 22 and b.ctab = 22 and a.nume = 1  and b.nume = 3 and a.valm = 1 and b.valm = 0 ) ";
 		}
 		if (StringUtils.equals(TypeBDUtil.typeBD, TypeBDUtil.MY))
 		{
-			query="select cast(sum(nvl(nbjc,0)) as int) nb from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and date_format(ddeb,'%Y%m') <= '"+salary.getMoisPaieCourant()+"' ";
+			query="select cast(sum(nvl(nbjc,0)) as int) nb from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and date_format(ddeb,'%Y%m') <= '"+salary.getMoisPaieCourant()+"' ";
 			query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a, ParamData b "+
-																 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
+																 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"'  and a.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' "+
 																 "and a.ctab = 22 and b.ctab = 22 and a.nume = 1  and b.nume = 3 and a.valm = 1 and b.valm = 0 ) ";
 		}
 //		System.out.println("REQUETE: "+query);
@@ -13046,7 +13046,7 @@ public class ClsAlgorithm implements IAlgorithm
 		} catch (Exception e) {
 			// TODO: handle exception
 		} finally {
-			salary.parameter.service.closeConnexion(session);
+			salary.parameter.service.closeSession(session);
 		}
 		
 		salary.getValeurRubriquePartage().setRates(0);
@@ -13076,23 +13076,23 @@ public class ClsAlgorithm implements IAlgorithm
 			Query q = null;
 			
 		
-		String query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and to_char(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
-		query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a where a.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and a.ctab = 22 and a.nume = 3  and a.vall = 'O') ";
+		String query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and to_char(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
+		query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a where a.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and a.ctab = 22 and a.nume = 3  and a.vall = 'O') ";
 		if (StringUtils.equals(TypeBDUtil.typeBD, TypeBDUtil.IN))
 		{
-			query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and to_char1(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
-			query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a where a.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and a.ctab = 22 and a.nume = 3  and a.vall = 'O') ";
+			query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and to_char1(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
+			query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a where a.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and a.ctab = 22 and a.nume = 3  and a.vall = 'O') ";
 		}
 		
 		if (StringUtils.equals(TypeBDUtil.typeBD, TypeBDUtil.MS))
 		{
-			query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and dbo.formaterDateEnChaine(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
-			query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a where a.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and a.ctab = 22 and a.nume = 3  and a.vall = 'O') ";
+			query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and dbo.formaterDateEnChaine(ddeb,'yyyyMM') <= '"+salary.getMoisPaieCourant()+"' ";
+			query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a where a.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and a.ctab = 22 and a.nume = 3  and a.vall = 'O') ";
 		}
 		if (StringUtils.equals(TypeBDUtil.typeBD, TypeBDUtil.MY))
 		{
-			query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and date_format(ddeb,'%Y%m') <= '"+salary.getMoisPaieCourant()+"' ";
-			query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a where a.cdos = '"+salary.getInfoSalary().getComp_id().getCdos()+"' and a.ctab = 22 and a.nume = 3  and a.vall = 'O') ";
+			query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and date_format(ddeb,'%Y%m') <= '"+salary.getMoisPaieCourant()+"' ";
+			query+=" and nmat = '"+salary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+salary.getNbul()+" AND motf in (select a.cacc from ParamData a where a.identreprise='"+salary.getInfoSalary().getComp_id().getCdos()+"' and a.ctab = 22 and a.nume = 3  and a.vall = 'O') ";
 		}
 //		System.out.println("REQUETE: "+query);
 		session = salary.parameter.service.getSession();
@@ -13105,7 +13105,7 @@ public class ClsAlgorithm implements IAlgorithm
 		} catch (Exception e) {
 			// TODO: handle exception
 		} finally {
-			salary.parameter.service.closeConnexion(session);
+			salary.parameter.service.closeSession(session);
 		}
 		
 		salary.getValeurRubriquePartage().setRates(0);

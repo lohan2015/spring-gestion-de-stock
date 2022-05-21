@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "ElementSalaireBareme")
 @Table(name = "elementsalairebareme")
 public class ElementSalaireBareme extends AbstractEntity {
 

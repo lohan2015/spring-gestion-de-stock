@@ -16,6 +16,8 @@ import com.kinart.paie.business.model.ElementSalaireBareme;
 import com.kinart.paie.business.model.LogMessage;
 import com.kinart.paie.business.model.Message;
 import com.kinart.paie.business.model.ParamData;
+import com.kinart.paie.business.services.CongeFictifService;
+import com.kinart.paie.business.services.impl.CalculPaieServiceImpl;
 import com.kinart.paie.business.services.utils.ClsDate;
 import com.kinart.paie.business.services.utils.ClsObjectUtil;
 import com.kinart.paie.business.services.utils.ClsStringUtil;
@@ -35,6 +37,8 @@ import org.springframework.dao.DataAccessException;
 
 public class ClsFictifParameterOfPay extends ClsParameterOfPay
 {
+	public CongeFictifService congeFictifService;
+
 	private int BasePretsNb_ret;
 
 	private String salaireMoyenMensuelRubrique = "";
@@ -268,7 +272,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 	public void chargementTauxAbsence()
 	{
 
-		String query = "select cacc, valm from ParamData" + " where cdos ='" + dossier + "'" + " and ctab = 22" + " and nume = 8" + " and valm <> 0";
+		String query = "select cacc, valm from ParamData" + " where identreprise ='" + dossier + "'" + " and ctab = 22" + " and nume = 8" + " and valm <> 0";
 		List listOfParam = service.find(query);
 		//
 		String rubrique = "";
@@ -299,7 +303,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 	public void chargementTableValeurAjustementFictif()
 	{
 
-		String queryString = "select count(*) from Rhtrubnet " + " where session_id ='" + sessionId + "'";
+		String queryString = "select count(*) from Rhtrubnet " + " where session_id ='" + session_id + "'";
 		List listOfRubrique = service.find(queryString);
 		if (listOfRubrique != null && listOfRubrique.size() > 0)
 		{
@@ -308,7 +312,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 				this.setRubriqueNetExist(true);
 		}
 
-		queryString = "select count(*) from Rhprubriqueajus " + " where session_id ='" + sessionId + "'";
+		queryString = "select count(*) from ElementSalaireajus " + " where session_id ='" + session_id + "'";
 		listOfRubrique = service.find(queryString);
 		if (listOfRubrique != null && listOfRubrique.size() > 0)
 		{
@@ -367,7 +371,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 		// AND rman = 'N'
 		// ORDER BY cdos, crub;
 		//
-		String queryString = "select rcon from Rhprubrique where cdos ='" + dossier + "'" + " and rreg = 'O'" + " and rman = 'N'" + " order by cdos, crub";
+		String queryString = "select rcon from ElementSalaire where identreprise ='" + dossier + "'" + " and rreg = 'O'" + " and rman = 'N'" + " order by cdos, crub";
 		// CURSOR curs_rubreg2 IS
 		// SELECT rcon FROM pahrubq
 		// WHERE cdos = wpdos.cdos
@@ -376,7 +380,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 		// AND aamm = w_aamm
 		// AND nbul = wsd_fcal1.nbul
 		// ORDER BY cdos, crub;
-		String queryStringRetro = "select rcon from Rhthrubq where cdos ='" + dossier + "'" + " and rreg = 'O'" + " and rman = 'N'" + " and aamm = '" + monthOfPay + "'" + " and nbul = "
+		String queryStringRetro = "select rcon from Rhthrubq where identreprise ='" + dossier + "'" + " and rreg = 'O'" + " and rman = 'N'" + " and aamm = '" + monthOfPay + "'" + " and nbul = "
 				+ numeroBulletin + " order by cdos, crub";
 
 		List listOfRubrique = (useRetroactif) ? service.find(queryStringRetro) : service.find(queryString);
@@ -443,7 +447,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 		// AND nume = 3
 		// ORDER BY cacc;
 		//
-		// String queryString10 = "select cacc, vall, valm from ParamData " + " where cdos ='" + dossier + "'" + " and ctab = 10" + " and
+		// String queryString10 = "select cacc, vall, valm from ParamData " + " where identreprise ='" + dossier + "'" + " and ctab = 10" + " and
 		// nume = 3" + " order by cacc";
 		// -- Curseur sur les banques
 		// CURSOR Curs_TB10_2 IS
@@ -454,7 +458,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 		// AND aamm = w_aamm
 		// AND nbul = wsd_fcal1.nbul
 		// ORDER BY cacc;
-		// String queryString10Retro = "select cacc, vall, valm from Rhthfnom " + " where cdos ='" + dossier + "'" + " and ctab = 10" + " and
+		// String queryString10Retro = "select cacc, vall, valm from Rhthfnom " + " where identreprise ='" + dossier + "'" + " and ctab = 10" + " and
 		// nume = 3" + " and aamm = '"
 		// + monthOfPay + "'" + " and nbul = " + numeroBulletin + " order by cacc";
 		//
@@ -466,7 +470,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 		// AND cacc = Devise_Banque
 		// AND nume = 1;
 		//
-		// String queryString27 = "select valt, valm from ParamData " + " where cdos ='" + dossier + "'" + " and ctab = 27" + " and nume = 1" + "
+		// String queryString27 = "select valt, valm from ParamData " + " where identreprise ='" + dossier + "'" + " and ctab = 27" + " and nume = 1" + "
 		// and cacc = '" + bankCcy + "'"
 		// + " order by cacc";
 		// -- Curseur sur les devises
@@ -478,17 +482,17 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 		// AND aamm = w_aamm
 		// AND nbul = wsd_fcal1.nbul
 		// AND nume = 1;
-		// String queryString27Retro = "select valt, valm from Rhthfnom " + " where cdos ='" + dossier + "'" + " and ctab = 27" + " and nume =
+		// String queryString27Retro = "select valt, valm from Rhthfnom " + " where identreprise ='" + dossier + "'" + " and ctab = 27" + " and nume =
 		// 1" + " and cacc = '" + bankCcy
 		// + "'" + " and aamm = '" + monthOfPay + "'" + " and nbul = " + numeroBulletin + " order by cacc";
 		//
 		ClsInfoOfBank oInfoOfBank = null;
 		String queryString10Retro = "SELECT banque.cacc as codebanque, banque.vall as devisebanque, banque.valm as virmini , " + " devise.valt as tauxchange, devise.valm as nbdecimale "
 				+ "FROM Rhthfnom banque " + "Left join Rhthfnom devise on( " + "banque.cdos=devise.cdos and devise.ctab=27 and devise.nume=1 and devise.cacc=banque.vall "
-				+ "and banque.aamm = devise.aamm and banque.nbul = devise.nbul) " + "WHERE banque.cdos = '" + dossier + "' " + "AND banque.ctab = 10 " + "AND banque.nume = 3 " + "AND devise.aamm = '"
+				+ "and banque.aamm = devise.aamm and banque.nbul = devise.nbul) " + "WHERE banque.identreprise ='" + dossier + "' " + "AND banque.ctab = 10 " + "AND banque.nume = 3 " + "AND devise.aamm = '"
 				+ monthOfPay + "' " + "AND banque.nbul = " + numeroBulletin + " " + "ORDER BY banque.cacc ";
 		String queryString10 = "SELECT banque.cacc as codebanque, banque.vall as devisebanque, banque.valm as virmini , " + " devise.valt as tauxchange, devise.valm as nbdecimale "
-				+ "FROM ParamData banque " + "Left join ParamData devise on( " + "banque.cdos=devise.cdos and devise.ctab=27 and devise.nume=1 and devise.cacc=banque.vall) " + "WHERE banque.cdos = '"
+				+ "FROM ParamData banque " + "Left join ParamData devise on( " + "banque.cdos=devise.cdos and devise.ctab=27 and devise.nume=1 and devise.cacc=banque.vall) " + "WHERE banque.identreprise ='"
 				+ dossier + "' " + "AND banque.ctab = 10 " + "AND banque.nume = 3 " + "ORDER BY banque.cacc ";
 
 		Session session = service.getSession();
@@ -521,7 +525,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 
 			listOfBank.add(oInfoOfBank);
 		}
-		service.closeConnexion(session);
+		service.closeSession(session);
 
 		// List listOfRatesAndAmount10 = (useRetroactif) ? service.find(queryString10Retro) : service.find(queryString10);
 		// List listOfRatesAndAmount27 = (useRetroactif) ? service.find(queryString27Retro) : service.find(queryString27);
@@ -653,7 +657,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 		// -- Lecture Mnt1 = Rubrique somme des nets a payer (avance conges)
 		// -- Lecture Mnt2 = jours minimum pour calcul rub. dernier mois
 		String query = " SELECT sum(case nume when 1 then valm else 0 end ) as somme1, sum(case nume when 2 then valm else 0 end) as somme2";
-		query += "  FROM ParamData WHERE cdos = '" + dossier + "' AND ctab = 99 AND cacc = 'FICTIF' AND nume IN (1,2)";
+		query += "  FROM ParamData WHERE identreprise ='" + dossier + "' AND ctab = 99 AND cacc = 'FICTIF' AND nume IN (1,2)";
 		List<Object[]> l = this.getService().find(query);
 		if ((!l.isEmpty()) && l.get(0)[0] != null && l.get(0)[1] != null)
 		{
@@ -764,9 +768,9 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 	{
 		Session session = service.getSession();
 
-		String query = " SELECT count(*)  FROM ParamData WHERE cdos = '" + dossier + "' and ctab=91 and cacc = '" + cods + "' and nume = 1";
+		String query = " SELECT count(*)  FROM ParamData WHERE identreprise ='" + dossier + "' and ctab=91 and cacc = '" + cods + "' and nume = 1";
 		Integer count = Integer.valueOf(session.createSQLQuery(query).list().get(0).toString());
-		service.closeConnexion(session);
+		service.closeSession(session);
 		if(count==0)
 		{
 			calculatePremierEtDernierJourMoisPaie(monthOfPay);
@@ -846,7 +850,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 	private boolean rubriqueExiste(String rubrique)
 	{
 		// com.cdi.deltarh.service.ClsParameter.println(">>rubriqueExiste");
-		List l = service.find("from Rhprubrique where cdos = '" + dossier + "' and crub = '" + rubrique + "'");
+		List l = service.find("from ElementSalaire where identreprise ='" + dossier + "' and crub = '" + rubrique + "'");
 		if (l != null && l.size() > 0)
 			return true;
 		else
@@ -1067,15 +1071,15 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 	{
 
 		Map<String, List<Object>> map = new HashMap<String, List<Object>>();
-//		String queryStringZli = "from RhprubriqueZonelibre " + " where cdos = '" + this.getDossier() + "'";
+//		String queryStringZli = "from ElementSalaireZonelibre " + " where identreprise ='" + this.getDossier() + "'";
 //
 //		List listOfRubZli = this.getService().find(queryStringZli);
 //		//
-//		RhprubriqueZonelibre zonelibre2 = null;
+//		ElementSalaireZonelibre zonelibre2 = null;
 //		for (Object object : listOfRubZli)
 //		{
 //			// map.put(crub, value)
-//			zonelibre2 = (RhprubriqueZonelibre) object;
+//			zonelibre2 = (ElementSalaireZonelibre) object;
 //			if (!map.containsKey(zonelibre2.getComp_id().getCrub()))
 //				map.put(zonelibre2.getComp_id().getCrub(), new ArrayList<Object>());
 //			//
@@ -1092,16 +1096,16 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 	{
 
 		Map<String, List<Object[]>> map = new HashMap<String, List<Object[]>>();
-		String queryString = "select crub, nume, sign, rubk from Rhprubriquebase " + " where cdos = '" + this.getDossier() + "'" +
-				// " and crub in ( select crub from Rhprubrique" +
-				// " where cdos = '" + this.getDossier() + "'" +
+		String queryString = "select crub, nume, sign, rubk from ElementSalairebase " + " where identreprise ='" + this.getDossier() + "'" +
+				// " and crub in ( select crub from ElementSalaire" +
+				// " where identreprise ='" + this.getDossier() + "'" +
 				// " and ( (basc = 'O' and trtc = 'N') or mopa = 'O'))" +
 				" order by cdos, crub, nume";
 
-		String queryStringRetro = "select crub, nume, sign, rubk from Rhthrbqba " + " where cdos = '" + this.getDossier() + "'" + " and aamm = '" + this.getMonthOfPay() + "'"
+		String queryStringRetro = "select crub, nume, sign, rubk from Rhthrbqba " + " where identreprise ='" + this.getDossier() + "'" + " and aamm = '" + this.getMonthOfPay() + "'"
 				+ " and nbul = '" + this.getNumeroBulletin() + "'" +
-				// " and crub in ( select crub from Rhprubrique" +
-				// " where cdos = '" + this.getDossier() + "'" +
+				// " and crub in ( select crub from ElementSalaire" +
+				// " where identreprise ='" + this.getDossier() + "'" +
 				// " and ( (basc = 'O' and trtc = 'N') or mopa = 'O'))" +
 				" order by cdos, crub, nume";
 
@@ -1135,14 +1139,14 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 		List l1 = null;
 		if (!useRetroactif)
 		{
-			l = service.find("from ParamData " + " where cdos = '" + dossier + "'" + " and ctab = 63" + " and nume = 2");
-			l1 = service.find("from ParamData " + " where cdos = '" + dossier + "'" + " and ctab = 63" + " and nume = 1");
+			l = service.find("from ParamData " + " where identreprise ='" + dossier + "'" + " and ctab = 63" + " and nume = 2");
+			l1 = service.find("from ParamData " + " where identreprise ='" + dossier + "'" + " and ctab = 63" + " and nume = 1");
 		}
 		else
 		{
-			l = service.find("from Rhthfnom " + " where cdos = '" + dossier + "'" + " and ctab = 63" + " and nume = 2" + " and nbul = " + numeroBulletin
+			l = service.find("from Rhthfnom " + " where identreprise ='" + dossier + "'" + " and ctab = 63" + " and nume = 2" + " and nbul = " + numeroBulletin
 					+ " and aamm = '" + monthOfPay + "'");
-			l1 = service.find("from Rhthfnom " + " where cdos = '" + dossier + "'" + " and ctab = 63" + " and nume = 1" + " and nbul = " + numeroBulletin
+			l1 = service.find("from Rhthfnom " + " where identreprise ='" + dossier + "'" + " and ctab = 63" + " and nume = 1" + " and nbul = " + numeroBulletin
 					+ " and aamm = '" + monthOfPay + "'");
 		}
 		//
@@ -1201,11 +1205,11 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 		List l = null;
 		if (!useRetroactif)
 		{
-			l = service.find("from ParamData " + " where cdos = '" + dossier + "'" + " and ctab in (51, 52, 99)");
+			l = service.find("from ParamData " + " where identreprise ='" + dossier + "'" + " and ctab in (51, 52, 99)");
 		}
 		else
 		{
-			l = service.find("from Rhthfnom " + " where cdos = '" + dossier + "'" + " and ctab in (51, 52, 99)" + " and nbul = " + numeroBulletin + " and aamm = '"
+			l = service.find("from Rhthfnom " + " where identreprise ='" + dossier + "'" + " and ctab in (51, 52, 99)" + " and nbul = " + numeroBulletin + " and aamm = '"
 					+ monthOfPay + "'");
 		}
 		//
@@ -1253,7 +1257,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 	// public void buildRubriqueOfSessionMap()
 	// {
 	// Map<String, Object> map = new HashMap<String, Object>();
-	// String queryString = "select crub, mont from Rhprubriqueajus" + " where session_id = " + this.sessionId + " order by mont ";
+	// String queryString = "select crub, mont from ElementSalaireajus" + " where session_id = " + this.sessionId + " order by mont ";
 	// List ListOfRow = service.find(queryString);
 	// double mont = 0;
 	// Object[] oo = null;
@@ -1341,8 +1345,8 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 	{
 		// com.cdi.deltarh.service.ClsParameter.println("<<buildListOfRubrique");
 		listOfRubriquebaremeMap = new HashMap<String, Object>();
-		String queryString = "from Rhprubriquebareme " + " where cdos = '" + dossier + "'" + " order by cdos , crub , nume";
-		String queryStringRetro = "from Rhthrubbarem " + " where cdos = '" + dossier + "'" + " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = "
+		String queryString = "from ElementSalairebareme " + " where identreprise ='" + dossier + "'" + " order by cdos , crub , nume";
+		String queryStringRetro = "from Rhthrubbarem " + " where identreprise ='" + dossier + "'" + " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = "
 				+ this.getNumeroBulletin() + " order by cdos , crub , nume";
 
 		List<Object> listOfRubriquebareme = new ArrayList<Object>();
@@ -1356,7 +1360,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 
 			//Rhthrubbarem oRhthrubbarem = null;
 
-			ElementSalaireBareme oRhprubriquebareme = null;
+			ElementSalaireBareme oElementSalairebareme = null;
 
 			String lastrub = "";
 
@@ -1385,11 +1389,11 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 				for (Object barem : listOfBarem)
 				{
 
-					oRhprubriquebareme = (ElementSalaireBareme) barem;
+					oElementSalairebareme = (ElementSalaireBareme) barem;
 
-					keyOfBaremeList = oRhprubriquebareme.getCrub();
+					keyOfBaremeList = oElementSalairebareme.getCrub();
 
-					if (!oRhprubriquebareme.getCrub().equals(lastrub))
+					if (!oElementSalairebareme.getCrub().equals(lastrub))
 					{
 
 						if ("".equalsIgnoreCase(lastrub))
@@ -1410,7 +1414,7 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 						listOfRubriquebareme.add(barem);
 					}
 
-					lastrub = oRhprubriquebareme.getCrub();
+					lastrub = oElementSalairebareme.getCrub();
 				}
 			//}
 		}
@@ -1521,4 +1525,11 @@ public class ClsFictifParameterOfPay extends ClsParameterOfPay
 		this.fictiveDossierDateDebutExercice = fictiveDossierDateDebutExercice;
 	}
 
+	public CongeFictifService getCongeFictifService() {
+		return congeFictifService;
+	}
+
+	public void setCongeFictifService(CongeFictifService congeFictifService) {
+		this.congeFictifService = congeFictifService;
+	}
 }

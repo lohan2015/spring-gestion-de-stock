@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "ParamData")
 @Table(name = "paramdata")
 public class ParamData extends AbstractEntity {
 

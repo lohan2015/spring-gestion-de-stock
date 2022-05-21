@@ -7,6 +7,7 @@ import java.util.*;
 
 import com.kinart.paie.business.repository.ElementSalaireRepository;
 import com.kinart.paie.business.model.*;
+import com.kinart.paie.business.services.CalculPaieService;
 import com.kinart.paie.business.services.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
@@ -20,7 +21,7 @@ import org.springframework.dao.DataAccessException;
  * calculer toutes les rubriques. Elle a été conéue pour que ses intances soient tangibles les unes des autres. Ainsi, son espace de nommage est complétement
  * isolée.
  * 
- * @author e.etoundi
+ * @author c.mbassi
  * 
  */
 public class ClsSalaryToProcess
@@ -40,6 +41,8 @@ public class ClsSalaryToProcess
 	protected ClsNomenclatureUtil utilNomenclature = null;
 
 	protected GeneriqueConnexionService service = null;
+
+	private CalculPaieService calculPaieService;
 
 	protected ElementSalaireRepository elementSalaireRepository;
 
@@ -275,6 +278,7 @@ public class ClsSalaryToProcess
 				this.outputtext += outputtext;
 //			}
 		}
+		System.out.println(outputtext);
 	}
 
 	public synchronized Map<String, List<Object>> getListLignePretMap()
@@ -356,7 +360,7 @@ public class ClsSalaryToProcess
 	{
 		this.listOfEltvar = listOfEltvar;
 	}
-	
+
 	public boolean isApplyTaux()
 	{
 		return applyTaux;
@@ -483,16 +487,17 @@ public class ClsSalaryToProcess
 	}
 
 	/**
-	 * 
+	 *
 	 * @param parameter
 	 * @param infoSalary
 	 * @param service
 	 */
-	public ClsSalaryToProcess(ClsParameterOfPay parameter, ClsInfoSalaryClone infoSalary, GeneriqueConnexionService service)
+	public ClsSalaryToProcess(ClsParameterOfPay parameter, ClsInfoSalaryClone infoSalary, GeneriqueConnexionService service, CalculPaieService calculPaieService)
 	{
 		this.parameter = parameter;
 		this.infoSalary = infoSalary;
 		this.service = service;
+		this.calculPaieService = calculPaieService;
 		this.elementSalaireRepository = elementSalaireRepository;
 		this.utilNomenclature = new ClsNomenclatureUtil(parameter);
 		this.myMonthOfPay = parameter.getMyMonthOfPay();
@@ -516,7 +521,7 @@ public class ClsSalaryToProcess
 
 		this.setFirstDayOfMonth(parameter.getFirstDayOfMonth());
 		this.setLastDayOfMonth(parameter.getLastDayOfMonth());
-		
+
 		this.setPremierJourDuMois(parameter.getFirstDayOfMonth());
 		this.setDernierJourDuMois(parameter.getLastDayOfMonth());
 
@@ -723,6 +728,14 @@ public class ClsSalaryToProcess
 		this.service = service;
 	}
 
+	public CalculPaieService getCalculPaieService() {
+		return calculPaieService;
+	}
+
+	public void setCalculPaieService(CalculPaieService calculPaieService) {
+		this.calculPaieService = calculPaieService;
+	}
+
 	public ClsParameterOfPay getParameter()
 	{
 		return parameter;
@@ -820,7 +833,7 @@ public class ClsSalaryToProcess
 
 	/**
 	 * => destruction_fcal supprime les lignes de ce salarié dans la table PACALC
-	 * 
+	 *
 	 * @return le nombre de ligne supprimées
 	 * @throws Exception
 	 */
@@ -843,7 +856,7 @@ public class ClsSalaryToProcess
 		// EXCEPTION
 		// WHEN NO_DATA_FOUND THEN null;
 		// END;
-		String queryStringRetro = "select distinct nbul from Rhtprcalc" + " where identreprise ='" + infoSalary.getComp_id().getCdos() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '"
+		String queryStringRetro = "select distinct nbul from PrCalculPaie" + " where identreprise ='" + infoSalary.getComp_id().getCdos() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '"
 				+ infoSalary.getComp_id().getNmat() + "'" + " and nlot = " + nlot;
 		// ELSE
 		// BEGIN
@@ -894,7 +907,7 @@ public class ClsSalaryToProcess
 		// RETURN FALSE;
 		// -- erreur(err_msg) ;
 		// END;
-		queryStringRetro = "delete from Rhtprcalc" + " where identreprise ='" + infoSalary.getComp_id().getCdos() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'"
+		queryStringRetro = "delete from PrCalculPaie" + " where identreprise ='" + infoSalary.getComp_id().getCdos() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'"
 				+ " and nlot = " + nlot;
 		// ELSE
 		// BEGIN
@@ -926,7 +939,7 @@ public class ClsSalaryToProcess
 
 	/**
 	 * => Absent_Tout_Mois est-ce que ce salarié était absent tout le mois?
-	 * 
+	 *
 	 * @return true ou false
 	 */
 	// public boolean isAbsentToutMois(){
@@ -949,7 +962,7 @@ public class ClsSalaryToProcess
 	// long mont = 0;
 	// String firstDayOfMonthS = new ClsDate(firstDayOfMonth).getDateS();
 	// String lastDayOfMonthS = new ClsDate(lastDayOfMonth).getDateS();
-	//	    
+	//
 	// String queryString = "from Rhteltvarconge "
 	// + " where identreprise = '" + infoSalary.getComp_id().getCdos() + "'"
 	// + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'"
@@ -971,12 +984,12 @@ public class ClsSalaryToProcess
 	// + " and dfin between '" + firstDayOfMonthS + "' and '" + lastDayOfMonthS
 	// + "'"
 	// + " order by motf, ddeb";
-	//		
+	//
 	// List listOfInfoConge = (useRetroactif)? service.find(queryStringRetro) :
 	// service.find(queryString);
 	// if(ClsObjectUtil.isListEmty(listOfInfoConge))
 	// return false;
-	//		
+	//
 	// ClsElementVariableCongeClone evConge = null;
 	// // try{
 	// for (Object obj : listOfInfoConge) {
@@ -1051,7 +1064,7 @@ public class ClsSalaryToProcess
 	// // WHEN NO_DATA_FOUND THEN
 	// // null;
 	// // END;
-	// String strQueryMaxValm = "select valm from Rhfnom "
+	// String strQueryMaxValm = "select valm from ParamData "
 	// + " where identreprise = '" + infoSalary.getComp_id().getCdos() + "'"
 	// + " and nume in (1, 4, 8)"
 	// + " and ctab = 22"
@@ -1156,7 +1169,7 @@ public class ClsSalaryToProcess
 	// date_max = new ClsDate(date_max, "yyyy-MM-dd").getDate();
 	// if(finConge != null)
 	// finConge = new ClsDate(finConge, "yyyy-MM-dd").getDate();
-	//    	
+	//
 	// if( date_min == debutConge && date_max == finConge)
 	// // RETURN TRUE;
 	// return true;
@@ -1177,7 +1190,8 @@ public class ClsSalaryToProcess
 	public void traitementSalaire(String strDateFormat)
 	{
 		ParamData nome1 = service.findAnyColumnFromNomenclature(infoSalary.getComp_id().getCdos(),null, "266","COMPARRUB", "2");
-		tjrsComparer = StringUtils.equalsIgnoreCase(nome1.getVall(), "O");
+		if(nome1 != null)
+		  tjrsComparer = StringUtils.equalsIgnoreCase(nome1.getVall(), "O");
 		// addToOutputtext("\n"+">>traitementSalaire");
 		try
 		{
@@ -1248,9 +1262,11 @@ public class ClsSalaryToProcess
 			// wsal01.snet := ROUND( wsal01.snet * NVL(wfnom.tau1,0), Nb_Dec_Devise_Dossier);
 			// END IF;
 			// END IF;
+			System.out.println("DEVISE 1="+infoSalary.getDevp());
+		    System.out.println("DEVISE 2="+parameter.dossierCcy);
 			if(StringUtils.isBlank(infoSalary.getDevp()))
 				infoSalary.setDevp(parameter.dossierCcy);
-			
+
 			if (StringUtils.equals("O", infoSalary.getPnet()) && !infoSalary.getDevp().equalsIgnoreCase(parameter.dossierCcy))
 			{
 				ParamData nome = service.findAnyColumnFromNomenclature(infoSalary.getComp_id().getCdos(), null,"27", infoSalary.getDevp(), "1");
@@ -1903,7 +1919,7 @@ public class ClsSalaryToProcess
 				addToOutputtext("\n" + "Salaire net de l'agent dans la fiche salarié = " + a);
 				if (this.getWorkTime().getProrataNbreJourTravaillees() != 0)
 					this.salaireNetATrouver = Math.ceil(a * nbreJourProrata / this.getWorkTime().getProrataNbreJourTravaillees());
-				
+
 				addToOutputtext("\n" + "Salaire net é trouver de l'agent proraté au nombre de jours de travail = " + this.salaireNetATrouver);
 				// addToOutputtext("\n"+">>>>>>>>>>>>>>>>>> a:" + a);
 				// w_res1 := 0;
@@ -1925,7 +1941,7 @@ public class ClsSalaryToProcess
 				if (this.getParameter().isRubriqueNetExist())
 				{
 
-					String queryAjouterAuNet = "select sum(mont) from ElementSalaireNet" + " where ajnu <= " + this.getParameter().getNumeroAjustementActuel() + " and sessionid = '" + this.getParameter().getSessionId() + "'";
+					String queryAjouterAuNet = "select sum(mont) from ElementSalaireNet" + " where ajnu <= " + this.getParameter().getNumeroAjustementActuel() + " and sessionid = '" + this.getParameter().getsession_id() + "'";
 
 					addToOutputtext("\n" + "Recherche du montant dans ElementSalaireNet é ajouter au net é trouver pour l'ajuster (sum(mont) de ElementSalaireNet) ");
 					List l = service.find(queryAjouterAuNet);
@@ -1979,7 +1995,7 @@ public class ClsSalaryToProcess
 					addToOutputtext("\n" + "Taux de réajustement du net é trouver (salaireNetATrouver/Salaire Fiche Sal) = " + tauxAjustement);
 					//
 					List l = service.find("from ElementSalaireAjus" + " where ajnu is not null " + " and ajnu = " + this.getParameter().getNumeroAjustementActuel() + " and sessionid = '"
-							+ this.getParameter().getSessionId() + "'" + " and mont is not null ");
+							+ this.getParameter().getsession_id() + "'" + " and mont is not null ");
 					//
 					try
 					{
@@ -2155,7 +2171,7 @@ public class ClsSalaryToProcess
 			int i = 0;
 			if (this.getParameter().isRubriqueNetExist())
 			{
-				String queryAjouterAuNet = "select count(*) from ElementSalaireNet" + " where ajnu > " + this.getParameter().getNumeroAjustementActuel() + " and sessionid = '" + this.getParameter().getSessionId() + "'";
+				String queryAjouterAuNet = "select count(*) from ElementSalaireNet" + " where ajnu > " + this.getParameter().getNumeroAjustementActuel() + " and sessionid = '" + this.getParameter().getsession_id() + "'";
 				List l = service.find(queryAjouterAuNet);
 				if (l != null && l.size() > 0)
 				{
@@ -2280,7 +2296,7 @@ public class ClsSalaryToProcess
 
 		ClsRubriqueClone rubriqueClone = null;
 		ElementSalaire myRubrique = null;
-		
+
 		for (String string : liste)
 		{
 			myRubrique = elementSalaireRepository.findByCodeRubriqueExactly(string);
@@ -2322,7 +2338,7 @@ public class ClsSalaryToProcess
 	 * <p>
 	 * val_exp = Valeur de la zone pour un expatrie
 	 * </p>
-	 * 
+	 *
 	 * @return true si c'est un expatrié ou false dans le cas contraire
 	 */
 	public boolean _isExpatrie()
@@ -2469,7 +2485,7 @@ public class ClsSalaryToProcess
 		int wmois = -1;
 		// nbreYear NUMBER(5);
 		int nbreYear = -1;
-		//		   
+		//
 
 		//
 		// CURSOR C_ARRPAIE IS
@@ -2480,7 +2496,7 @@ public class ClsSalaryToProcess
 		// AND nmat = mat_i
 		// AND ddar < TO_date(aamm_i,'YYYYMM')
 		// ORDER BY ddar;
-		//		   
+		//
 		// x_an := 0;
 		year = 0;
 		// mois := 0;
@@ -2500,7 +2516,7 @@ public class ClsSalaryToProcess
 		nDayDeduted = 0;
 		ClsDate myMonthOfPay = new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM);
 		Date monthOfPayDate = myMonthOfPay.getDate();
-		String queryString = "select ddar, dfar from Rhtarrpaiagent" + " where identreprise ='" + this.parameter.getDossier() + "'" + " and mtar in (" + " select cacc from Rhfnom" + " where identreprise ='"
+		String queryString = "select ddar, dfar from SuspensionPaie" + " where identreprise ='" + this.parameter.getDossier() + "'" + " and mtar in (" + " select cacc from ParamData" + " where identreprise ='"
 				+ this.parameter.getDossier() + "'" + " and ctab = 21" + " and nume = 1 and valm =1)" + " and nmat ='" + this.infoSalary.getComp_id().getNmat() + "'" +
 				// " and ddar < '" + myMonthOfPay.getDateS("dd-MM-yyyy")
 				// + "'" +
@@ -2606,7 +2622,7 @@ public class ClsSalaryToProcess
 
 	/**
 	 * Calcul de l'age de l'agent
-	 * 
+	 *
 	 * @return l'age
 	 */
 	public int calculateAgentAge()
@@ -2674,7 +2690,7 @@ public class ClsSalaryToProcess
 		// CURSOR C_AJUS IS
 		// SELECT * FROM parubajus
 		// WHERE sessionid = w_sessionid;
-		String queryString = "from ElementSalaireAjus" + " where sessionid =" + parameter.getSessionId();
+		String queryString = "from ElementSalaireAjus" + " where sessionid =" + parameter.getsession_id();
 		//
 		//
 		// BEGIN
@@ -2684,7 +2700,7 @@ public class ClsSalaryToProcess
 		// WHERE sessionid = w_sessionid;
 		try
 		{
-			service.updateFromTable("update ElementSalaireAjus set mont = 0 where sessionid = " + parameter.getSessionId());
+			service.updateFromTable("update ElementSalaireAjus set mont = 0 where sessionid = " + parameter.getsession_id());
 			// prendre la liste des ajustements
 			List listOfRubajus = service.find(queryString);
 			//
@@ -2727,13 +2743,13 @@ public class ClsSalaryToProcess
 						// AND sessionid = w_sessionid;
 						String queryStringforupdate = "update ElementSalaireAjus set mont = " + montant + " where exists(" + " select codp from Rhthelfix" + " where identreprise = '" + parameter.getDossier() + "'"
 								+ " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and codp = '" + ((ElementSalaireAjus) parubajus).getCrub() + "'" + " and aamm = '"
-								+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul() + " )" + " and sessionid = " + parameter.getSessionId();
+								+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul() + " )" + " and sessionid = " + parameter.getsession_id();
 
 						this.addToOutputtext("\n Deuxieme Requete de mise é jour de la table ElementSalaireNet " + queryStringforupdate);
 
 						session = service.getSession();
 						session.createSQLQuery(queryStringforupdate).executeUpdate();
-						service.closeConnexion(session);
+						service.closeSession(session);
 					}
 					// ELSE
 					else
@@ -2780,13 +2796,13 @@ public class ClsSalaryToProcess
 				// AND nmat = wsal01.nmat
 				// AND aamm = w_aamm
 				// AND nbul = wsd_fcal1.nbul;
-				listOfCount = service.find("select count(*) from Rhthevar" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
-						+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul());
-
-				if (listOfCount != null && listOfCount.size() > 0)
-				{
-					count = ((Long) listOfCount.get(0)).intValue();
-				}
+//				listOfCount = service.find("select count(*) from Rhthevar" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
+//						+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul());
+//
+//				if (listOfCount != null && listOfCount.size() > 0)
+//				{
+//					count = ((Long) listOfCount.get(0)).intValue();
+//				}
 				//
 				// IF NOT PA_PAIE.NouZ(nb_evar) THEN
 				//
@@ -2812,16 +2828,16 @@ public class ClsSalaryToProcess
 					// AND nbul = wsd_fcal1.nbul
 					// AND rubq = parubajus.crub )
 					// AND sessionid = w_sessionid;
-					String queryStringforupdate = "update ElementSalaireAjus a " + "set mont = (select sum( mont ) from Rhthevar" + " where identreprise ='" + parameter.getDossier() + "' and nmat = '"
-							+ infoSalary.getComp_id().getNmat() + "'" + " and rubq = a.crub " + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul() + " )" + " where exists("
-							+ " select rubq from Rhthevar" + " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and rubq = a.crub " + " and aamm = '"
-							+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul() + " )" + " and sessionid = " + parameter.getSessionId();
-
-					this.addToOutputtext("\n Premiére Requete de mise é jour de la table ElementSalaireAjus " + queryStringforupdate);
-
-					session = service.getSession();
-					session.createSQLQuery(queryStringforupdate).executeUpdate();
-					service.closeSession(session);
+//					String queryStringforupdate = "update ElementSalaireAjus a " + "set mont = (select sum( mont ) from Rhthevar" + " where identreprise ='" + parameter.getDossier() + "' and nmat = '"
+//							+ infoSalary.getComp_id().getNmat() + "'" + " and rubq = a.crub " + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul() + " )" + " where exists("
+//							+ " select rubq from Rhthevar" + " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and rubq = a.crub " + " and aamm = '"
+//							+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul() + " )" + " and sessionid = " + parameter.getSessionId();
+//
+//					this.addToOutputtext("\n Premiére Requete de mise é jour de la table ElementSalaireAjus " + queryStringforupdate);
+//
+//					session = service.getSession();
+//					session.createSQLQuery(queryStringforupdate).executeUpdate();
+//					service.closeSession(session);
 					// END IF;
 				}
 			}
@@ -2840,12 +2856,12 @@ public class ClsSalaryToProcess
 					List<Object> lst = service.find(strLib);
 					if(! lst.isEmpty() && lst.get(0) != null)
 						mont = new BigDecimal(lst.get(0).toString()).doubleValue();
-					
-					strQueryUpdate = "update ElementSalaireAjus set mont = " + mont + " where crub = '" + rubAAjuster + "' and sessionid = "+ parameter.getSessionId();
+
+					strQueryUpdate = "update ElementSalaireAjus set mont = " + mont + " where crub = '" + rubAAjuster + "' and sessionid = "+ parameter.getsession_id();
 					if(mont != 0)
 					service.updateFromTable(strQueryUpdate);
 				}
-				
+
 				listOfCount = service.find("select count(*) from ElementVariableDetailMois" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
 						+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul());
 				count = 0;
@@ -2860,25 +2876,25 @@ public class ClsSalaryToProcess
 						mont = 0;
 						String strLib=" select sum( mont ) from ElementVariableDetailMois c where  c.identreprise ='"+parameter.getDossier()+"' and c.nmat = '"+infoSalary.getComp_id().getNmat()+"' and c.rubq = '"+rubAAjuster+"'";
 						strLib+=" and nbul = "+this.getNbul()+" and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" ;
-						
+
 						List<Object> lst = service.find(strLib);
 						if(! lst.isEmpty() && lst.get(0) != null)
 							mont = new BigDecimal(lst.get(0).toString()).doubleValue();
-						
-						strQueryUpdate = "update ElementSalaireAjus set mont = " + mont + " where crub = '" + rubAAjuster + "' and sessionid = "+ parameter.getSessionId();
+
+						strQueryUpdate = "update ElementSalaireAjus set mont = " + mont + " where crub = '" + rubAAjuster + "' and sessionid = "+ parameter.getsession_id();
 						if(mont != 0)
 						service.updateFromTable(strQueryUpdate);
-					}	
+					}
 				}
 			}
 
-			String strQuery = "update ElementSalaireAjus set mont = 0" + " where sessionid = " + parameter.getSessionId();
+			String strQuery = "update ElementSalaireAjus set mont = 0" + " where sessionid = " + parameter.getsession_id();
 			service.updateFromTable(strQuery);
 //			session = service.getSession();
 //
 //			session.createSQLQuery(strQuery).executeUpdate();
 //
-//			service.closeConnexion(session);
+//			service.closeSession(session);
 			//
 			// RETURN TRUE;
 		}
@@ -2895,7 +2911,7 @@ public class ClsSalaryToProcess
 	private void chargementMontantDesRubriquesNettes()
 	{
 		// if('O' == this.getParameter().getGenfile()) addToOutputtext("\n"+">>chargementMontantDesRubriquesNettes");
-		String queryString = "from ElementSalaireNet" + " where sessionid =" + parameter.getSessionId();
+		String queryString = "from ElementSalaireNet" + " where sessionid =" + parameter.getsession_id();
 		double montant = 0;
 		int count = 0;
 		List listOfCount = null;
@@ -2904,7 +2920,7 @@ public class ClsSalaryToProcess
 		// WHERE sessionid = w_sessionid;
 		try
 		{
-			service.updateFromTable("update ElementSalaireNet set mont = 0" + " where sessionid = " + parameter.getSessionId());
+			service.updateFromTable("update ElementSalaireNet set mont = 0" + " where sessionid = " + parameter.getsession_id());
 			//
 			// -- Lecture des montants, en E.F., pour les rubriques saisies en
 			// net
@@ -2944,7 +2960,7 @@ public class ClsSalaryToProcess
 						// AND sessionid = w_sessionid;
 						service.updateFromTable("update ElementSalaireNet set mont = " + montant + " where exists(" + " select * from Rhthelfix" + " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '"
 								+ infoSalary.getComp_id().getNmat() + "'" + " and codp = '" + ((ElementSalaireNet) parubnet).getCrub() + "'" + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" + " and nbul = "
-								+ this.getNbul() + " )" + " and sessionid = " + parameter.getSessionId());
+								+ this.getNbul() + " )" + " and sessionid = " + parameter.getsession_id());
 					}
 					// ELSE
 					else
@@ -2985,13 +3001,13 @@ public class ClsSalaryToProcess
 				// AND nmat = wsal01.nmat
 				// AND aamm = w_aamm
 				// AND nbul = wsd_fcal1.nbul;
-				listOfCount = service.find("select count(*) from Rhthevar" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
-						+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul());
-				count = 0;
-				if (listOfCount != null && listOfCount.size() > 0)
-				{
-					count = ((Long) listOfCount.get(0)).intValue();
-				}
+//				listOfCount = service.find("select count(*) from Rhthevar" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '"
+//						+ myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul());
+//				count = 0;
+//				if (listOfCount != null && listOfCount.size() > 0)
+//				{
+//					count = ((Long) listOfCount.get(0)).intValue();
+//				}
 				//
 				// IF NOT PA_PAIE.NouZ(nb_evar)
 				// THEN
@@ -3017,21 +3033,21 @@ public class ClsSalaryToProcess
 					// AND sessionid = w_sessionid;nbr_elmt
 					// END IF;
 
-					service.updateFromTable("update ElementSalaireNet a " + "set mont = (select sum( mont ) from Rhthevar" + " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat()
-							+ "'" + " and rubq = a.crub " + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul() + " )" + " where exists(" + " select rubq from Rhthevar"
-							+ " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and rubq = a.crub " + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'"
-							+ " and nbul = " + this.getNbul() + " )" + " and sessionid = " + parameter.getSessionId());
+//					service.updateFromTable("update ElementSalaireNet a " + "set mont = (select sum( mont ) from Rhthevar" + " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat()
+//							+ "'" + " and rubq = a.crub " + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" + " and nbul = " + this.getNbul() + " )" + " where exists(" + " select rubq from Rhthevar"
+//							+ " where identreprise = '" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and rubq = a.crub " + " and aamm = '" + myMonthOfPay.getYearAndMonth() + "'"
+//							+ " and nbul = " + this.getNbul() + " )" + " and sessionid = " + parameter.getSessionId());
 				}
 			}
 			//
 			// ELSE
 			else
 			{
-				
-				
+
+
 				double mont = 0;
 				String strQueryUpdate = StringUtils.EMPTY;
-				
+
 				for (String rubAAjouterAuNet : parameter.listeRubriquesAAjouterAuNet)
 				{
 					mont = 0;
@@ -3041,9 +3057,9 @@ public class ClsSalaryToProcess
 					List<Object> lst = service.find(strLib);
 					if(! lst.isEmpty() && lst.get(0) != null)
 						mont = new BigDecimal(lst.get(0).toString()).doubleValue();
-					
-					strQueryUpdate = "update ElementSalaireNet set mont = " + mont + " where crub = '" + rubAAjouterAuNet + "' and sessionid = "+ parameter.getSessionId();
-					
+
+					strQueryUpdate = "update ElementSalaireNet set mont = " + mont + " where crub = '" + rubAAjouterAuNet + "' and sessionid = "+ parameter.getsession_id();
+
 					if(mont != 0)
 					service.updateFromTable(strQueryUpdate);
 				}
@@ -3058,18 +3074,18 @@ public class ClsSalaryToProcess
 
 				if (count > 0)
 				{
-				
+
 					for (String rubAAjouterAuNet : parameter.listeRubriquesAAjouterAuNet)
 					{
 						mont = 0;
 						String strLib=" select sum( mont ) from ElementVariableDetailMois c where  c.identreprise ='"+parameter.getDossier()+"' and c.nmat = '"+infoSalary.getComp_id().getNmat()+"' and c.rubq = '"+rubAAjouterAuNet+"'";
 						strLib+=" and nbul = "+this.getNbul()+" and aamm = '" + myMonthOfPay.getYearAndMonth() + "'" ;
-						
+
 						List<Object> lst = service.find(strLib);
 						if(! lst.isEmpty() && lst.get(0) != null)
 							mont = new BigDecimal(lst.get(0).toString()).doubleValue();
-						
-						strQueryUpdate = "update ElementSalaireNet set mont = " + mont + " where crub = '" + rubAAjouterAuNet + "' and sessionid = "+ parameter.getSessionId();
+
+						strQueryUpdate = "update ElementSalaireNet set mont = " + mont + " where crub = '" + rubAAjouterAuNet + "' and sessionid = "+ parameter.getsession_id();
 						if(mont != 0)
 						service.updateFromTable(strQueryUpdate);
 					}
@@ -3087,7 +3103,7 @@ public class ClsSalaryToProcess
 
 	/**
 	 * => corps() process all the rubriques of that salary
-	 * 
+	 *
 	 * @param w_dec1
 	 */
 	public void processAllRubrique(int w_dec1, String dateformat)
@@ -3095,6 +3111,7 @@ public class ClsSalaryToProcess
 		// if('O' == this.getParameter().getGenfile()) addToOutputtext("\n"+">> processAllRubrique");
 		// if('O' == this.getParameter().getGenfile()) addToOutputtext("\n"+">> AJUSTEMENT :" + w_dec1);
 		//
+		System.out.println("-----------------------PROCESS ALL  RUBRIQUE--------------------");
 		if (this.getParameter().isUseRetroactif())
 			processAllRubrique(parameter.listOrdonneRubrique, w_dec1, dateformat);
 		else
@@ -3103,7 +3120,7 @@ public class ClsSalaryToProcess
 
 	/**
 	 * => corps() process all the rubriques of that salary numeroAjustement => w_numcal
-	 * 
+	 *
 	 * @param listOfAllRubrique
 	 * @param w_dec1
 	 */
@@ -3131,7 +3148,7 @@ public class ClsSalaryToProcess
 		if (w_dec1 == 0)
 		{
 			ClsRubriqueClone rubriqueClone = null;
-		
+
 			for (String crub : listOrdonneRubrique)
 			{
 				rubriqueClone = parameter.getListOfAllRubriqueMap().get(crub);
@@ -3147,7 +3164,7 @@ public class ClsSalaryToProcess
 		}
 		else
 		{
-			
+
 		}
 		String codeRubrique = "";
 		String rubriqueNet = this.getParameter().getPaieAuNetRubrique();
@@ -3156,6 +3173,7 @@ public class ClsSalaryToProcess
 		int sx = 0;
 		for (String crub : listOrdonneRubrique)
 		{// rubriqueClone=t_rub
+			System.out.println("---------------------RUB A CALCULER="+crub);
 			if(crub.startsWith("38") || "0333".equals(crub) || "0330".equals(crub))
 				sx = 0;
 			rubriqueClone = parameter.getListOfAllRubriqueMap().get(crub);
@@ -3277,6 +3295,7 @@ public class ClsSalaryToProcess
 			// END IF;
 			//
 			// IF W_Cont THEN
+			System.out.println("VALEUR DE GO=------------------"+go);
 			if (go)
 			{
 				// @emmanuel:on ne fait rien ici car on a déjé la list :
@@ -3292,6 +3311,7 @@ public class ClsSalaryToProcess
 				// IF t_rub.algo IN (13,17,20) AND NOT retroactif THEN
 				// charg_prets;
 				// END IF;
+				System.out.println("ALGO-----------------="+rubriqueClone.getRubrique().getAlgo());
 				if (!this.getParameter().isUseRetroactif() && (rubriqueClone.getRubrique().getAlgo() == 13 || rubriqueClone.getRubrique().getAlgo() == 17 || rubriqueClone.getRubrique().getAlgo() == 20))
 				{
 					rubriqueClone.loadListOfLoanNumber();
@@ -3351,6 +3371,8 @@ public class ClsSalaryToProcess
 			// END IF;
 			//
 			// IF W_Cont THEN
+			System.out.println("DEUXIEME VALEUR DE GO=----------------------"+go);
+			//go=true;
 			if (go)
 			{
 				// -------------------------------------------------------------------------
@@ -3414,7 +3436,7 @@ public class ClsSalaryToProcess
 					List l = null;
 					//YT : Ajout le 30/10/2010; on n'exécute cette recherche que pour les rubriques soumises é ajustement
 					if(StringUtils.equals("O", rubriqueClone.getRubrique().getAjus()))
-							l = service.find("select mont from ElementSalaireAjus where sessionid = '" + this.getParameter().getSessionId() + "' and crub ='" + rubriqueClone.getRubrique().getComp_id().getCrub() + "'");
+							l = service.find("select mont from ElementSalaireAjus where sessionid = '" + this.getParameter().getsession_id() + "' and crub ='" + rubriqueClone.getRubrique().getComp_id().getCrub() + "'");
 
 					if (l != null && l.size() > 0)
 					{
@@ -3442,7 +3464,7 @@ public class ClsSalaryToProcess
 				else
 				{
 					rubriqueClone.calculateBase();
-					
+
 				}
 
 				addToOutputtext("\n" + ">> Suite du calcul de la rubrique " + rubriqueClone.getRubrique().getComp_id().getCrub());
@@ -3477,7 +3499,7 @@ public class ClsSalaryToProcess
 					// variable idx: " + i);
 					//@add
 					i++;
-					
+
 					// elementVariable = (Object[])obj;
 					// w_basp := w_bas; -- Base plafonnee
 					// if('O' == this.getParameter().getGenfile()) addToOutputtext("\n"+"getValeurRubriquePartage base:
@@ -3860,7 +3882,7 @@ public class ClsSalaryToProcess
 					// END IF;
 					// END IF;
 					//
-					
+
 					rubriqueClone.setNumElementVarCourant(1 + rubriqueClone.getNumElementVarCourant());
 					//num_elmt = num_elmt+1;
 					//rubriqueClone.setNumElementVarCourant(num_elmt-1);
@@ -3928,7 +3950,7 @@ public class ClsSalaryToProcess
 				// THEN
 				// EXIT;
 				// END IF;
-				
+
 				if (("O".equals(this.getParameter().getCalcul())) && ("O".equals(this.infoSalary.getPnet())) && (rubriqueClone.getRubrique().getComp_id().getCrub().equals(this.getParameter().getPaieAuNetRubrique())))
 				{
 
@@ -3951,27 +3973,27 @@ public class ClsSalaryToProcess
 			// ajout de l'affichage des rubriques
 
 
-			
+
 			this.insererModuleExterne(rubriqueClone, "1");
-			
+
 		}// for
 	}
 
 	private String minAamm = null;
 	private boolean alreadyComputeMinAamm = false;
-	
+
 	public String _computeMinOfMonthForCumul()
 	{
 		if(alreadyComputeMinAamm)
 		{
 			return minAamm;
 		}
-		
+
 		String strSqlQuery = "select min(aamm) from CumulPaie " + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat()
 				+ "'";
 
 		List aammmin = this.getService().find(strSqlQuery);
-		
+
 
 		if (aammmin.size() > 0)
 		{
@@ -3982,7 +4004,7 @@ public class ClsSalaryToProcess
 		return minAamm;
 	}
 
-	
+
 	/**
 	 * Calculate the total days of holidays/absence
 	 */
@@ -4017,7 +4039,7 @@ public class ClsSalaryToProcess
 
 	/**
 	 * generer les rubriques
-	 * 
+	 *
 	 * @param pseudoRubrique
 	 * @param rubriqueConge
 	 * @param argu
@@ -4054,10 +4076,10 @@ public class ClsSalaryToProcess
 		if (StringUtils.equals(ParameterUtil.formatRubrique, pseudoRubrique) || StringUtils.equals(ParameterUtil.formatRubrique, rubriqueConge))
 			return;
 
-		String queryString = "from ElementVariableDetailMois" + " where cdos='" + parameter.getDossier() + "'" + " and nmat ='" + infoSalary.getComp_id().getNmat() + "'" + " and aamm ='" + monthOfPay + "'" + " and nbul =" + nbul
+		String queryString = "from ElementVariableDetailMois" + " where identreprise='" + parameter.getDossier() + "'" + " and nmat ='" + infoSalary.getComp_id().getNmat() + "'" + " and aamm ='" + monthOfPay + "'" + " and nbul =" + nbul
 				+ " and rubq ='" + pseudoRubrique + "'" + " and argu ='PSEUDO-EV'";
-		String queryStringRetro = "from Rhthevar" + " where cdos='" + parameter.getDossier() + "'" + " and nmat ='" + infoSalary.getComp_id().getNmat() + "'" + " and aamm ='" + monthOfPay + "'" + " and nbul =" + nbul
-				+ " and rubq ='" + pseudoRubrique + "'" + " and argu ='PSEUDO-EV'";
+//		String queryStringRetro = "from Rhthevar" + " where cdos='" + parameter.getDossier() + "'" + " and nmat ='" + infoSalary.getComp_id().getNmat() + "'" + " and aamm ='" + monthOfPay + "'" + " and nbul =" + nbul
+//				+ " and rubq ='" + pseudoRubrique + "'" + " and argu ='PSEUDO-EV'";
 		List listOfElementVariableDetailMois = null;
 		List listOfPahevar = null;
 		//
@@ -4102,7 +4124,7 @@ public class ClsSalaryToProcess
 //					ev.setCuti("PSEU");
 //					//
 //					//service.save(ev);
-//					
+//
 //					//Ajout dans la liste des EV deja chargés du salarié
 //					Object elvar[] = null;
 //						// map.put(crub, value)
@@ -4114,7 +4136,7 @@ public class ClsSalaryToProcess
 //						if (!this.listOfEltvar.containsKey(ev.getRubq()))
 //							this.listOfEltvar.put(ev.getRubq(), new ArrayList<Object[]>());
 //						this.listOfEltvar.get(ev.getRubq()).add(elvar);
-//					
+//
 //				}
 //				// ELSE
 //				else
@@ -4140,7 +4162,7 @@ public class ClsSalaryToProcess
 //						// );
 //						o.setMont(new BigDecimal(o.getMont().doubleValue() + montant));
 //						//service.update(o);
-//						
+//
 //						//MAJ du montant dans la liste des EV deja chargés du salarié
 //						Object elvar[] = null;
 //						// map.put(crub, value)
@@ -4205,7 +4227,7 @@ public class ClsSalaryToProcess
 					ev.setMont(new BigDecimal(montant));
 					//
 					//service.save(ev);
-					
+
 					//Ajout dans la liste des EV deja chargés du salarié
 					Object elvar[] = null;
 						// map.put(crub, value)
@@ -4240,7 +4262,7 @@ public class ClsSalaryToProcess
 						o.setMont(new BigDecimal(o.getMont().doubleValue() + montant));
 						//service.update(o);
 						// END IF;
-						
+
 						//MAJ du montant dans la liste des EV deja chargés du salarié
 						Object elvar[] = null;
 						// map.put(crub, value)
@@ -4262,7 +4284,7 @@ public class ClsSalaryToProcess
 			}
 		}
 	}
-	
+
 	public void generateEVAvenir(String pseudoRubrique, String rubriqueConge, String argu, String nprt, String ruba, double montant)
 	{
 
@@ -4271,7 +4293,7 @@ public class ClsSalaryToProcess
 
 	/**
 	 * vérifie si le salaire de ce salarié est bloqué ou pas
-	 * 
+	 *
 	 * @return true ou false
 	 */
 	public boolean bulletinBloque()
@@ -4341,7 +4363,7 @@ public class ClsSalaryToProcess
 //			}
 //			finally
 //			{
-//				service.closeConnexion(session);
+//				service.closeSession(session);
 //			}
 //
 //		}
@@ -4458,7 +4480,7 @@ public class ClsSalaryToProcess
 
 		return true;
 	}
-	
+
 	public boolean validateBulletin(String action)
 	{
 //		if(StringUtils.notIn(action,"O,N") )
@@ -4475,13 +4497,13 @@ public class ClsSalaryToProcess
 //			if (oRhtblq != null)
 //				service.delete(oRhtblq);
 //		}
-		
+
 		return true;
 	}
 
 	/**
-	 * => destruction_fcal supprime toutes les info de ce salarié dans les tables CalculPaie et Rhtprcalc
-	 * 
+	 * => destruction_fcal supprime toutes les info de ce salarié dans les tables CalculPaie et PrCalculPaie
+	 *
 	 * @throws Exception
 	 */
 	public void deleteBulletin() throws Exception
@@ -4500,7 +4522,7 @@ public class ClsSalaryToProcess
 			// AND nlot = w_nlot;
 			if (parameter.isUseRetroactif())
 			{
-				// service.deleteFromTable("delete from Rhtprcalc " +
+				// service.deleteFromTable("delete from PrCalculPaie " +
 				// " where identreprise = '" + parameter.getDossier() + "'" +
 				// " and aamm = '" + new ClsDate( monthOfPay,
 				// ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth()
@@ -4509,7 +4531,7 @@ public class ClsSalaryToProcess
 				// " and nbul = " + nbul +
 				// " and nlot = " + nlot);
 				session.createQuery(
-						"delete from Rhtprcalc " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" + new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'"
+						"delete from PrCalculPaie " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" + new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'"
 								+ " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and nlot = " + nlot).executeUpdate();
 			}
 			// ELSE
@@ -4539,7 +4561,7 @@ public class ClsSalaryToProcess
 		{
 			if (session.isOpen() || session.isConnected())
 			{
-				service.closeConnexion(session);
+				service.closeSession(session);
 			}
 		}
 
@@ -4547,8 +4569,8 @@ public class ClsSalaryToProcess
 	}
 
 	/**
-	 * => destruction_fcal supprime toutes les info de ce salarié dans les tables CalculPaie et Rhtprcalc
-	 * 
+	 * => destruction_fcal supprime toutes les info de ce salarié dans les tables CalculPaie et PrCalculPaie
+	 *
 	 * @throws Exception
 	 */
 	public void deleteBulletin(int nbul, long nlot, String monthOfPay) throws Exception
@@ -4565,7 +4587,7 @@ public class ClsSalaryToProcess
 		// AND nbul = i_nbul
 		// AND nlot = w_nlot;
 		if (parameter.isUseRetroactif())
-			service.deleteFromTable("delete from Rhtprcalc " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '"
+			service.deleteFromTable("delete from PrCalculPaie " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '"
 					+ new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and nlot = "
 					+ nlot);
 		// ELSE
@@ -4579,7 +4601,7 @@ public class ClsSalaryToProcess
 					+ new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul);
 		// END IF;
 	}
-	
+
 	public void deleteElementsFictif() throws Exception
 	{
 
@@ -4588,9 +4610,9 @@ public class ClsSalaryToProcess
 			addToOutputtext("\n" + ">>deleteBulletin");
 			if(!this.bulletinValide())
 			{
-				service.deleteFromTable("delete from Rhtfic where identreprise = '" + parameter.getDossier() + "' and nmat = '" + infoSalary.getComp_id().getNmat() + "'" );
-				
-				
+				service.deleteFromTable("delete from CalculPaieFictif where identreprise = '" + parameter.getDossier() + "' and nmat = '" + infoSalary.getComp_id().getNmat() + "'" );
+
+
 				String query = "DELETE FROM ElementVariableDetailMois WHERE identreprise = '" + parameter.getDossier() + "' AND aamm = '" + monthOfPay+ "' AND nmat = '" + infoSalary.getComp_id().getNmat() + "' AND rubq = '"
 				+ fictiveParameter.getFictiveRubrique() + "' and argu='AUTO'";
 				if(StringUtil.notEquals(ParameterUtil.formatRubrique, fictiveParameter.getFictiveRubrique()))
@@ -4606,8 +4628,8 @@ public class ClsSalaryToProcess
 	}
 
 	/**
-	 * => destruction_fcal supprime toutes les info de ce salarié dans les tables CalculPaie et Rhtprcalc
-	 * 
+	 * => destruction_fcal supprime toutes les info de ce salarié dans les tables CalculPaie et PrCalculPaie
+	 *
 	 * @param monthOfPay
 	 *            la période pour laquelle on veut supprimer le bulletin
 	 * @throws Exception
@@ -4623,7 +4645,7 @@ public class ClsSalaryToProcess
 		// AND nbul = i_nbul
 		// AND nlot = w_nlot;
 		if (parameter.isUseRetroactif())
-			service.deleteFromTable("delete from Rhtprcalc " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '"
+			service.deleteFromTable("delete from PrCalculPaie " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '"
 					+ new ClsDate(monthOfPay, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYearAndMonth() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'");
 		// ELSE
 		else
@@ -4659,14 +4681,14 @@ public class ClsSalaryToProcess
 		{
 			if (session.isOpen() || session.isConnected())
 			{
-				service.closeConnexion(session);
+				service.closeSession(session);
 			}
 		}
 	}
 
 	/**
 	 * recherche la zone libre en fonction du code
-	 * 
+	 *
 	 * @param codezone
 	 * @return la zone libre ou une chaine vide si rien n'est trouvé
 	 */
@@ -4720,9 +4742,9 @@ public class ClsSalaryToProcess
 			if (parameter.isUseRetroactif())
 			{
 
-				session.createQuery(
-						"delete from Rhthevar where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '" + parameter.getMyMonthOfPay().getYearAndMonth()
-								+ "'" + " and argu = 'PSEUDO-EV'" + " and nbul = " + parameter.getNumeroBulletin()).executeUpdate();
+//				session.createQuery(
+//						"delete from Rhthevar where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and aamm = '" + parameter.getMyMonthOfPay().getYearAndMonth()
+//								+ "'" + " and argu = 'PSEUDO-EV'" + " and nbul = " + parameter.getNumeroBulletin()).executeUpdate();
 			}
 			else
 			{
@@ -4741,7 +4763,7 @@ public class ClsSalaryToProcess
 		{
 			if (session.isOpen() || session.isConnected())
 			{
-				service.closeConnexion(session);
+				service.closeSession(session);
 			}
 		}
 		// END IF;
@@ -4757,7 +4779,7 @@ public class ClsSalaryToProcess
 			// WHERE identreprise = wpdos.identreprise
 			// AND nmat = wsal01.nmat;
 
-			session.createQuery("delete from Rhtfic" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'").executeUpdate();
+			session.createQuery("delete from CalculPaieFictif" + " where identreprise ='" + parameter.getDossier() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'").executeUpdate();
 		}
 		catch (Exception e)
 		{
@@ -4768,7 +4790,7 @@ public class ClsSalaryToProcess
 		{
 			if (session.isOpen() || session.isConnected())
 			{
-				service.closeConnexion(session);
+				service.closeSession(session);
 			}
 		}
 		// END IF;
@@ -4777,7 +4799,7 @@ public class ClsSalaryToProcess
 	/**
 	 * cherche une rubrique dans la table des rubriques en fonction de son code une fois la rubrique retrouvée, on va utiliser les valeurs des taux, montant et
 	 * de base qui seront utilisées pour le calcule de la base du mois de paie =>
-	 * 
+	 *
 	 * @param crub
 	 * @return le wrapper de la rubrique, et null si rien n'est trouvé
 	 */
@@ -4844,7 +4866,7 @@ public class ClsSalaryToProcess
 
 	public boolean majTableVirements()
 	{
-		String updateString = "update Rhtvrmtagent" + " set mntdb = 0, mntdvd = 0" + " where identreprise = '" + infoSalary.getComp_id().getCdos() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'";
+		String updateString = "update VirementSalarie" + " set mntdb = 0, mntdvd = 0" + " where identreprise = '" + infoSalary.getComp_id().getCdos() + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'";
 		try
 		{
 			this.getService().updateFromTable(updateString);
@@ -4859,7 +4881,7 @@ public class ClsSalaryToProcess
 
 	/**
 	 * => concPro(String cle)
-	 * 
+	 *
 	 * @param cle
 	 * @return xxx
 	 */
@@ -4980,7 +5002,7 @@ public class ClsSalaryToProcess
 		//
 		return char10;
 	}
-	
+
 	private void insererModuleExterne(ClsRubriqueClone rubriqueClone, String trtb)
 	{
 		String crub = rubriqueClone.getRubrique().getComp_id().getCrub();
@@ -5013,11 +5035,11 @@ public class ClsSalaryToProcess
 
 	/**
 	 * permet d'insérer une rubrique dans pacalc
-	 * 
+	 *
 	 * @param rubriqueClone
 	 * @param trtb
 	 */
-	
+
 	private void insererUneRubriqueClone(ClsRubriqueClone rubriqueClone, String trtb)
 	{
 		// if('O' == this.getParameter().getGenfile()) addToOutputtext("\n"+">>insererUneRubriqueClone");
@@ -5095,7 +5117,7 @@ public class ClsSalaryToProcess
 		{
 			//System.out.println("Ajout du break point");
 		}
-		
+
 //		if (this.parameter.genfile== 'O')
 //		{
 //			String texte = StringUtils.toString(this) + "\n" + StringUtils.toString(this.getWorkTime()) + "\n---------------LISTE PARAMETRAGE POUR LE SALARIE"
@@ -5318,7 +5340,7 @@ public class ClsSalaryToProcess
 						List l = null;
 						if (this.getParameter().isUseRetroactif())
 						{
-							String queryStringRetro = "select nmat from Rhtprcalc " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" + monthOfPay + "'"
+							String queryStringRetro = "select nmat from PrCalculPaie " + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" + monthOfPay + "'"
 									+ " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and rubq = '" + parameter.getPaieAuNetAffectationEcartRubrique() + "'"
 									+ " and nlot = " + nlot;
 							//
@@ -5326,13 +5348,13 @@ public class ClsSalaryToProcess
 							if (l != null && l.size() > 0)
 							{
 								// update
-								String queryStringUpdate = "update Rhtprcalc set mont = " + rubriqueAffectationEcart.getAmount() + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '"
+								String queryStringUpdate = "update PrCalculPaie set mont = " + rubriqueAffectationEcart.getAmount() + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '"
 										+ monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and rubq = '"
 										+ parameter.getPaieAuNetAffectationEcartRubrique() + "'" + " and nlot = " + nlot;
 								//
 								session = service.getSession();
 								session.createQuery(queryStringUpdate).executeUpdate();
-								service.closeConnexion(session);
+								service.closeSession(session);
 							}
 							else
 							{
@@ -5358,8 +5380,8 @@ public class ClsSalaryToProcess
 								rubriqueAffectationEcart.setBasePlafonnee(this.getParameter().getEcartSalaireNet());
 
 								this.incrementerDerniereLigne();
-								/*Rhtprcalc oPrcalc = new Rhtprcalc();
-								RhtprcalcPK pk = new RhtprcalcPK();
+								/*PrCalculPaie oPrcalc = new PrCalculPaie();
+								PrCalculPaiePK pk = new PrCalculPaiePK();
 								pk.setAamm(this.getMonthOfPay());
 								pk.setCdos(this.getParameter().getDossier());
 								pk.setNbul(this.getNbul());
@@ -5397,7 +5419,7 @@ public class ClsSalaryToProcess
 								//
 								session = service.getSession();
 								session.createQuery(queryStringUpdate).executeUpdate();
-								service.closeConnexion(session);
+								service.closeSession(session);
 							}
 							else
 							{
@@ -5487,8 +5509,8 @@ public class ClsSalaryToProcess
 						{
 							// ClsRubriqueClone.setDerniereLigne(1 + ClsRubriqueClone.getDerniereLigne());
 							this.incrementerDerniereLigne();
-//							Rhtprcalc oPrcalc = new Rhtprcalc();
-//							RhtprcalcPK pk = new RhtprcalcPK();
+//							PrCalculPaie oPrcalc = new PrCalculPaie();
+//							PrCalculPaiePK pk = new PrCalculPaiePK();
 //							pk.setAamm(this.getMonthOfPay());
 //							pk.setCdos(this.getParameter().getDossier());
 //							pk.setNbul(this.getNbul());
@@ -5549,7 +5571,7 @@ public class ClsSalaryToProcess
 					rubriqueNet.setAmount(this.salaireNetATrouver - this.salaireAecarterDuNet);
 					rubriqueNet.setBase(this.salaireNetATrouver - this.salaireAecarterDuNet);
 					rubriqueNet.setBasePlafonnee(this.salaireNetATrouver - this.salaireAecarterDuNet);
-					
+
 					// IF retroactif THEN
 					// UPDATE prcalc
 					// SET mont = t9999_mont(l),
@@ -5574,7 +5596,7 @@ public class ClsSalaryToProcess
 					// END IF;
 
 					/*
-					 * if (this.getParameter().isUseRetroactif()) { String queryStringUpdate = "update Rhtprcalc " + " set mont = " +
+					 * if (this.getParameter().isUseRetroactif()) { String queryStringUpdate = "update PrCalculPaie " + " set mont = " +
 					 * rubriqueAffectationEcart.getAmount() + " ,basc = " + rubriqueAffectationEcart.getBase() + " ,basp = " +
 					 * rubriqueAffectationEcart.getBasePlafonnee() + " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" +
 					 * monthOfPay+ "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'" + " and nbul = " + nbul + " and rubq = '" +
@@ -5588,13 +5610,13 @@ public class ClsSalaryToProcess
 
 					if (this.getParameter().isUseRetroactif())
 					{
-						String queryStringUpdate = "update Rhtprcalc " + " set mont = " + rubriqueNet.getAmount() + " ,basc = " + rubriqueNet.getBase() + " ,basp = " + rubriqueNet.getBasePlafonnee()
+						String queryStringUpdate = "update PrCalculPaie " + " set mont = " + rubriqueNet.getAmount() + " ,basc = " + rubriqueNet.getBase() + " ,basp = " + rubriqueNet.getBasePlafonnee()
 								+ " where identreprise = '" + parameter.getDossier() + "'" + " and aamm = '" + monthOfPay + "'" + " and nmat = '" + infoSalary.getComp_id().getNmat() + "'"
 								+ " and nbul = " + nbul + " and rubq = '" + parameter.getPaieAuNetRubrique() + "'" + " and nlot = " + this.getNlot();
 						//
 						session = service.getSession();
 						session.createQuery(queryStringUpdate).executeUpdate();
-						service.closeConnexion(session);
+						service.closeSession(session);
 					}
 					else
 					{
@@ -5606,7 +5628,7 @@ public class ClsSalaryToProcess
 						this.addToOutputtext("\n" + "Requete de Mise é jour de la rubrique du net " + parameter.getPaieAuNetRubrique() + " " + queryStringUpdate);
 						session = service.getSession();
 						session.createQuery(queryStringUpdate).executeUpdate();
-						service.closeConnexion(session);
+						service.closeSession(session);
 					}
 				}
 			}
@@ -5671,7 +5693,7 @@ public class ClsSalaryToProcess
 		// rsa_tot := ROUND( NVL( rsa_tot, 0 ), 0);
 		// -- w_faitout := ecr_lognet(' Compensation fiscale *' || rsa_tot ||
 		// '*');
-		List l = service.find("select sum(mont) from ElementSalaireAjus" + " where ajnu = " + this.getParameter().getNumeroAjustementActuel() + " and sessionid = '" + this.getParameter().getSessionId() + "'");
+		List l = service.find("select sum(mont) from ElementSalaireAjus" + " where ajnu = " + this.getParameter().getNumeroAjustementActuel() + " and sessionid = '" + this.getParameter().getsession_id() + "'");
 		double totalAjnu = 0;
 		if (l != null && l.size() > 0 && !ClsObjectUtil.isNull(l.get(0)))
 		{
@@ -5833,7 +5855,7 @@ public class ClsSalaryToProcess
 		// END LOOP;
 		// CLOSE curs_ajus;
 
-		String queryString = "from ElementSalaireAjus" + " where sessionid = " + parameter.getSessionId() + " and ajnu is not null" + " and ajnu = " + this.getParameter().getNumeroAjustementActuel();
+		String queryString = "from ElementSalaireAjus" + " where sessionid = " + parameter.getsession_id() + " and ajnu is not null" + " and ajnu = " + this.getParameter().getNumeroAjustementActuel();
 
 		l = service.find(queryString);
 		double pourcentageMajo = 0;
@@ -6539,12 +6561,12 @@ public class ClsSalaryToProcess
 	 * => PA_ALGO.calc_nbjsup
 	 * <p>
 	 * Calcul du nombre de jours supplementaires
-	 * 
+	 *
 	 * @return le nombre de jours supplementaires
 	 */
 	public double calculNombreDJourSuppl()
 	{
-		String identreprise = getInfoSalary().getComp_id().getCdos();
+		String cdos = getInfoSalary().getComp_id().getCdos();
 		int montant = 0;
 		double taux1 = 0;
 		double taux2 = 0;
@@ -6571,7 +6593,7 @@ public class ClsSalaryToProcess
 		//
 		// -- Calcul des jours supp selon la categorie et
 		// -- acquis tous les MNT3 annees
-		montant = new Double((tempNumber = getUtilNomenclature().getAmountOrRateFromNomenclature(this.parameter.listOfTableXXMap,cdos, 35, getInfoSalary().getCat(), 3, getNlot(), getNbul(), getMonthOfPay(), getPeriodOfPay(),
+		montant = new  Double((tempNumber = getUtilNomenclature().getAmountOrRateFromNomenclature(this.parameter.listOfTableXXMap,cdos, 35, getInfoSalary().getCat(), 3, getNlot(), getNbul(), getMonthOfPay(), getPeriodOfPay(),
 				ClsEnumeration.EnColumnToRead.AMOUNT)) == null ? 0 : tempNumber.intValue()).intValue();
 
 		taux1 = new Double((tempNumber = getUtilNomenclature().getAmountOrRateFromNomenclature(this.parameter.listOfTableXXMap,cdos, 35, getInfoSalary().getCat(), 1, getNlot(), getNbul(), getMonthOfPay(), getPeriodOfPay(),
@@ -6626,16 +6648,16 @@ public class ClsSalaryToProcess
 					String sdate = ClsStringUtil.formatNumber(sysdate.getDay(), "00") + "-" + ClsStringUtil.formatNumber(sysdate.getMonth(), "00") + "-"
 							+ ClsStringUtil.formatNumber((sysdate.getYear() - parameter.enfantAgeMaximum), "0000");
 					Date date_min = new ClsDate(sdate, "dd-MM-yyyy").getDate();
-					
+
 					String dtna = new ClsDate(date_min, parameter.getAppDateFormat()).getDateS();
-					
-					String query="select count(*) from Rhtenfantagent" + " where identreprise = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "'" + " and achg = 'O'" + " and dtna > '" + dtna + "'";
+
+					String query="select count(*) from EnfantSalarie" + " where identreprise = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "'" + " and achg = 'O'" + " and dtna > '" + dtna + "'";
 					nbreEnfant = new Integer(service.find(query).get(0).toString());
 				}
 				catch (Exception e)
 				{
 					e.printStackTrace();
-				}			
+				}
 			}
 			// END IF;
 			// nbj_sup := nbj_sup + (nbj_par_enf * nb_enf);
@@ -6664,9 +6686,9 @@ public class ClsSalaryToProcess
 		// WHERE identreprise = PA_CALCUL.wpdos.identreprise
 		// AND nmat = PA_CALCUL.wsal01.nmat);
 		List l = getParameter().isUseRetroactif() ? getService().find(
-				"select coalesce(sum(valt),0) from Rhthfnom" + " where identreprise = '" + cdos + "'" + " and ctab = 18 " + " and nume = 1 " + " and cacc in (select distinct cdis from Rhtdistinctionagent "
+				"select coalesce(sum(valt),0) from Rhthfnom" + " where identreprise = '" + cdos + "'" + " and ctab = 18 " + " and nume = 1 " + " and cacc in (select distinct cdis from DistinctionSalarie "
 						+ " where identreprise = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "')") : getService().find(
-				"select coalesce(sum(valt),0) from Rhfnom" + " where identreprise = '" + cdos + "'" + " and ctab = 18 " + " and nume = 1 " + " and cacc in (select distinct cdis from Rhtdistinctionagent "
+				"select coalesce(sum(valt),0) from ParamData" + " where identreprise = '" + cdos + "'" + " and ctab = 18 " + " and nume = 1 " + " and cacc in (select distinct cdis from DistinctionSalarie "
 						+ " where identreprise = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "')");
 		if (!ClsObjectUtil.isListEmty(l))
 			nbreJourDeco = new BigDecimal(l.get(0).toString()).intValue();
@@ -6676,7 +6698,7 @@ public class ClsSalaryToProcess
 
 	/**
 	 * =>paf_TypePaiement Retrouve le type de paiement é utiliser
-	 * 
+	 *
 	 * @return le type de paiement
 	 */
 	public String getTypePaiement()
@@ -6687,10 +6709,10 @@ public class ClsSalaryToProcess
 	}
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public void annulation(HibernateConnexionService service, String cdos, String nmat, String aamm, Integer nbul)
+	public void annulation(GeneriqueConnexionService service, String cdos, String nmat, String aamm, Integer nbul)
 	{
 		String queryString = "from CumulPaie" + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and aamm = '" + aamm + "'" + " and nbul = " + nbul;
 		try
@@ -6722,11 +6744,11 @@ public class ClsSalaryToProcess
 					calcul.setClas(null);
 					session.save(calcul);
 
-					queryString = "Update CumulPaie set nbul = nbul *  " + (-1) + " where cdos='" + cdos + "' and nmat ='" + nmat + "'";
+					queryString = "Update CumulPaie set nbul = nbul *  " + (-1) + " where identreprise='" + cdos + "' and nmat ='" + nmat + "'";
 					queryString += " and nbul =" + nbul + " and rubq ='" + cum.getRubq() + "' and aamm ='" + aamm + "'";
 					session.createSQLQuery(queryString).executeUpdate();
 
-					queryString = "Update CumulPaie set mont = mont - " + cum.getMont() + " where cdos='" + cdos + "' and nmat ='" + nmat + "'";
+					queryString = "Update CumulPaie set mont = mont - " + cum.getMont() + " where identreprise='" + cdos + "' and nmat ='" + nmat + "'";
 					queryString += " and nbul =" + nbul + " and rubq ='" + cum.getRubq() + "' and aamm ='" + new ClsDate(aamm, ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).getYear() + "99'";
 					session.createSQLQuery(queryString).executeUpdate();
 				}
@@ -6740,7 +6762,7 @@ public class ClsSalaryToProcess
 			}
 			finally
 			{
-				service.closeConnexion(session);
+				service.closeSession(session);
 			}
 
 		}
@@ -6813,7 +6835,7 @@ public class ClsSalaryToProcess
 		// }
 		// finally
 		// {
-		// service.closeConnexion(session);
+		// service.closeSession(session);
 		// }
 		//
 		// }
@@ -6840,7 +6862,7 @@ public class ClsSalaryToProcess
 		//
 		String queryString = "select rubq, mont, argu, nprt, ruba from ElementVariableDetailMois" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
 				+ " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = " + this.getNbul();
-		
+
 //		String queryString = "select rubq, sum(mont) as mont, argu, nprt, ruba from ElementVariableDetailMois" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
 //		+ " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = " + this.getNbul()+" group by rubq,argu,nprt,ruba";
 		// CURSOR curs_evar2 IS
@@ -6854,7 +6876,7 @@ public class ClsSalaryToProcess
 				+ " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = " + this.getNbul();
 //		String queryStringRetro = "select rubq, sum(mont) as mont, argu, nprt, ruba from Rhthevar" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
 //		+ " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = " + this.getNbul()+" group by rubq,argu,nprt,ruba";
-		
+
 		//
 		if (this.getParameter().isUseRetroactif())
 			listOfElementVariable = this.getService().find(queryStringRetro);
@@ -6877,10 +6899,10 @@ public class ClsSalaryToProcess
 		//
 		listOfEltvar = map;
 	}
-	
+
 	/**
 	 * construit un map qui contient les éléments variables d'un agent
-	 * 
+	 *
 	 */
 	public void buildElementFixeMap()
 	{
@@ -6920,7 +6942,7 @@ public class ClsSalaryToProcess
 	/**
 	 * calcule les cumuls de cet agent et les met dans un map. En fait, elle permet d'optimiser le calcul proprement dit des cumuls car elle anticipe sur les
 	 * données.
-	 * 
+	 *
 	 */
 	public Map<String, Map<String, Object[]>> cumulMap1PourRubrique = new HashMap<String, Map<String,Object[]>>();
 	public Map<String, Map<String, Object[]>> cumulMap2PourRubrique = new HashMap<String, Map<String,Object[]>>();
@@ -6935,7 +6957,7 @@ public class ClsSalaryToProcess
 		cumul4 = new HashMap<String, Object[]>();
 		//
 		String nmat = infoSalary.getComp_id().getNmat();
-		String identreprise = parameter.getDossier();
+		String cdos = parameter.getDossier();
 
 		String strSqlQuery1 = "select rubq, sum(mont), sum(taux), sum(basp) , aamm from CumulPaie " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat
 				+ "' and nbul != 0 and " + wherePart + " and ( mont != 0 or taux != 0 or basp != 0) group by aamm, rubq";
@@ -6954,7 +6976,7 @@ public class ClsSalaryToProcess
 		boolean exist = false;
 		if (computecumul)
 		{
-			
+
 			if (nbul == 0)
 			{
 				if (!retro)
@@ -6996,7 +7018,7 @@ public class ClsSalaryToProcess
 					}
 				}
 			}
-			
+
 			if(exist) return;
 
 			if (nbul == 0)
@@ -7085,7 +7107,7 @@ public class ClsSalaryToProcess
 		// NVL(mtmens,0) != 0 )
 		// )
 		// ORDER BY lg;
-		String complexQuery = "select crub, lg from Rhtpretsagent" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
+		String complexQuery = "select crub, lg from PretInterne" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'"
 				+ " and premrb <= '" + this.getMonthOfPay() + "'" + " and etatpr = 'D'" + " and (((case when mtpr is null then 0 else mtpr end) != (case when mtremb is null then 0 else mtremb end))"
 				+ " or (((case when mtpr is null then 0 else mtpr end) = 0) and ((case when mtmens is null then 0 else mtmens end) != 0)))" + " order by lg";
 		List l = this.getService().find(complexQuery);
@@ -7117,8 +7139,8 @@ public class ClsSalaryToProcess
 		// AND paprent.pact = 'O'
 		// AND paprent.etpr = 'D'
 		// AND paprent.resr != 0;
-		String complexQuery = "select crub, nprt from Rhtpretent" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'" +
-		
+		String complexQuery = "select crub, nprt from PretExterneEntete" + " where identreprise = '" + this.getParameter().getDossier() + "'" + " and nmat = '" + this.getInfoSalary().getComp_id().getNmat() + "'" +
+
 		// " and per1 <= '" +
 				// salary.getMyMonthOfPay().getDateS(ParameterUtil.SESSION_FORMAT_DATE)
 				// + "'" +
@@ -7126,6 +7148,7 @@ public class ClsSalaryToProcess
 		List l = this.getService().find(complexQuery);
 		//
 		for (Object object : l)
+
 		{
 			// map.put(crub, value)
 			if (!listNumeroPretMap.containsKey((String) ((Object[]) object)[0]))
@@ -7142,42 +7165,42 @@ public class ClsSalaryToProcess
 	Map<String, Object> listSpecifiqueCumul99Map21 = null;
 
 	Map<String, Object> listSpecifiqueCumul99Map31 = null;
-	
+
 	public Map<String, Map<String, Object[]>> cumulMap1PourPeriode = new HashMap<String, Map<String,Object[]>>();
 	public Map<String, Map<String, Object>> cumulMap2PourPeriode = new HashMap<String, Map<String,Object>>();
 	public Map<String, Map<String, Object>> cumulMap3PourPeriode = new HashMap<String, Map<String,Object>>();
 
 	public void buildSpecifiqueCumul99Map(String debutPeriode, String finPeriode, String periode99)
 	{
-		String identreprise = this.getParameter().getDossier();
+		String cdos = this.getParameter().getDossier();
 		String nmat = this.getInfoSalary().getComp_id().getNmat();
-		HibernateConnexionService serv = this.getService();
+		GeneriqueConnexionService serv = this.getService();
 		String queryString = StringUtils.EMPTY;
 		String queryStringRetro = StringUtils.EMPTY;
 		List l = null;
-		
+
 		String key = debutPeriode+finPeriode+periode99;
-		
+
 		Map<String, Object[]> listSpecifiqueCumul99Map1 = new HashMap<String, Object[]>();
 		Map<String, Object> listSpecifiqueCumul99Map2 = new HashMap<String, Object>();
 		Map<String, Object> listSpecifiqueCumul99Map3 = new HashMap<String, Object>();
 
-		//Cas 1 : 
+		//Cas 1 :
 		if( ! cumulMap1PourPeriode.containsKey(key))
 		{
 			listSpecifiqueCumul99Map1 = new HashMap<String, Object[]>();
-			
+
 			queryString = "select rubq, sum(basc), sum(mont) from CumulPaie where identreprise = '" + cdos + "'";
 			queryString+=" and nmat = '" + nmat + "' and aamm >= '" + debutPeriode + "'";
 			queryString+="  and aamm <= '" + finPeriode + "'" + " and aamm != '" + periode99 + "'  and nbul != 0" + " group by  rubq";
-	
+
 			addToOutputtext("\n" + "..Query for map 1: " + queryString);
 			queryStringRetro = queryString.replace("CumulPaie", "Rhtprcumu");
-			
+
 			l = (this.getParameter().isUseRetroactif()) ? serv.find(queryStringRetro) : serv.find(queryString);
-	
+
 			Object[] array = null;
-	
+
 			for (Object object : l)
 			{
 				array = new Object[2];
@@ -7188,15 +7211,15 @@ public class ClsSalaryToProcess
 			cumulMap1PourPeriode.put(key, listSpecifiqueCumul99Map1);
 		}
 
-		//Cas 2 : 
+		//Cas 2 :
 		if( ! cumulMap2PourPeriode.containsKey(key))
 		{
 			listSpecifiqueCumul99Map2 = new HashMap<String, Object>();
-			
+
 			queryString = "select rubq, sum(mont) from CumulPaie where identreprise = '" + cdos + "' and nmat = '" + nmat + "'" ;
 			queryString+=" and aamm >= '" + debutPeriode + "'" + " and aamm <= '";
 			queryString+= finPeriode + "'" + " and aamm != '" + periode99 + "'  and nbul != 0" + " group by  rubq";
-	
+
 			addToOutputtext("\n" + "..Query for map 2: " + queryString);
 			queryStringRetro = queryString.replace("CumulPaie", "Rhtprcumu");
 			l = (this.getParameter().isUseRetroactif()) ? serv.find(queryStringRetro) : serv.find(queryString);
@@ -7207,16 +7230,16 @@ public class ClsSalaryToProcess
 			}
 			cumulMap2PourPeriode.put(key, listSpecifiqueCumul99Map2);
 		}
-		
-		//Cas 2 : 
+
+		//Cas 2 :
 		if( ! cumulMap3PourPeriode.containsKey(key))
 		{
 			listSpecifiqueCumul99Map3 = new HashMap<String, Object>();
-			
+
 			queryString = "select rubq, count(*) from CumulPaie" + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "'";
 			queryString+=" and aamm >= '" + debutPeriode + "'" + " and aamm < '" + finPeriode + "'" + " and aamm != '" + periode99 + "'";
 			queryString+="  and nbul = 9" + " group by  rubq";
-	
+
 			addToOutputtext("\n" + "..Query for map 3: " + queryString);
 			queryStringRetro = queryString.replace("CumulPaie", "Rhtprcumu");
 			l = (this.getParameter().isUseRetroactif()) ? serv.find(queryStringRetro) : serv.find(queryString);
@@ -7228,9 +7251,10 @@ public class ClsSalaryToProcess
 			cumulMap3PourPeriode.put(key, listSpecifiqueCumul99Map3);
 		}
 	}
-	
+
 	public void buildSpecifiqueCumul99MapOld()
 	{
+
 		listSpecifiqueCumul99Map11 = new HashMap<String, Object[]>();
 		listSpecifiqueCumul99Map21 = new HashMap<String, Object>();
 		listSpecifiqueCumul99Map31 = new HashMap<String, Object>();
@@ -7341,7 +7365,7 @@ public class ClsSalaryToProcess
 		ClsFictifSalaryWorkTime workTimeFictif = new ClsFictifSalaryWorkTime();
 		BeanUtils.copyProperties(this.getWorkTime(), workTimeFictif);
 
-		ClsFictifSalaryToProcess salaryToProcess = new ClsFictifSalaryToProcess(fictiveParameter, infoSalary, workTimeFictif);
+		ClsFictifSalaryToProcess salaryToProcess = new ClsFictifSalaryToProcess(fictiveParameter, infoSalary, workTimeFictif, fictiveParameter.getLanceur(), fictiveParameter.getCongeFictifService());
 		BeanUtils.copyProperties(this, salaryToProcess);
 
 		fictiveParameter.setListOfAllRubriqueMap(this.parameter.getListOfAllRubriqueMap());
@@ -7619,7 +7643,7 @@ public class ClsSalaryToProcess
 
 	public double calculDuNBJSUPP(double cgprinc)
 	{
-		String identreprise = getInfoSalary().getComp_id().getCdos();
+		String cdos = getInfoSalary().getComp_id().getCdos();
 		int montant = 0;
 		int taux1 = 0;
 		int taux2 = 0;
@@ -7668,7 +7692,7 @@ public class ClsSalaryToProcess
 					
 					String dtna = new ClsDate(date_min, parameter.getAppDateFormat()).getDateS();
 					
-					String query="select count(*) from Rhtenfantagent" + " where identreprise = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "'" + " and achg = 'O'" + " and dtna > '" + dtna + "'";
+					String query="select count(*) from EnfantSalarie" + " where identreprise = '" + cdos + "'" + " and nmat = '" + getInfoSalary().getComp_id().getNmat() + "'" + " and achg = 'O'" + " and dtna > '" + dtna + "'";
 					nbreEnfant = new Integer(service.find(query).get(0).toString());
 				}
 				catch (Exception e)
@@ -7695,10 +7719,10 @@ public class ClsSalaryToProcess
 			try
 			{
 				
-				String identreprise = getInfoSalary().getComp_id().getCdos();
-				String query="select sum(nbjrc-nbjrd) from Spcongesabc where identreprise = '" + cdos + "' and nmat = '" + getInfoSalary().getComp_id().getNmat() + "' ";
-				
-				nbj_reliq = new Integer(service.find(query).get(0).toString());
+//				String cdos = getInfoSalary().getComp_id().getCdos();
+//				String query="select sum(nbjrc-nbjrd) from Spcongesabc where identreprise = '" + cdos + "' and nmat = '" + getInfoSalary().getComp_id().getNmat() + "' ";
+//
+//				nbj_reliq = new Integer(service.find(query).get(0).toString());
 			}
 			catch (Exception e)
 			{

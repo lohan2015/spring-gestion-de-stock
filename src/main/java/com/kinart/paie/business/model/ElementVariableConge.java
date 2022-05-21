@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "ElementVariableConge")
 @Table(name = "elementvariableconge")
 public class ElementVariableConge extends AbstractEntity {
 

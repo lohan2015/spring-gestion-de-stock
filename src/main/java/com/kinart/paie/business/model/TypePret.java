@@ -15,7 +15,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "TypePret")
 @Table(name = "typepret")
 public class TypePret extends AbstractEntity {
 

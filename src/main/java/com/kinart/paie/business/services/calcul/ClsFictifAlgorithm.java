@@ -332,7 +332,7 @@ public class ClsFictifAlgorithm implements IFictifAlgorithm
 		String codeRubrique = rubrique.getRubrique().getComp_id().getCrub();
 		String cdos = fictivesalary.getInfoSalary().getComp_id().getCdos();
 		String nmat = this.fictivesalary.getInfoSalary().getComp_id().getNmat();
-		HibernateConnexionService service = fictivesalary.getService();
+		GeneriqueConnexionService service = fictivesalary.getService();
 		if(StringUtils.isBlank(rubrique.getRubrique().getTabl()))
 		{
 			// logger
@@ -2772,20 +2772,20 @@ public class ClsFictifAlgorithm implements IFictifAlgorithm
 			ddcf = "'" + new ClsDate(fictivesalary.getInfoSalary().getDdcf()).getDateS(fictivesalary.param.appDateFormat) + "'";
 		
 		String requete = !fictivesalary.param.isUseRetroactif() ? 
-				"select max(ddcg) from Rhtcongeagent " + " where identreprise = '" + cdos + "'" + " and nmat = '" + fictivesalary.getInfoSalary().getComp_id().getNmat() + "'"
+				"select max(ddcg) from HistoCongeSalarie " + " where identreprise = '" + cdos + "'" + " and nmat = '" + fictivesalary.getInfoSalary().getComp_id().getNmat() + "'"
 						+ " and ddcg < " + ddcf+ "" + " and cmcg in (select a.cacc from ParamData a, ParamData b "
-						+ " where b.cacc = a.cacc " + " and b.ctab = b.ctab" + " and b.cdos = '" + cdos + "'" + " and a.cdos = '" + cdos + "'"
+						+ " where b.cacc = a.cacc " + " and b.ctab = b.ctab" + " and b.identreprise = '" + cdos + "'" + " and a.identreprise = '" + cdos + "'"
 						+ " and a.ctab = 22 " + " and b.ctab = 22 " + " and a.nume = 1 " + " and b.nume = 3 " + " and a.valm = 1 " + " and b.valm = 0 )"
 				: 
-						"select max(ddcg) from Rhtcongeagent " + " where identreprise = '" + cdos + "'" + " and nmat = '" + fictivesalary.getInfoSalary().getComp_id().getNmat() + "'"
+						"select max(ddcg) from HistoCongeSalarie " + " where identreprise = '" + cdos + "'" + " and nmat = '" + fictivesalary.getInfoSalary().getComp_id().getNmat() + "'"
 								+ " and ddcg < " + ddcf  + "" + " and cmcg in (select a.cacc from Rhthfnom a, Rhthfnom b "
-								+ " where b.cacc = a.cacc " + " and b.ctab = b.ctab" + " and b.cdos = '" + cdos + "'" + " and a.cdos = '" + cdos + "'"
+								+ " where b.cacc = a.cacc " + " and b.ctab = b.ctab" + " and b.identreprise = '" + cdos + "'" + " and a.identreprise = '" + cdos + "'"
 								+ " and a.ctab = 22 " + " and b.ctab = 22 " + " and a.nume = 1 " + " and b.nume = 3 " + " and a.valm = 1 " + " and b.valm = 0 )";
 		Session session = fictivesalary.getService().getSession();
 		Query q = session.createSQLQuery(requete);
 		
 		List l = q.list();
-		fictivesalary.getService().closeConnexion(session);
+		fictivesalary.getService().closeSession(session);
 				
 		if (!ClsObjectUtil.isListEmty(l))
 		{
@@ -8520,7 +8520,7 @@ public class ClsFictifAlgorithm implements IFictifAlgorithm
 		String nmat = fictivesalary.getInfoSalary().getComp_id().getNmat();
 		String rubq = fictivesalary.param.getBaseCongeRubrique();
 		String aamm = new ClsDate(fictivesalary.param.myMoisPaieCourant.addMonth(-1)).getDateS("yyyyMM");
-		HibernateConnexionService service = fictivesalary.getService();
+		GeneriqueConnexionService service = fictivesalary.getService();
 		double l_mon   = 0;
 
 	   String query=" SELECT SUM(coalesce(mont,0)) FROM Rhtcalcul  where identreprise = '"+cdos+"'";
@@ -8543,10 +8543,10 @@ public class ClsFictifAlgorithm implements IFictifAlgorithm
 		String nmat = fictivesalary.getInfoSalary().getComp_id().getNmat();
 		String rubq = fictivesalary.param.getBaseCongeRubrique();
 		String aamm = fictivesalary.param.getMonthOfPay();
-		HibernateConnexionService service = fictivesalary.getService();
+		GeneriqueConnexionService service = fictivesalary.getService();
 		double l_mon   = 0;
 
-	   String query=" SELECT SUM(coalesce(mont,0)) FROM Rhtfic  where identreprise = '"+cdos+"'";
+	   String query=" SELECT SUM(coalesce(mont,0)) FROM CongeFictif  where identreprise = '"+cdos+"'";
 	   query+=" AND aamm < '"+aamm+"' and aamm not like '%99' AND nmat = '"+nmat+"' AND rubq = '"+rubq+"'";
 	   List lst = service.find(query);
 	   if(!lst.isEmpty() && lst.get(0)!= null)
@@ -8581,27 +8581,27 @@ public class ClsFictifAlgorithm implements IFictifAlgorithm
 		} else {
 			query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where identreprise = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"' and to_char(ddeb, 'yyyyMM') = '"+this.fictivesalary.param.getMonthOfPay()+"' ";
 			query+=" and nmat = '"+fictivesalary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+fictivesalary.param.getNumeroBulletin()+" AND motf in (select a.cacc from ParamData a, ParamData b "+
-																 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.cdos = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"'  and a.cdos = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"' "+
+																 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.identreprise = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"'  and a.identreprise = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"' "+
 																 "and a.ctab = 22 and b.ctab = 22 and a.nume = 1  and b.nume = 3 and a.valm = 1 and b.valm = 0 ) ";
 			if (StringUtils.equals(TypeBDUtil.typeBD, TypeBDUtil.IN))
 			{
 				query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where identreprise = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"' and to_char1(ddeb,'YYYYMM') = '"+this.fictivesalary.param.getMoisPaieCourant()+"' ";
 				query+=" and nmat = '"+fictivesalary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+fictivesalary.param.getNumeroBulletin()+" AND motf in (select a.cacc from ParamData a, ParamData b "+
-																	 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.cdos = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"'  and a.cdos = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"' "+
+																	 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.identreprise = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"'  and a.identreprise = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"' "+
 																	 "and a.ctab = 22 and b.ctab = 22 and a.nume = 1  and b.nume = 3 and a.valm = 1 and b.valm = 0 ) ";
 			}
 			if (StringUtils.equals(TypeBDUtil.typeBD, TypeBDUtil.MS))
 			{
 				query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where identreprise = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"' and dbo.formaterDateEnChaine(ddeb,'yyyyMM') = '"+this.fictivesalary.param.getMoisPaieCourant()+"' ";
 				query+=" and nmat = '"+fictivesalary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+fictivesalary.param.getNumeroBulletin()+" AND motf in (select a.cacc from ParamData a, ParamData b "+
-																	 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.cdos = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"'  and a.cdos = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"' "+
+																	 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.identreprise = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"'  and a.identreprise = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"' "+
 																	 "and a.ctab = 22 and b.ctab = 22 and a.nume = 1  and b.nume = 3 and a.valm = 1 and b.valm = 0 ) ";
 			}
 			if (StringUtils.equals(TypeBDUtil.typeBD, TypeBDUtil.MY))
 			{
 				query="select cast(sum(nvl(nbja,0)) as int) nb from ElementVariableConge where identreprise = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"' and date_format(ddeb,'%Y%m') = '"+this.fictivesalary.param.getMoisPaieCourant()+"' ";
 				query+=" and nmat = '"+fictivesalary.getInfoSalary().getComp_id().getNmat()+"' and nbul = "+fictivesalary.param.getNumeroBulletin()+" AND motf in (select a.cacc from ParamData a, ParamData b "+
-																	 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.cdos = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"'  and a.cdos = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"' "+
+																	 "where b.cacc = a.cacc   and b.ctab = b.ctab  and b.identreprise = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"'  and a.identreprise = '"+fictivesalary.getInfoSalary().getComp_id().getCdos()+"' "+
 																	 "and a.ctab = 22 and b.ctab = 22 and a.nume = 1  and b.nume = 3 and a.valm = 1 and b.valm = 0 ) ";
 			}
 		}
@@ -8616,7 +8616,7 @@ public class ClsFictifAlgorithm implements IFictifAlgorithm
 		} catch (Exception e) {
 			// TODO: handle exception
 		} finally {
-			fictivesalary.param.service.closeConnexion(session);
+			fictivesalary.param.service.closeSession(session);
 		}
 		
 		fictivesalary.getValeurRubriquePartage().setRates(tau);

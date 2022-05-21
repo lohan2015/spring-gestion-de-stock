@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "SuspensionPaie")
 @Table(name = "suspensionpaie")
 public class SuspensionPaie extends AbstractEntity {
 

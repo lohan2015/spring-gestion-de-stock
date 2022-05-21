@@ -65,7 +65,7 @@ class CategoryServiceImplTest {
                 .nom("MBASSI MASSOUKE")
                 .pren("CYRILLE")
                 .lemb("AUTO")
-                .idEntreprise(1)
+                .identreprise(1)
                 .build();
 
         Session session = hibernateConnexionService.getSession();

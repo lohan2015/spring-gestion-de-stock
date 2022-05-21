@@ -1,11 +1,15 @@
 package com.kinart.paie.business.services.utils;
 
+import com.kinart.paie.business.model.ParamData;
 import com.kinart.paie.business.model.SequenceAuto;
 import com.kinart.paie.business.repository.SequenceAutoRepository;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +17,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -41,7 +48,8 @@ public class GeneriqueConnexionService {
     public List find(String query) throws DataAccessException {
         Session sess = getSession();
         try {
-            return sess.createSQLQuery(query).getResultList();
+            org.hibernate.Query querySQL = sess.createQuery(query);
+            return querySQL.getResultList();
         } catch (Exception e){
             e.printStackTrace();
             throw e;
@@ -68,7 +76,7 @@ public class GeneriqueConnexionService {
             if(tx!=null)
                 tx.rollback();
         }finally{
-            sess.flush();
+            //sess.flush();
             closeSession(sess);
         }
     }
@@ -109,17 +117,18 @@ public class GeneriqueConnexionService {
         // TODO Auto-generated method stub
         Serializable ret = null;
         Session sess=getSession();
-        Transaction tx = null;
+        //Transaction tx = null;
         try{
-            tx=sess.beginTransaction();
-            ret = /*this.dao*/sess.save ( entity );
-            tx.commit();
+            //tx=sess.beginTransaction();
+            //ret = /*this.dao*/
+                    sess.saveOrUpdate ( entity );
+            //tx.commit();
         }catch(Exception ex){
             ex.printStackTrace();
-            if(tx!=null)
-                tx.rollback();
+//            if(tx!=null)
+//                tx.rollback();
         }finally{
-            sess.flush();
+            //sess.flush();
             closeSession(sess);
         }
         return ret;
@@ -409,4 +418,166 @@ public class GeneriqueConnexionService {
 
     }
 
+    public List<ParamData> findAnyColumnFromNomenclature (String strCodeDossier , String codeLangue , String strCodeTable , String strColumnNumber ) {
+        return findAnyColumnFromNomenclature (  strCodeDossier ,  codeLangue ,  strCodeTable ,  strColumnNumber, ClsNomenclatureSortColumnEnum.NomenclatureSortColumnEnum.CACC );
+    }
+
+
+    public List<ParamData> findAnyColumnFromNomenclature ( String strCodeDossier , String codeLangue , String strCodeTable , String strColumnNumber, ClsNomenclatureSortColumnEnum.NomenclatureSortColumnEnum enumSortColumn) {
+        ArrayList<ParamData> liste = new ArrayList<ParamData> ( );
+        ParamData nomenclature = null;
+        String strSortColumn = enumSortColumn==ClsNomenclatureSortColumnEnum.NomenclatureSortColumnEnum.CACC ? "cacc" : "vall";
+        String queryString = "Select ParamData.cacc,ParamData.vall,ParamData.valm,ParamData.valt,ParamData.vald from ParamData ParamData where ParamData.identreprise=" + "'" + strCodeDossier + "'"
+                + " and ParamData.ctab="  + strCodeTable +  " and ParamData.nume=" + strColumnNumber;
+        queryString += " order by ParamData."+strSortColumn+" ASC";
+        Session session = this.getSession();
+        try {
+            org.hibernate.Query query = session.createQuery ( queryString );
+            Iterator iterator = query.iterate();
+            String montant = "";
+            String taux = "";
+            String date = "";
+            String code = "";
+            String libelle = "";
+            while (iterator.hasNext ( )) {
+                try {
+                    montant = "";
+                    taux = "";
+                    date = "";
+                    code="";
+                    libelle="";
+                    Object [ ] ligne = ( Object [ ] ) iterator.next ( );
+                    code = ligne [ 0 ]+"";
+                    libelle = ligne [ 1 ]+"";
+                    if (ligne [ 2 ] != null) montant = ligne [ 2 ]+"";
+                    if (ligne [ 3 ] != null) taux = ligne [ 3 ]+"";
+                    if (ligne [ 4 ] != null) date = ligne [ 4 ]+"";
+                    //libelle = Convertisseur.getMessage2(libelle, codeLangue, libelle); //getLibelleFromEvMsg(session,libelle,codeLangue);
+                    nomenclature = new ParamData();
+                    nomenclature.setCacc(code);
+                    nomenclature.setVall(libelle);
+                    nomenclature.setValm(Long.valueOf(montant));
+                    nomenclature.setValt(new BigDecimal(taux));
+                    nomenclature.setVald(new ClsDate(date).getDate());
+                    liste.add ( nomenclature );
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    continue;
+                }
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        finally{
+            this.closeSession(session);
+        }
+        return liste;
+    }
+
+    public ParamData findAnyColumnFromNomenclature ( String strCodeDossier , String codeLangue , String strCodeTable , String strCodeCacc , String strColumnNumber ) {
+        ParamData nomenclature = null;
+        String code = "";
+        String libelle = "";
+        String montant = "";
+        String taux = "";
+        String date = "";
+        String queryString = "Select a.cacc,a.vall,a.valm,a.valt,a.vald from ParamData a where a.idEntreprise=" + "'" + strCodeDossier + "'"
+                + " and a.ctab=" +  strCodeTable   + " and a.cacc=" + "'"
+                + strCodeCacc + "'"+ " and a.nume="  + strColumnNumber;
+        queryString += " order by a.vall ASC";
+        Session session = this.getSession();
+        try {
+            org.hibernate.Query query = session.createQuery ( queryString );
+            Iterator iterator = query.iterate();
+            if (iterator.hasNext ( )) {
+                Object [ ] ligne = ( Object [ ] ) iterator.next ( );
+                code = ligne [ 0 ]+"";
+                if (ligne [ 1 ] != null) libelle = ligne [ 1 ]+"";
+                if (ligne [ 2 ] != null) montant = ligne [ 2 ]+"";
+                if (ligne [ 3 ] != null) taux = ligne [ 3 ]+"";
+                if (ligne [ 4 ] != null) date = ligne [ 4 ]+"";
+                //libelle = Convertisseur.getMessage2(libelle, codeLangue, libelle); //libelle = getLibelleFromEvMsg(session,libelle,codeLangue);
+            }
+            nomenclature = new ParamData();
+            nomenclature.setCacc(code);
+            nomenclature.setVall(libelle);
+            nomenclature.setValm(Long.valueOf(StringUtils.isEmpty(montant)?"0":montant));
+            nomenclature.setValt(new BigDecimal(StringUtils.isEmpty(taux)?"0":taux));
+            nomenclature.setVald(new ClsDate(StringUtils.isEmpty(date)?"01/01/2000":date).getDate());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally{
+            this.closeSession(session);
+        }
+
+        return nomenclature;
+    }
+
+    public ParamData findAnyByOrderColumnFromNomenclature ( String strCodeDossier , String codeLangue , String strCodeTable , String strCodeCacc , String strColumnNumber,String strSortColumn ) {
+        ParamData nomenclature = null;
+        String code = "";
+        String libelle = "";
+        String montant = "";
+        String taux = "";
+        String date = "";
+        String queryString = "Select ParamData.cacc,ParamData.vall,ParamData.valm,ParamData.valt,ParamData.vald from Rhfnom rhfnom where ParamData.identreprise=" + "'" + strCodeDossier + "'"
+                + " and ParamData.ctab="  + strCodeTable  + " and ParamData.cacc=" + "'"
+                + strCodeCacc + "'"+ " and ParamData.nume="  + strColumnNumber;
+        queryString += " order by ParamData."+strSortColumn+" ASC";
+        Session session = this.getSession();
+        try {
+            org.hibernate.Query query = session.createQuery ( queryString );
+            Iterator iterator = query.iterate();
+            if (iterator.hasNext ( )) {
+                Object [ ] ligne = ( Object [ ] ) iterator.next ( );
+                code = ligne [ 0 ]+"";
+                if (ligne [ 1 ] != null) libelle = ligne [ 1 ]+"";
+                if (ligne [ 2 ] != null) montant = ligne [ 2 ]+"";
+                if (ligne [ 3 ] != null) taux = ligne [ 3 ]+"";
+                if (ligne [ 4 ] != null) date = ligne [ 4 ]+"";
+                //libelle = Convertisseur.getMessage2(libelle, codeLangue, libelle); //libelle = getLibelleFromEvMsg(session,libelle,codeLangue);
+            }
+            nomenclature = new ParamData();
+            nomenclature.setCacc(code);
+            nomenclature.setVall(libelle);
+            nomenclature.setValm(Long.valueOf(montant));
+            nomenclature.setValt(new BigDecimal(taux));
+            nomenclature.setVald(new ClsDate(date).getDate());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally{
+            this.closeSession(session);
+        }
+        return nomenclature;
+    }
+
+    public String getMoisPaieReel(final String cdos, final String datedebut){
+        Session session = this.getSession();
+        try {
+            org.hibernate.Query query = session.createQuery("select a.cacc"
+                    + " from ParamData a, ParamData b, ParamData c"
+                    + " where a.identreprise = '"+cdos+"' and a.ctab = 91"
+                    + " and a.identreprise = b.identreprise and a.identreprise = c.identreprise"
+                    + " and a.cacc = b.cacc and a.cacc = c.cacc"
+                    + " and a.ctab = b.ctab and a.ctab = c.ctab"
+                    + " and a.nume = 1 and b.nume = 2 and c.nume = 3"
+                    + " and to_date('"+datedebut+"', 'dd/MM/yyyy') between to_date(b.vall, 'dd/MM/yyyy') and to_date(c.vall, 'dd/MM/yyyy')");
+            List list = query.list();
+            if(list.isEmpty())
+            {
+                return "0";
+            }
+            else return (String) list.get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally{
+            this.closeSession(session);
+        }
+        return "0";
+    }
 }

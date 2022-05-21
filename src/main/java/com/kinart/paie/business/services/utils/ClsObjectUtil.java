@@ -170,21 +170,32 @@ public class ClsObjectUtil {
 	 * @return
 	 */
 	public static boolean isAppliedToObject(Object value, Object ...values){
-		boolean applied = false;
-		if(isNull(value)){
-			for (int i = 0; i < values.length; i++) {
-		        applied = (isNull(values[i]));
-		        if(! applied)
-		        	return (! applied);
-		    }
+		boolean applied = true;
+		if(isNull(value)) return applied;
+		//si toutes les valeurs sont nulles alors true
+		for (int i = 0; i < values.length; i++) {
+			//com.cdi.deltarh.service.ClsParameter.println("Valeur à rechercher chez le salarié = "+values[i]);
+			applied = applied && (isNull(values[i]));
 		}
-		else{
-			for (int i = 0; i < values.length; i++) {
-		        applied = values[i].equals(value);
-		        if(applied)
-		        	return (applied);
-		    }
-		}		
+		//si la valeur à comparer n'est pas nulle alors retourner true
+		if(! applied){
+			if(isNull(value))
+				return false;
+		}
+		else
+			return true;
+		//
+		applied = false;
+		for (int i = 0; i < values.length; i++) {
+			if(values[i] == null){
+//					applied = true;
+				continue;
+			}
+			applied = value.toString().equals(values[i].toString());
+			if(applied)
+				return (applied);
+		}
+//		}
 		//
 		return applied;
 	}
@@ -205,6 +216,10 @@ public class ClsObjectUtil {
 			if(obj == null || ((Integer)obj) == 0)
 				flag = true;
 		}
+		else if(obj instanceof Long){
+			if(obj == null || ((Long)obj) == 0)
+				flag = true;
+		}
 		else if(obj instanceof Double){
 			if(obj == null || ((Double)obj) == 0)
 				flag = true;
@@ -214,7 +229,8 @@ public class ClsObjectUtil {
 				flag = true;
 		}
 		else if(obj instanceof String){
-			flag = StringUtils.isEmpty((String)obj);
+			if(obj == null || "".equalsIgnoreCase(((String)obj).trim()))
+			    flag = true;//StringUtils.isEmpty((String)obj);
 		}
 		else if(obj instanceof Date){
 			if(obj == null)

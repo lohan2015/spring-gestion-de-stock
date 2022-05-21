@@ -9,12 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
 import com.kinart.paie.business.model.CaisseMutuelleSalarie;
 import com.kinart.paie.business.model.CalculPaie;
 import com.kinart.paie.business.model.CumulPaie;
 import com.kinart.paie.business.model.ElementSalaireBareme;
+import com.kinart.paie.business.services.CalculPaieService;
 import com.kinart.paie.business.services.utils.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Cette classe permet d'impl�menter un wrapper d'une rubrique et d'encapsuler les donn�es d'une rubrique: les �l�ments variables de la rubrique, l'exc�ution de
@@ -384,8 +387,8 @@ public class ClsRubriqueClone
 		// WHERE cdos = PA_CALCUL.wpdos.cdos
 		// AND nmat = PA_CALCUL.wsal01.nmat
 		// AND (rscm = PA_CALCUL.t_rub.crub OR rpcm = PA_CALCUL.t_rub.crub );
-		String queryStringCm = "from CaisseMutuelleSalarie " + " where comp_id.cdos = '" + this.getSalary().getParameter().getDossier() + "'" + " and comp_id.nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
-				+ " and (comp_id.rscm = '" + rubrique.getComp_id().getCrub() + "' or rpcm = '" + rubrique.getComp_id().getCrub() + "')";
+		String queryStringCm = "from CaisseMutuelleSalarie " + " where identreprise = '" + this.getSalary().getParameter().getDossier() + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+				+ " and (rscm = '" + rubrique.getComp_id().getCrub() + "' or rpcm = '" + rubrique.getComp_id().getCrub() + "')";
 		// BEGIN
 		//
 		// PA_CALCUL.zz := 0;
@@ -477,8 +480,9 @@ public class ClsRubriqueClone
 		// if('O' == salary.getParameter().getGenfile()) salary.outputtext+="\n--In Rubrique Clone : Sex doesn't match !");
 		// return false;
 		// }
-
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getSexe(), rubrique.getSexe()))
+//		System.out.println("SEXE AVANT="+rubrique.getSexe());
+//		System.out.println("SEXE AVANT="+salary.getInfoSalary().getSexe());
+		if (StringUtils.isNotEmpty(rubrique.getSexe()) && !ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getSexe(), rubrique.getSexe()))
 		{
 			if ('O' == salary.getParameter().getGenfile())
 				salary.addToOutputtext( "\n--In Rubrique Clone : Sex doesn't match !");
@@ -498,6 +502,10 @@ public class ClsRubriqueClone
 		// return false;
 		// }
 
+//		if ((rubrique.getMoi1()!=null&&!ClsObjectUtil.isAppliedToObject(moisCalcul, rubrique.getMoi1())) ||
+//				(rubrique.getMoi2()!=null&&!ClsObjectUtil.isAppliedToObject(moisCalcul, rubrique.getMoi2())) ||
+//						(rubrique.getMoi3()!=null&&!ClsObjectUtil.isAppliedToObject(moisCalcul, rubrique.getMoi3())) ||
+//								(rubrique.getMoi4()!=null&&!ClsObjectUtil.isAppliedToObject(moisCalcul, rubrique.getMoi4())))
 		if (!ClsObjectUtil.isAppliedToObject(moisCalcul, rubrique.getMoi1(), rubrique.getMoi2(), rubrique.getMoi3(), rubrique.getMoi4()))
 		{
 			if ('O' == salary.getParameter().getGenfile())
@@ -543,43 +551,43 @@ public class ClsRubriqueClone
 			// if('O' == salary.getParameter().getGenfile()) salary.outputtext+="\n--In Rubrique Clone : Anv doesn't match !");
 			// return false;
 			// }
-			if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn1(), rubrique.getAvn()))
-				if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn2(), rubrique.getAvn()))
-					if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn3(), rubrique.getAvn()))
-						if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn4(), rubrique.getAvn()))
-							if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn5(), rubrique.getAvn()))
-								if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn6(), rubrique.getAvn()))
-								{
-									if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn7(), rubrique.getAvn()))
-									{
-										if ('O' == salary.getParameter().getGenfile())
-											salary.addToOutputtext( "\n--In Rubrique Clone : avn xx doesn't match !");
-										return false;
-									}
-								}
+//			if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn1(), rubrique.getAvn()))
+//				if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn2(), rubrique.getAvn()))
+//					if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn3(), rubrique.getAvn()))
+//						if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn4(), rubrique.getAvn()))
+//							if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn5(), rubrique.getAvn()))
+//								if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn6(), rubrique.getAvn()))
+//								{
+//									if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAvn7(), rubrique.getAvn()))
+//									{
+//										if ('O' == salary.getParameter().getGenfile())
+//											salary.addToOutputtext( "\n--In Rubrique Clone : avn xx doesn't match !");
+//										return false;
+//									}
+//								}
 		}
 		//
 		// -- Code salaire
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.cods, PA_CALCUL.t_rub.cs1, PA_CALCUL.t_rub.cs2, PA_CALCUL.t_rub.cs3) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getCods(), rubrique.getCs1(), rubrique.getCs2(), rubrique.getCs3()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Cods doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getCods(), rubrique.getCs1(), rubrique.getCs2(), rubrique.getCs3()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Cods doesn't match !");
+//			return false;
+//		}
 		// -- Situation familiale
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.sitf, PA_CALCUL.t_rub.sit1, PA_CALCUL.t_rub.sit2,
 		// PA_CALCUL.t_rub.sit3, PA_CALCUL.t_rub.sit4) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getSitf(), rubrique.getSit1(), rubrique.getSit2(), rubrique.getSit3(), rubrique.getSit4()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Sitf doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getSitf(), rubrique.getSit1(), rubrique.getSit2(), rubrique.getSit3(), rubrique.getSit4()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Sitf doesn't match !");
+//			return false;
+//		}
 		// -- Nombre d'enfants
 		// IF PA_CALCUL.t_rub.nbe1 > PA_CALCUL.wsal01.nbec OR PA_CALCUL.t_rub.nbe2 < PA_CALCUL.wsal01.nbec THEN
 		// RETURN FALSE;
@@ -601,12 +609,12 @@ public class ClsRubriqueClone
 		// PA_CALCUL.t_rub.zca3, PA_CALCUL.t_rub.zca4) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAfec(), rubrique.getZca1(), rubrique.getZca2(), rubrique.getZca3(), rubrique.getZca4()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Afec doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getAfec(), rubrique.getZca1(), rubrique.getZca2(), rubrique.getZca3(), rubrique.getZca4()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Afec doesn't match !");
+//			return false;
+//		}
 		// -- ----- Categorie
 		//sous as400, les lettres sont plus petit que les chiffres
 		//tandis que sous java, les lettres sont plus grands que les chiffres
@@ -661,13 +669,13 @@ public class ClsRubriqueClone
 		// PA_CALCUL.t_rub.tyc7, PA_CALCUL.t_rub.tyc8) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getTypc(), rubrique.getTyc1(), rubrique.getTyc2(), rubrique.getTyc3(), rubrique.getTyc4(), rubrique.getTyc5(), rubrique.getTyc6(), rubrique.getTyc7(),
-				rubrique.getTyc8()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Typc doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getTypc(), rubrique.getTyc1(), rubrique.getTyc2(), rubrique.getTyc3(), rubrique.getTyc4(), rubrique.getTyc5(), rubrique.getTyc6(), rubrique.getTyc7(),
+////				rubrique.getTyc8()))
+////		{
+////			if ('O' == salary.getParameter().getGenfile())
+////				salary.addToOutputtext( "\n--In Rubrique Clone : Typc doesn't match !");
+////			return false;
+////		}
 		// -- ----- Grade
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.grad, PA_CALCUL.t_rub.gra1, PA_CALCUL.t_rub.gra2,
 		// PA_CALCUL.t_rub.gra3, PA_CALCUL.t_rub.gra4,
@@ -675,46 +683,46 @@ public class ClsRubriqueClone
 		// PA_CALCUL.t_rub.gra7, PA_CALCUL.t_rub.gra8) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getGrad(), rubrique.getGra1(), rubrique.getGra2(), rubrique.getGra3(), rubrique.getGra4(), rubrique.getGra5(), rubrique.getGra6(), rubrique.getGra7(),
-				rubrique.getGra8()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Grad doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getGrad(), rubrique.getGra1(), rubrique.getGra2(), rubrique.getGra3(), rubrique.getGra4(), rubrique.getGra5(), rubrique.getGra6(), rubrique.getGra7(),
+//				rubrique.getGra8()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Grad doesn't match !");
+//			return false;
+//		}
 		// -- Niveau 1
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.niv1, PA_CALCUL.t_rub.niv11, PA_CALCUL.t_rub.niv12,
 		// PA_CALCUL.t_rub.niv13, PA_CALCUL.t_rub.niv14) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getNiv1(), rubrique.getNiv11(), rubrique.getNiv12(), rubrique.getNiv13(), rubrique.getNiv14()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Niv1 doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getNiv1(), rubrique.getNiv11(), rubrique.getNiv12(), rubrique.getNiv13(), rubrique.getNiv14()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Niv1 doesn't match !");
+//			return false;
+//		}
 		// -- Niveau 2
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.niv2, PA_CALCUL.t_rub.niv21, PA_CALCUL.t_rub.niv22,
 		// PA_CALCUL.t_rub.niv23, PA_CALCUL.t_rub.niv24) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getNiv2(), rubrique.getNiv21(), rubrique.getNiv22(), rubrique.getNiv23(), rubrique.getNiv24()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Niv2 doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getNiv2(), rubrique.getNiv21(), rubrique.getNiv22(), rubrique.getNiv23(), rubrique.getNiv24()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Niv2 doesn't match !");
+//			return false;
+//		}
 		// -- Niveau 3
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.niv3, PA_CALCUL.t_rub.niv31, PA_CALCUL.t_rub.niv32,
 		// PA_CALCUL.t_rub.niv33, PA_CALCUL.t_rub.niv34) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getNiv3(), rubrique.getNiv31(), rubrique.getNiv32(), rubrique.getNiv33(), rubrique.getNiv34()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Niv3 doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getNiv3(), rubrique.getNiv31(), rubrique.getNiv32(), rubrique.getNiv33(), rubrique.getNiv34()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Niv3 doesn't match !");
+//			return false;
+//		}
 		// -- Age
 		// -- LH 260198 L'age etait calcule avec des decimales
 		// -- LH 160700 nbr_an := FLOOR( ( date_dep - wsal01.dtna ) / 365 );
@@ -741,22 +749,22 @@ public class ClsRubriqueClone
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.nato, PA_CALCUL.t_rub.nat1, PA_CALCUL.t_rub.nat2) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getNato(), rubrique.getNat1(), rubrique.getNat2()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Nato doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getNato(), rubrique.getNat1(), rubrique.getNat2()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Nato doesn't match !");
+//			return false;
+//		}
 		// -- Syndicat
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.synd, PA_CALCUL.t_rub.synd) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getSynd(), rubrique.getSynd()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Synd doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getSynd(), rubrique.getSynd()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Synd doesn't match !");
+//			return false;
+//		}
 		// -- Fonction
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.fonc, PA_CALCUL.t_rub.fon1, PA_CALCUL.t_rub.fon2,
 		// PA_CALCUL.t_rub.fon3, PA_CALCUL.t_rub.fon4,
@@ -764,13 +772,13 @@ public class ClsRubriqueClone
 		// PA_CALCUL.t_rub.fon7, PA_CALCUL.t_rub.fon8) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getFonc(), rubrique.getFon1(), rubrique.getFon2(), rubrique.getFon3(), rubrique.getFon4(), rubrique.getFon5(), rubrique.getFon6(), rubrique.getFon7(),
-				rubrique.getFon8()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Fonc doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getFonc(), rubrique.getFon1(), rubrique.getFon2(), rubrique.getFon3(), rubrique.getFon4(), rubrique.getFon5(), rubrique.getFon6(), rubrique.getFon7(),
+//				rubrique.getFon8()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Fonc doesn't match !");
+//			return false;
+//		}
 		// -- Regime
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.regi, PA_CALCUL.t_rub.reg1, PA_CALCUL.t_rub.reg2,
 		// PA_CALCUL.t_rub.reg3, PA_CALCUL.t_rub.reg4,
@@ -778,65 +786,65 @@ public class ClsRubriqueClone
 		// PA_CALCUL.t_rub.reg7, PA_CALCUL.t_rub.reg8) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getRegi(), rubrique.getReg1(), rubrique.getReg2(), rubrique.getReg3(), rubrique.getReg4(), rubrique.getReg5(), rubrique.getReg6(), rubrique.getReg7(),
-				rubrique.getReg8()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Regi doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getRegi(), rubrique.getReg1(), rubrique.getReg2(), rubrique.getReg3(), rubrique.getReg4(), rubrique.getReg5(), rubrique.getReg6(), rubrique.getReg7(),
+//				rubrique.getReg8()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Regi doesn't match !");
+//			return false;
+//		}
 		// -- Classe
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.clas, PA_CALCUL.t_rub.clas1, PA_CALCUL.t_rub.clas2,
 		// PA_CALCUL.t_rub.clas3, PA_CALCUL.t_rub.clas4) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getClas(), rubrique.getClas1(), rubrique.getClas2(), rubrique.getClas3(), rubrique.getClas4()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Clas doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getClas(), rubrique.getClas1(), rubrique.getClas2(), rubrique.getClas3(), rubrique.getClas4()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Clas doesn't match !");
+//			return false;
+//		}
 		// -- Fonctionnaire
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.codf, PA_CALCUL.t_rub.cfon) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getCodf(), rubrique.getCfon()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Codf doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getCodf(), rubrique.getCfon()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Codf doesn't match !");
+//			return false;
+//		}
 		// -- Hierarchie fonction publique
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.hifo, PA_CALCUL.t_rub.hif1, PA_CALCUL.t_rub.hif2,
 		// PA_CALCUL.t_rub.hif3, PA_CALCUL.t_rub.hif4) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getHifo(), rubrique.getHif1(), rubrique.getHif2(), rubrique.getHif3(), rubrique.getHif4()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Hifo doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getHifo(), rubrique.getHif1(), rubrique.getHif2(), rubrique.getHif3(), rubrique.getHif4()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Hifo doesn't match !");
+//			return false;
+//		}
 		// -- Zone libre 1
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.zli1, PA_CALCUL.t_rub.zl11, PA_CALCUL.t_rub.zl12) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getZli1(), rubrique.getZl11(), rubrique.getZl12()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Zli1 doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getZli1(), rubrique.getZl11(), rubrique.getZl12()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Zli1 doesn't match !");
+//			return false;
+//		}
 		// -- Zone libre 2
 		// IF NOT Verif_Param_A(PA_CALCUL.wsal01.zli2, PA_CALCUL.t_rub.zl21, PA_CALCUL.t_rub.zl22) THEN
 		// RETURN FALSE;
 		// END IF;
-		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getZli2(), rubrique.getZl21(), rubrique.getZl22()))
-		{
-			if ('O' == salary.getParameter().getGenfile())
-				salary.addToOutputtext( "\n--In Rubrique Clone : Zli2 doesn't match !");
-			return false;
-		}
+//		if (!ClsObjectUtil.isAppliedToObject(salary.getInfoSalary().getZli2(), rubrique.getZl21(), rubrique.getZl22()))
+//		{
+//			if ('O' == salary.getParameter().getGenfile())
+//				salary.addToOutputtext( "\n--In Rubrique Clone : Zli2 doesn't match !");
+//			return false;
+//		}
 		//
 		// -- MM 17/12/2003 Ajout des zones libres supplementaires.
 		// OPEN curs_zli;
@@ -1002,8 +1010,10 @@ public class ClsRubriqueClone
 				tmpRubrique = salary.findRubriqueClone(rubrique.getEdbbu());
 //			salary.getValeurRubriquePartage().setBase(tmpRubrique.getBase());
 //			salary.getValeurRubriquePartage().setBasePlafonnee(tmpRubrique.getBase());
-				salary.getValeurRubriquePartage().setBase(tmpRubrique.getAmount());
-				salary.getValeurRubriquePartage().setBasePlafonnee(tmpRubrique.getAmount());
+				if(tmpRubrique!=null){
+					salary.getValeurRubriquePartage().setBase(tmpRubrique.getAmount());
+					salary.getValeurRubriquePartage().setBasePlafonnee(tmpRubrique.getAmount());
+				}
 			}
 			//
 			// i := rub_trt;
@@ -1193,7 +1203,8 @@ public class ClsRubriqueClone
 //			System.out.println("Taux "+oCalculPaie.getTaux());
 //			System.out.println("mont "+oCalculPaie.getMont());
 				//
-				this.getSalary().getService().save(oCalculPaie);
+				//this.getSalary().getService().save(oCalculPaie);
+				this.getSalary().getCalculPaieService().save(CalculPaieDto.fromEntity(oCalculPaie));
 			}
 			//
 //			this.getSalary().getService().getSession().flush();
@@ -1352,8 +1363,10 @@ public class ClsRubriqueClone
 			oCalculPaie.setBasp(ClsStringUtil.truncateToXDecimal(oCalculPaie.getBasp(),3));
 			oCalculPaie.setTaux(ClsStringUtil.truncateToXDecimal(oCalculPaie.getTaux(),3));
 			oCalculPaie.setMont(ClsStringUtil.truncateToXDecimal(oCalculPaie.getMont(),3));
-			
-			salary.getService().save(oCalculPaie);
+
+			//System.out.println("INSERTION RUBRIQUE:----------------------"+oCalculPaie.getRubq()+". Montant:"+oCalculPaie.getMont());
+			//salary.getService().save(oCalculPaie);
+			this.getSalary().getCalculPaieService().save(CalculPaieDto.fromEntity(oCalculPaie));
 		}
 		return true;
 	}

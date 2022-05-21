@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
 import com.kinart.paie.business.model.*;
 import com.kinart.paie.business.services.utils.*;
 import org.apache.commons.lang3.StringUtils;
@@ -734,7 +735,9 @@ public class ClsFictifRubriqueClone
 		oCongeFictif.setTaux(ClsStringUtil.truncateToXDecimal(oCongeFictif.getTaux(),3));
 		oCongeFictif.setMont(ClsStringUtil.truncateToXDecimal(oCongeFictif.getMont(),3));
 
-		this.fictivesalary.getService().save(oCongeFictif);
+		//this.fictivesalary.getService().save(oCongeFictif);
+
+		this.fictivesalary.getCongeFictifService().save(oCongeFictif);
 
 //		this.fictivesalary.getService().getSession().flush();
 //		this.fictivesalary.getService().getSession().clear();
@@ -853,7 +856,8 @@ public class ClsFictifRubriqueClone
 			oCalculPaie.setTaux(ClsStringUtil.truncateToXDecimal(oCalculPaie.getTaux(),3));
 			oCalculPaie.setMont(ClsStringUtil.truncateToXDecimal(oCalculPaie.getMont(),3));
 			
-			fictivesalary.getService().save(oCalculPaie);
+			//fictivesalary.getService().save(oCalculPaie);
+			this.fictivesalary.getCalculPaieService().save(CalculPaieDto.fromEntity(oCalculPaie));
 		}
 		return true;
 	}

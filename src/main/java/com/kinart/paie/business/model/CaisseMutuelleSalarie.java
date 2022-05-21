@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "CaisseMutuelleSalarie")
 @Table(name = "caissemutuellesalarie")
 public class CaisseMutuelleSalarie extends AbstractEntity {
 

@@ -6,7 +6,9 @@ import com.kinart.paie.business.model.DossierPaie;
 import com.kinart.paie.business.model.ElementVariableDetailMois;
 import com.kinart.paie.business.model.Salarie;
 import com.kinart.paie.business.repository.CalculPaieRepository;
+import com.kinart.paie.business.repository.ParamDataRepository;
 import com.kinart.paie.business.services.CalculPaieService;
+import com.kinart.paie.business.services.CongeFictifService;
 import com.kinart.paie.business.services.DossierPaieService;
 import com.kinart.paie.business.services.calcul.*;
 import com.kinart.paie.business.services.utils.ClsDate;
@@ -42,15 +44,20 @@ public class CalculPaieServiceImpl implements CalculPaieService {
     private GeneriqueConnexionService service;
     private DossierPaieService dossierPaieService;
     private ClsNomenclatureUtil nomenclatureUtil;
+    private ParamDataRepository paramDataRepository;
+    private CongeFictifService congeFictifService;
 
     @Autowired
     public CalculPaieServiceImpl(CalculPaieRepository calculPaieRepository
             , GeneriqueConnexionService service
-            , DossierPaieService dossierPaieService, ClsNomenclatureUtil nomenclatureUtil) {
+            , DossierPaieService dossierPaieService, ClsNomenclatureUtil nomenclatureUtil
+    , ParamDataRepository paramDataRepository, CongeFictifService congeFictifService) {
         this.calculPaieRepository = calculPaieRepository;
         this.dossierPaieService = dossierPaieService;
         this.service = service;
         this.nomenclatureUtil = nomenclatureUtil;
+        this.paramDataRepository = paramDataRepository;
+        this.congeFictifService = congeFictifService;
     }
 
     @Override
@@ -117,7 +124,9 @@ public class CalculPaieServiceImpl implements CalculPaieService {
         oCalcul.setNumerobulletin(dto.numeroBulletin);
         oCalcul.setPeriodepaie(dto.periodeDePaie);
         oCalcul.setIntervalle("I");
-
+        oCalcul.setModepaiement("V");
+        oCalcul.setMatriculedepart(dto.nmatMin);
+        oCalcul.setMatriculearrive(dto.nmatMax);
 
         DossierPaie infodossier = DossierPaieDto.toEntity(this.dossierPaieService.findAll().get(0));
         if (infodossier != null)
@@ -140,7 +149,10 @@ public class CalculPaieServiceImpl implements CalculPaieService {
         ClsDate d = new ClsDate(dto.periodeDePaie, "yyyyMM");
         parameter.setMyMonthOfPay(d);
         parameter.setService(service);
+        nomenclatureUtil.setService(service);
+        nomenclatureUtil.setParamDataRepository(paramDataRepository);
         parameter.setUtilNomenclature(nomenclatureUtil);
+        parameter.setLanceur(this);
         // calcul des salaires
         parameter.setDossier(dto.identreprise);
         parameter.setClas(oCalcul.getClassesalariemin());
@@ -174,7 +186,7 @@ public class CalculPaieServiceImpl implements CalculPaieService {
         oCalcul.setMatriculearrive(dto.nmatMax);
         parameter.setDepartMatricule(oCalcul.getMatriculedepart());
         parameter.setFinMatricule(oCalcul.getMatriculearrive());
-        parameter.setSessionId(1322);
+        parameter.setsession_id(1322);
         parameter.setUti(dto.user);
         parameter.setDepartNiv1(oCalcul.getNiveau1depart());
         parameter.setFinNiv1(oCalcul.getNiveau1arrive());
@@ -186,10 +198,10 @@ public class CalculPaieServiceImpl implements CalculPaieService {
         parameter.setAppDateFormat(strDateFormat);
         // initialisation
 
-        String generationFichiers = "N";
+        String generationFichiers = "O";
         String dossierGenerationFichiers = "/";
         Integer nbrThread = NumberUtils.toInt("1");
-        String synchro_traiter_salaire = "O";
+        String synchro_traiter_salaire = "1";
 
         parameter.setGenfile(generationFichiers.charAt(0));
         parameter.setGenfilefolder(dossierGenerationFichiers);
@@ -199,6 +211,7 @@ public class CalculPaieServiceImpl implements CalculPaieService {
 
         ClsTraiterSalaireThread.NBRE_AGENT_A_TRAITE = oCalcul.getListeAgents().size();
         ClsTraiterSalaireThread.NBRE_AGENT_TRAITE = 0;
+        //System.out.println("NBRE DE SALARIE:================"+ClsTraiterSalaireThread.NBRE_AGENT_A_TRAITE);
 
         if (parameter.init())
         {
@@ -209,6 +222,8 @@ public class CalculPaieServiceImpl implements CalculPaieService {
                 fictiveParameter.setFictiveMonthOfPay(parameter.getMonthOfPay());
                 fictiveParameter.setMyMoisPaieCourant(parameter.getMyMoisPaieCourant().clone());
                 fictiveParameter.setMyMonthOfPay(parameter.getMyMonthOfPay().clone());
+                fictiveParameter.setLanceur(this);
+                fictiveParameter.setCongeFictifService(this.congeFictifService);
 
                 ClsFictifNomenclatureUtil utilNomenclatureFictif = new ClsFictifNomenclatureUtil(fictiveParameter);
                 fictiveParameter.setUtilNomenclatureFictif(utilNomenclatureFictif);

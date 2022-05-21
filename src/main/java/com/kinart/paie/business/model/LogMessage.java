@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "LogMessage")
 @Table(name = "logmessage")
 public class LogMessage  extends AbstractEntity {
 

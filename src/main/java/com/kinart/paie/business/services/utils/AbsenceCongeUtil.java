@@ -55,12 +55,12 @@ public class AbsenceCongeUtil {
 //
 //	  CURSOR curs_cal IS
 //	      SELECT count(*), TO_CHAR(jour,'YYYYMM') FROM pacal
-//	       WHERE cdos = :b_label.w_cdos
+//	       where identreprise = :b_label.w_cdos
 //	         AND jour BETWEEN W_Deb AND W_Fin
 //	         AND ouvr LIKE (DECODE(W_Cas,'C','O','%'))
 //	         AND fer  LIKE (DECODE(W_Cas,'C','N','%'))
 //	       GROUP BY TO_CHAR(jour,'YYYYMM');
-        String curs_sal = "Select count(*) as nb, to_char(jour,'YYYYMM') as mois From CalendrierPaie where cdos = :cdos ";
+        String curs_sal = "Select count(*) as nb, to_char(jour,'YYYYMM') as mois From CalendrierPaie where identreprise = :cdos ";
         curs_sal+=" and jour between :debut and :fin ";
         curs_sal += " and ouvr like (case :cas when 'C' then 'O' else '%' end) ";
         //curs_sal += " and fer like (case :cas when 'C' then 'N' else '%' end) ";
@@ -70,7 +70,7 @@ public class AbsenceCongeUtil {
 
         if (typeBD.equalsIgnoreCase(TypeBDUtil.IN))
         {
-            curs_sal = "Select count(*) as nb, to_char1(jour,'YYYYMM') as mois From CalendrierPaie where cdos = '"+cdos+"' ";
+            curs_sal = "Select count(*) as nb, to_char1(jour,'YYYYMM') as mois From CalendrierPaie where identreprise = '"+cdos+"' ";
             curs_sal+=" and jour between '"+new ClsDate(deb).getDateS("yyyy-MM-dd")+"' and '"+new ClsDate(fin).getDateS("yyyy-MM-dd")+"' ";
             curs_sal += " and ouvr like (case '"+cas+"' when 'C' then 'O' else '%' end) ";
             curs_sal += " and fer like (case '"+cas+"' when 'C' then 'N' else 'N' end) ";
@@ -80,7 +80,7 @@ public class AbsenceCongeUtil {
 
         if (typeBD.equalsIgnoreCase(TypeBDUtil.MS))
         {
-            curs_sal = "Select count(*) as nb, dbo.formaterDateEnChaine(jour,'yyyyMM') as mois From Rhpcalendrier where cdos = :cdos ";
+            curs_sal = "Select count(*) as nb, dbo.formaterDateEnChaine(jour,'yyyyMM') as mois From Rhpcalendrier where identreprise = :cdos ";
             curs_sal += " and jour between :debut and :fin ";
             curs_sal += " and ouvr like (case :cas when 'C' then 'O' else '%' end) ";
             //curs_sal += " and fer like (case :cas when 'C' then 'N' else '%' end) ";
@@ -90,7 +90,7 @@ public class AbsenceCongeUtil {
         }
         if (typeBD.equalsIgnoreCase(TypeBDUtil.MY))
         {
-            curs_sal = "Select count(*) as nb, date_format(jour,'%Y%m') as mois From Rhpcalendrier where cdos = :cdos ";
+            curs_sal = "Select count(*) as nb, date_format(jour,'%Y%m') as mois From Rhpcalendrier where identreprise = :cdos ";
             curs_sal+=" and jour between :debut and :fin ";
             curs_sal += " and ouvr like (case :cas when 'C' then 'O' else '%' end) ";
             //curs_sal += " and fer like (case :cas when 'C' then 'N' else '%' end) ";
@@ -106,7 +106,7 @@ public class AbsenceCongeUtil {
 //	      SELECT NVL(vall, ' '), NVL(valm, 0)
 //	        INTO char1, Nbj_max_par_mois
 //	        FROM pafnom
-//	       WHERE cdos = :b_label.w_cdos
+//	       where identreprise = :b_label.w_cdos
 //	         AND ctab = 99
 //	         AND cacc = 'BASE30'
 //	         AND nume = 1;
@@ -289,7 +289,7 @@ public class AbsenceCongeUtil {
 //
 //	   RETURN w_nbtot;
 //	END;
-        oService.closeConnexion(session);
+        oService.closeSession(session);
 
         return nbtot;
     }

@@ -15,7 +15,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "HistoCongeSalarie")
 @Table(name = "histocongesalarie")
 public class HistoCongeSalarie extends AbstractEntity {
 

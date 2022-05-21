@@ -23,7 +23,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
- * Le but de cette classe est de lancer le calcul de la paie sur chaque salari�.
+ * Le but de cette classe est de lancer le calcul de la paie sur chaque salarié.
  * 
  * @author c.mbassi
  */
@@ -37,10 +37,10 @@ public class ClsSalariesEngine
 
 	private GeneriqueConnexionService service = null;
 
-	// contenant les param�tres de fonctionnement du moteur de paie
+	// contenant les paramétres de fonctionnement du moteur de paie
 	private ClsParameterOfPay parameterOfSalary = null;
 
-	// liste des salari�s � traiter
+	// liste des salariés é traiter
 	private List<ClsSalaryToProcess> listOfSalaryToProcess = null;
 
 	public List<Future> allTask = null;
@@ -147,11 +147,11 @@ public class ClsSalariesEngine
 	public List buildListOfAllRubrique()
 	{
 		ParameterUtil.println(">>buildListOfAllRubrique");
-		// List listOfParubq = service.find("from Rhprubrique" +
+		// List listOfParubq = service.find("from ElementSalaire" +
 		// " where identreprise = '" + parameterOfSalary.getDossier() + "'" +
 		// " order by identreprise , crub");
-		//List listOfParubq = service.find("from Rhprubrique" + " where identreprise = '" + parameterOfSalary.getDossier() + "'" + " and crub between '0001' and '9999'" + " order by identreprise , crub");
-		List listOfParubq = service.find("from Rhprubrique" + " where identreprise = '" + parameterOfSalary.getDossier() + "'" + " order by identreprise , crub");
+		//List listOfParubq = service.find("from ElementSalaire" + " where identreprise = '" + parameterOfSalary.getDossier() + "'" + " and crub between '0001' and '9999'" + " order by identreprise , crub");
+		List listOfParubq = service.find("from ElementSalaire" + " where identreprise = '" + parameterOfSalary.getDossier() + "'" + " order by identreprise , crub");
 		return listOfParubq;
 	}
 
@@ -168,10 +168,10 @@ public class ClsSalariesEngine
 	}
 
 	/**
-	 * construit une liste contenant les salari�s clon�s
+	 * construit une liste contenant les salariés clonés
 	 * 
 	 * @param listOfSalaries
-	 * @return liste des agents � traiter
+	 * @return liste des agents é traiter
 	 */
 	public List<ClsInfoSalaryClone> getListOfInfoSalaryClone(List listOfSalaries)
 	{
@@ -187,18 +187,18 @@ public class ClsSalariesEngine
 
 	private boolean existFictiveSalaries(String cdos, String aamm, String lastdayofmonth)
 	{
-		String query = "Select count(*) From Salarie where cdos='" + cdos + "' and pmcf='" + aamm + "' and dfcf>='" + lastdayofmonth + "'";
+		String query = "Select count(*) From Salarie where identreprise='" + cdos + "' and pmcf='" + aamm + "' and dfcf>='" + lastdayofmonth + "'";
 
-		// expatri�, pour lequel le fictif est actif
+		// expatrié, pour lequel le fictif est actif
 
 		return true;
 	}
 
 	/**
-	 * Lance le calcul de la paie sur chaque salari� contenu dans la liste re�ue en param�tre. Cette liste est compos�e des �l�ments de type Salarie.
+	 * Lance le calcul de la paie sur chaque salarié contenu dans la liste reéue en paramétre. Cette liste est composée des éléments de type Salarie.
 	 * 
 	 * @param listOfSalaries
-	 *            liste des agents � utiliser pour le calcul des salaires
+	 *            liste des agents é utiliser pour le calcul des salaires
 	 */
 	public void execute(List listOfSalaries)
 	{
@@ -209,7 +209,7 @@ public class ClsSalariesEngine
 		// parameterOfSalary.setPaieAuNetMaxIteration(2);
 
 		parameterOfSalary.setThreadmax(threadmax);
-		
+
 		
 		try
 		{
@@ -247,7 +247,7 @@ public class ClsSalariesEngine
 		Future currentTask = null;
 		boolean paieAuNet = false;
 
-		String query="select cacc, valm from ParamData where ctab=99 and cdos='"+parameterOfSalary.getDossier()+"' and cacc='BULAUNET' and nume >=1 and nume<=10 and valm="+parameterOfSalary.getNumeroBulletin();
+		String query="select cacc, valm from ParamData where ctab=99 and identreprise='"+parameterOfSalary.getDossier()+"' and cacc='BULAUNET' and nume >=1 and nume<=10 and valm="+parameterOfSalary.getNumeroBulletin();
 		Session session = service.getSession();
 		try {
 			Query q = session.createSQLQuery(query);
@@ -266,16 +266,16 @@ public class ClsSalariesEngine
 		for (Object obj : listOfSalaries)
 		{
 			i++;
-			//System.out.println("Envoit du salari� "+i+"/"+nbrSalaries+" - Matricule "+((Salarie) obj).getComp_id().getNmat());
+			System.out.println("Envoit du salarié "+i+"/"+nbrSalaries+" - Matricule "+((Salarie) obj).getNmat());
 
 			// if(i%20 == 0)
 			// Runtime.getRuntime().gc();
 			try
 			{
-				if (poolSrev == null)
-				{
-					poolSrev = Executors.newFixedThreadPool(threadmax);
-				}
+//				if (poolSrev == null)
+//				{
+//					poolSrev = Executors.newFixedThreadPool(threadmax);
+//				}
 				
 				Salarie agent = (Salarie) obj;
 				if(paieAuNet==true){
@@ -283,8 +283,9 @@ public class ClsSalariesEngine
 					agent.setPnet("O");
 					agent.setSnet(BigDecimal.ZERO);
 				}
-				currentTask = poolSrev.submit(new ClsTraiterSalaireThread(this, agent, i));
-				allTask.add(currentTask);
+//				currentTask = poolSrev.submit(new ClsTraiterSalaireThread(this, agent, i));
+//				allTask.add(currentTask);
+				new ClsTraiterSalaireThread(this, agent, i).run();
 			}
 			catch (RejectedExecutionException e)
 			{
@@ -350,14 +351,14 @@ public class ClsSalariesEngine
 	 * </p> => autorpaie
 	 * 
 	 * @param l_cuti
-	 *            l'utilisateur connect�
+	 *            l'utilisateur connecté
 	 * @param l_utype
-	 *            type d'acc�s
+	 *            type d'accés
 	 * @param l_ucode
 	 *            designe l'ecran par son numero
 	 * @param l_uacces
 	 *            acces demande
-	 * @return true si autoris� ou false sinon
+	 * @return true si autorisé ou false sinon
 	 */
 	public boolean autorPaie(String l_cuti, String l_utype, String l_ucode, String l_uacces)
 	{
@@ -405,7 +406,7 @@ public class ClsSalariesEngine
 	 * clacule le bulletin de paie d'un agent
 	 * 
 	 * @param agent
-	 *            l'agent concern�
+	 *            l'agent concerné
 	 */
 	public void traiterSalaire(Salarie agent, Integer sessionId)
 	{
@@ -476,16 +477,16 @@ public class ClsSalariesEngine
 		//ClsMethodesAvantEtApresCalcul m = new ClsMethodesAvantEtApresCalcul(service,param.dossier,param.getMonthOfPay(), param.getNumeroBulletin(), infoSalary.getComp_id().getNmat());
 		callMethode(m,"avantCalcul", StringUtils.EMPTY);
 
-		ClsSalaryToProcess salaryToProcess = new ClsSalaryToProcess(param, infoSalary, param.getService());
+		ClsSalaryToProcess salaryToProcess = new ClsSalaryToProcess(param, infoSalary, param.getService(), param.getLanceur());
 		
 		//*****************************************************************************************************
 		try
 		{
-			param.sessionId = Integer.valueOf(agent.getNmat());
+			param.session_id = Integer.valueOf(agent.getNmat());
 		}
 		catch (NumberFormatException e2)
 		{
-			param.sessionId = sessionId;
+			param.session_id = sessionId;
 		}
 		//
 		param.chargementTableValeurAjustement();
@@ -497,7 +498,7 @@ public class ClsSalariesEngine
 		salaryToProcess.setFictiveParameter(paramFictif);
 
 		/**
-		 * Mise � jour des montants dans la table des virements
+		 * Mise é jour des montants dans la table des virements
 		 */
 
 		//
@@ -535,8 +536,8 @@ public class ClsSalariesEngine
 		boolean autopaie = autorPaie(param.getUti(), param.getTypu(), agent.getClas(), param.getAccess());
 		boolean bulletinbloque = salaryToProcess.bulletinBloque();
 		boolean finArrierePaie = false;
-		// IF PA_PAIE.autorpaie(wsd_fcal1.cdos,w_cuti,3,wsal01.clas,'I') AND
-		// NOT PA_PAIE.Bulletin_Bloque(wsd_fcal1.cdos, wsal01.nmat)
+		// IF PA_PAIE.autorpaie(wsd_fcal1.identreprise,w_cuti,3,wsal01.clas,'I') AND
+		// NOT PA_PAIE.Bulletin_Bloque(wsd_fcal1.identreprise, wsal01.nmat)
 		// THEN
 		//
 		autopaie = true;
@@ -550,7 +551,7 @@ public class ClsSalariesEngine
 
 		if (autopaie && !bulletinbloque)
 		{
-			// Suppression des lignes de calcul avant tout lancement pour le salari�
+			// Suppression des lignes de calcul avant tout lancement pour le salarié
 			try
 			{
 				salaryToProcess.majTableVirements();
@@ -600,13 +601,13 @@ public class ClsSalariesEngine
 				// THEN
 				// Fin_Arrp := TRUE;
 				// END IF;
-				//on rajoute une cl� en table 99 pour dire si O/N on veut calculer ou pas
+				//on rajoute une clé en table 99 pour dire si O/N on veut calculer ou pas
 				
-				if ((("O".equals(param.getFictiveCalculus()) && "B".equals(param.getFictiveCalculusType())) || "N".equals(param.getFictiveCalculus())) && !ClsObjectUtil.isNull(agent.getPmcf())
+				if ((("O".equals(param.getFictiveCalculus()) && "B".equals(param.getFictiveCalculusType())) || "N".equals(param.getFictiveCalculus())) && StringUtils.isNotEmpty(agent.getPmcf())
 						&& param.getMyMonthOfPay().getYearAndMonth().compareToIgnoreCase(agent.getPmcf()) > 0 && !ClsObjectUtil.isNull(agent.getDfcf())
 						&& salaryToProcess.getLastDayOfMonth().compareTo(agent.getDfcf()) <= 0)
 				{
-					//Ce test n'est pas n�cessaire pour SOBRAGA
+					//Ce test n'est pas nécessaire pour SOBRAGA
 //					if(StringUtils.notEquals(param.nomClient, ClsEntreprise.SOBRAGA) && StringUtils.notEquals(param.nomClient, ClsEntreprise.BRASSERIES_BBLOME) )
 						finArrierePaie = true;
 					if(param.calculPaieMoisSuivantCalculConge)
@@ -628,7 +629,7 @@ public class ClsSalariesEngine
 						&& param.isABSENCE_MOIS_PDC_SI_ATLM())
 				{
 					finArrierePaie = true;
-					//salaryToProcess.getParameter().setError(salaryToProcess.getParameter().errorMessage("Salari� %1 absent tout le mois", salaryToProcess.getParameter().getLangue(),salaryToProcess.getInfoSalary().getComp_id().getNmat()));
+					//salaryToProcess.getParameter().setError(salaryToProcess.getParameter().errorMessage("Salarié %1 absent tout le mois", salaryToProcess.getParameter().getLangue(),salaryToProcess.getInfoSalary().getComp_id().getNmat()));
 				}
 				//
 				// -- Lecture des arrets de paie
@@ -683,7 +684,7 @@ public class ClsSalariesEngine
 						if (ddar.compareTo(salaryToProcess.getFirstDayOfMonth()) <= 0 && dfar.compareTo(salaryToProcess.getLastDayOfMonth()) >= 0)
 						{
 							finArrierePaie = true;
-							//salaryToProcess.getParameter().setError(salaryToProcess.getParameter().errorMessage("Salari� %1 en arret de paie", salaryToProcess.getParameter().getLangue(),salaryToProcess.getInfoSalary().getComp_id().getNmat()));
+							//salaryToProcess.getParameter().setError(salaryToProcess.getParameter().errorMessage("Salarié %1 en arret de paie", salaryToProcess.getParameter().getLangue(),salaryToProcess.getInfoSalary().getComp_id().getNmat()));
 							break;
 						}
 					}
@@ -704,7 +705,7 @@ public class ClsSalariesEngine
 					ParameterUtil.println(">>>>>>>>>>>>>>>>>>>>>>>>Matricule non calculable: " + agent.getNmat());
 					continuer = false;
 				}
-				//YT : On ne calcule pas les agents dont la date d'entr�e est sup�rieur � la paie actuelle
+				//YT : On ne calcule pas les agents dont la date d'entrée est supérieur é la paie actuelle
 				if(infoSalary.getDtes() == null)
 				{
 					salaryToProcess.parameter.errorMessage("ERR-90069", salaryToProcess.parameter.getLangue(), salaryToProcess.infoSalary.getComp_id().getNmat());
@@ -716,28 +717,28 @@ public class ClsSalariesEngine
 				
 				if (continuer)
 				{
-					// sp�cifique cnss
+					// spécifique cnss
 					if (StringUtils.equals(param.nomClient, "CNSS"))
 					{
-//						ELSIF wsal01.dtes > w_dfpa THEN -- TFN 271006 On ne calcul pas si la date d'entr�e et sup�rieur au dernier jours du mois
-//			               pap_logins('* Salarie: ' || wsal01.nmat || ' Contrat pas encore d�but�');                                     
+//						ELSIF wsal01.dtes > w_dfpa THEN -- TFN 271006 On ne calcul pas si la date d'entrée et supérieur au dernier jours du mois
+//			               pap_logins('* Salarie: ' || wsal01.nmat || ' Contrat pas encore débuté');                                     
 //			               DBMS_PIPE.PACK_MESSAGE('I2');
-//			               DBMS_PIPE.PACK_MESSAGE(wsal01.nmat||PA_PAIE.erreurp('INF-01606',w_clang)); --'Contrat non commenc�'
+//			               DBMS_PIPE.PACK_MESSAGE(wsal01.nmat||PA_PAIE.erreurp('INF-01606',w_clang)); --'Contrat non commencé'
 //			               w_status := DBMS_PIPE.SEND_MESSAGE(w_pipe_name);
 //			               W_Cont := FALSE;
 //			            ELSIF wsal01.mrrx IS NOT NULL 
-//			                   AND TO_CHAR(wsal01.dmrr, 'YYYY')||TO_CHAR(wsal01.dmrr, 'MM') <= TO_CHAR(wpdos.ddmp, 'YYYY')||TO_CHAR(wpdos.ddmp, 'MM') THEN -- LM 12/03/2008 On ne calcul pas si le salari� � quitter la soci�t�
-//			               pap_logins('* Salarie: ' || wsal01.nmat || ' a quitt� la soci�t�');   
+//			                   AND TO_CHAR(wsal01.dmrr, 'YYYY')||TO_CHAR(wsal01.dmrr, 'MM') <= TO_CHAR(wpdos.ddmp, 'YYYY')||TO_CHAR(wpdos.ddmp, 'MM') THEN -- LM 12/03/2008 On ne calcul pas si le salarié é quitter la société
+//			               pap_logins('* Salarie: ' || wsal01.nmat || ' a quitté la société');   
 //			               DBMS_PIPE.PACK_MESSAGE('I2');
-//			               DBMS_PIPE.PACK_MESSAGE(wsal01.nmat||PA_PAIE.erreurp('INF-01605',w_clang)); --Salari� a quitt� la soci�t�
+//			               DBMS_PIPE.PACK_MESSAGE(wsal01.nmat||PA_PAIE.erreurp('INF-01605',w_clang)); --Salarié a quitté la société
 //			               w_status := DBMS_PIPE.SEND_MESSAGE(w_pipe_name);
 //			               W_Cont := FALSE;
 //			            ELSIF w_Cdecc AND wsal01.decc IS NOT NULL 
-//			                   AND TO_CHAR(wsal01.decc, 'YYYY')||TO_CHAR(wsal01.decc, 'MM') <= TO_CHAR(wpdos.ddmp, 'YYYY')||TO_CHAR(wpdos.ddmp, 'MM') THEN --LM 12/03/2008 Test si contrat �chu              
-//			               pap_logins('* Salarie: ' || wsal01.nmat || ' Contrat �chu -> pas de calcul*');                                     
+//			                   AND TO_CHAR(wsal01.decc, 'YYYY')||TO_CHAR(wsal01.decc, 'MM') <= TO_CHAR(wpdos.ddmp, 'YYYY')||TO_CHAR(wpdos.ddmp, 'MM') THEN --LM 12/03/2008 Test si contrat échu              
+//			               pap_logins('* Salarie: ' || wsal01.nmat || ' Contrat échu -> pas de calcul*');                                     
 //			               W_Cont := FALSE;                  
 //			               DBMS_PIPE.PACK_MESSAGE('I2');
-//			               DBMS_PIPE.PACK_MESSAGE(wsal01.nmat||PA_PAIE.erreurp('INF-01604',w_clang)); --'contrat �chu'
+//			               DBMS_PIPE.PACK_MESSAGE(wsal01.nmat||PA_PAIE.erreurp('INF-01604',w_clang)); --'contrat échu'
 //			               w_status := DBMS_PIPE.SEND_MESSAGE(w_pipe_name); 
 						if(param.getLastDayOfMonth().compareTo(infoSalary.getDtes()) < 0)
 							continuer = false;
@@ -749,7 +750,7 @@ public class ClsSalariesEngine
 					if(StringUtils.equals("O",infoSalary.getCals()) &&param.priseEnCompteDateFinContrat && infoSalary.getDecc() != null && (ClsDate.getDateS(infoSalary.getDecc(), ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM).compareTo(ClsDate.getDateS(param.getDdmp(), ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM)) <= 0))
 					{
 						continuer = false;
-						salaryToProcess.getParameter().setError(salaryToProcess.getParameter().errorMessage("Salari� %1 . Contrat Echu le %2", salaryToProcess.getParameter().getLangue(),salaryToProcess.getInfoSalary().getComp_id().getNmat(), new ClsDate(salaryToProcess.getInfoSalary().getDecc()).getDateS("dd/MM/yyyy")));
+						salaryToProcess.getParameter().setError(salaryToProcess.getParameter().errorMessage("Salarié %1 . Contrat Echu le %2", salaryToProcess.getParameter().getLangue(),salaryToProcess.getInfoSalary().getComp_id().getNmat(), new ClsDate(salaryToProcess.getInfoSalary().getDecc()).getDateS("dd/MM/yyyy")));
 					}
 				}
 				if (continuer)
@@ -923,14 +924,14 @@ public class ClsSalariesEngine
 					// -- Suppression des pseudo-evs generes pour calcul des absences
 					// IF retroactif THEN
 					// DELETE FROM pahevar
-					// where identreprise = wpdos.cdos
+					// where identreprise = wpdos.identreprise
 					// AND nmat = wsal01.nmat
 					// AND aamm = w_aamm
 					// AND nbul = wsd_fcal1.nbul
 					// AND argu = 'PSEUDO-EV';
 					// ELSE
 					// DELETE FROM paevar
-					// where identreprise = wpdos.cdos
+					// where identreprise = wpdos.identreprise
 					// AND nmat = wsal01.nmat
 					// AND aamm = w_aamm
 					// AND nbul = wsd_fcal1.nbul
@@ -977,14 +978,14 @@ public class ClsSalariesEngine
 				//
 				// IF retroactif THEN
 				// DELETE FROM prcalc
-				// where identreprise = wpdos.cdos
+				// where identreprise = wpdos.identreprise
 				// AND nmat = wsal01.nmat
 				// AND aamm = w_aamm
 				// AND nbul = wsd_fcal1.nbul
 				// AND nlot = w_nlot;
 				// ELSE
 				// DELETE FROM pacalc
-				// where identreprise = wpdos.cdos
+				// where identreprise = wpdos.identreprise
 				// AND nmat = wsal01.nmat
 				// AND aamm = w_aamm
 				// AND nbul = wsd_fcal1.nbul;
@@ -993,7 +994,7 @@ public class ClsSalariesEngine
 				// IF NOT PA_PAIE.NouB(wsal01.pmcf) AND w_fictif = 'O' AND NOT retroactif THEN
 				// IF wsal01.pmcf = w_aamm THEN
 				// DELETE FROM pafic
-				// where identreprise = wpdos.cdos
+				// where identreprise = wpdos.identreprise
 				// AND nmat = wsal01.nmat;
 				// END IF;
 				// END IF;
@@ -1009,19 +1010,19 @@ public class ClsSalariesEngine
 							// salaryToProcess.getService().deleteFromTable("delete from Pafic" +
 							// " where identreprise = '"+ param.getDossier() + "'" +
 							// " and nmat = '" + (agent).getComp_id().getNmat() + "'");
-							// @yannick : ajout� par yannick, n'existait pas avant
+							// @yannick : ajouté par yannick, n'existait pas avant
 							salaryToProcess.deleteNonRetroFictif();
 						}
 					}
 					
-					// sp�cifique cnss
+					// spécifique cnss
 //					if (StringUtils.equals(param.nomClient, ClsEntreprise.CNSS))
 //					{
 //						-- MM 01-2006 maj des virements
 //			            UPDATE pavrmt SET mntdb=null,mntdvd=null,aamm=null
-//			             where identreprise = wpdos.cdos
+//			             where identreprise = wpdos.identreprise
 //			               AND nmat = wsal01.nmat;
-						String updateString = "Update Rhtvrmtagent set mntdb = null, mntdvd = null, aamm=null where identreprise = '" + infoSalary.getComp_id().getCdos() + "'" + " and nmat = '"
+						String updateString = "Update VirementSalarie set mntdb = null, mntdvd = null, aamm=null where identreprise = '" + infoSalary.getComp_id().getCdos() + "'" + " and nmat = '"
 								+ infoSalary.getComp_id().getNmat() + "'";
 
 						this.getService().updateFromTable(updateString);
@@ -1066,7 +1067,7 @@ public class ClsSalariesEngine
 	/**
 	 * => trait
 	 * <p>
-	 * Lance le calcul de la paie sur chaque salari� contenu dans la liste re�ue en param�tre.
+	 * Lance le calcul de la paie sur chaque salarié contenu dans la liste reéue en paramétre.
 	 * </p>
 	 */
 	public void constructionOfListSalaries(String strDateFormat)
@@ -1086,7 +1087,7 @@ public class ClsSalariesEngine
 		// -- Choix d'une liste de salarie
 		// CURSOR curs_chx_sal IS
 		// SELECT * from pasa01
-		// where identreprise = wpdos.cdos
+		// where identreprise = wpdos.identreprise
 		// and nmat IN
 		// (SELECT nmat from pasalist WHERE session_id = w_session_id)
 		// order by nmat;
@@ -1099,7 +1100,7 @@ public class ClsSalariesEngine
 		// -- Chois d'un intervalle
 		// CURSOR curs_chx_opt IS
 		// SELECT * from pasa01
-		// where identreprise = wpdos.cdos
+		// where identreprise = wpdos.identreprise
 		// and niv1 between NVL(LTRIM(SUBSTR(woptions,26,3)),' ') and LTRIM(SUBSTR(woptions,29,3))
 		// and niv2 between NVL(LTRIM(SUBSTR(woptions,32,3)),' ') and LTRIM(SUBSTR(woptions,35,3))
 		// and niv3 between NVL(LTRIM(SUBSTR(woptions,38,8)),' ') and LTRIM(SUBSTR(woptions,46,8))
@@ -1121,7 +1122,7 @@ public class ClsSalariesEngine
 		// -- Choix des salaries ayant un EF
 		// CURSOR curs_chx_opt1 IS
 		// SELECT * from pasa01 a
-		// where identreprise = wpdos.cdos
+		// where identreprise = wpdos.identreprise
 		// and niv1 between NVL(LTRIM(SUBSTR(woptions,26,3)),' ') and LTRIM(SUBSTR(woptions,29,3))
 		// and niv2 between NVL(LTRIM(SUBSTR(woptions,32,3)),' ') and LTRIM(SUBSTR(woptions,35,3))
 		// and niv3 between NVL(LTRIM(SUBSTR(woptions,38,8)),' ') and LTRIM(SUBSTR(woptions,46,8))
@@ -1129,7 +1130,7 @@ public class ClsSalariesEngine
 		// and modp like wsd_fcal1.modp
 		// and clas like wsd_fcal1.clas
 		// and nmat IN (select nmat from paelfix b
-		// where b.cdos = a.cdos
+		// where b.identreprise = a.identreprise
 		// and b.nmat = a.nmat
 		// and b.codp = w_plus_rub
 		// and (ddeb is null OR
@@ -1139,10 +1140,10 @@ public class ClsSalariesEngine
 		// )
 		// order by identreprise , niv1, niv2, niv3, nmat;
 
-		String critereEF = " and nmat in ( " + " select b.nmat from Rhteltfixagent b" + " where b.cdos = cdos" + " and b.nmat = nmat" + " and b.codp = '"
+		String critereEF = " and nmat in ( " + " select b.nmat from ElementFixeSalaire b" + " where b.identreprise = cdos" + " and b.nmat = nmat" + " and b.codp = '"
 				+ this.getParameterOfSalary().getRubriquePlus() + "'" + " and (b.ddeb is null or (b.ddeb is not null and b.ddeb <= '" + this.getParameterOfSalary().getMyMonthOfPay().getYearAndMonth() + "'))"
 				+ " and (b.dfin is null or (b.dfin is not null and b.dfin >= '" + this.getParameterOfSalary().getMyMonthOfPay().getYearAndMonth() + "')))";
-		String critereEF1 = " nmat in ( " + " select b.nmat from Rhteltfixagent b" + " where b.cdos = cdos" + " and b.nmat = nmat" + " and b.codp = '"
+		String critereEF1 = " nmat in ( " + " select b.nmat from ElementFixeSalaire b" + " where b.identreprise = cdos" + " and b.nmat = nmat" + " and b.codp = '"
 				+ this.getParameterOfSalary().getRubriquePlus() + "'" + " and (b.ddeb is null or (b.ddeb is not null and b.ddeb <= '" + this.getParameterOfSalary().getMyMonthOfPay().getYearAndMonth() + "'))"
 				+ " and (b.dfin is null or (b.dfin is not null and b.dfin >= '" + this.getParameterOfSalary().getMyMonthOfPay().getYearAndMonth() + "')))";
 		String queryStringListIntervalleEF = queryStringListIntervalle + critereEF + orderString;
@@ -1150,7 +1151,7 @@ public class ClsSalariesEngine
 		// -- Choix des salaries ayant un EV
 		// CURSOR curs_chx_opt2 IS
 		// SELECT * from pasa01 a
-		// where identreprise = wpdos.cdos
+		// where identreprise = wpdos.identreprise
 		// and niv1 between NVL(LTRIM(SUBSTR(woptions,26,3)),' ') and LTRIM(SUBSTR(woptions,29,3))
 		// and niv2 between NVL(LTRIM(SUBSTR(woptions,32,3)),' ') and LTRIM(SUBSTR(woptions,35,3))
 		// and niv3 between NVL(LTRIM(SUBSTR(woptions,38,8)),' ') and LTRIM(SUBSTR(woptions,46,8))
@@ -1158,24 +1159,24 @@ public class ClsSalariesEngine
 		// and modp like wsd_fcal1.modp
 		// and clas like wsd_fcal1.clas
 		// and nmat IN (select nmat from paevar b
-		// WHERE b.cdos = a.cdos
+		// WHERE b.identreprise = a.identreprise
 		// AND b.nmat = a.nmat
 		// AND b.aamm = w_aamm
 		// AND b.nbul = wsd_fcal1.nbul
 		// AND b.rubq = w_plus_rub)
 		// order by identreprise , niv1, niv2, niv3, nmat;
 		//
-		String critereEV = " and nmat in ( " + " select b.nmat from Rhteltvardet b" + " where b.cdos = cdos" + " and b.nmat = nmat" + " and b.aamm = '" + this.getParameterOfSalary().getMyMonthOfPay().getYearAndMonth()
+		String critereEV = " and nmat in ( " + " select b.nmat from ElementVariableDetailMois b" + " where b.identreprise = cdos" + " and b.nmat = nmat" + " and b.aamm = '" + this.getParameterOfSalary().getMyMonthOfPay().getYearAndMonth()
 				+ "'" + " and b.nbul = " + this.getParameterOfSalary().getNumeroBulletin() + " and b.rubq = '" + this.getParameterOfSalary().getRubriquePlus() + "')";
 
-		String critereEV1 = " nmat in ( " + " select b.nmat from Rhteltvardet b" + " where b.cdos = cdos" + " and b.nmat = nmat" + " and b.aamm = '" + this.getParameterOfSalary().getMyMonthOfPay().getYearAndMonth()
+		String critereEV1 = " nmat in ( " + " select b.nmat from ElementVariableDetailMois b" + " where b.identreprise = cdos" + " and b.nmat = nmat" + " and b.aamm = '" + this.getParameterOfSalary().getMyMonthOfPay().getYearAndMonth()
 				+ "'" + " and b.nbul = " + this.getParameterOfSalary().getNumeroBulletin() + " and b.rubq = '" + this.getParameterOfSalary().getRubriquePlus() + "')";
 
 		String queryStringListIntervalleEV = queryStringListIntervalle + critereEV + orderString;
 		// -- Choix des salaries ayant un EF ou un EV
 		// CURSOR curs_chx_opt3 IS
 		// SELECT * from pasa01 a
-		// where identreprise = wpdos.cdos
+		// where identreprise = wpdos.identreprise
 		// and niv1 between NVL(LTRIM(SUBSTR(woptions,26,3)),' ') and LTRIM(SUBSTR(woptions,29,3))
 		// and niv2 between NVL(LTRIM(SUBSTR(woptions,32,3)),' ') and LTRIM(SUBSTR(woptions,35,3))
 		// and niv3 between NVL(LTRIM(SUBSTR(woptions,38,8)),' ') and LTRIM(SUBSTR(woptions,46,8))
@@ -1183,7 +1184,7 @@ public class ClsSalariesEngine
 		// and modp like wsd_fcal1.modp
 		// and clas like wsd_fcal1.clas
 		// and (nmat IN (select nmat from paelfix b
-		// where b.cdos = a.cdos
+		// where b.identreprise = a.identreprise
 		// and b.nmat = a.nmat
 		// and b.codp = w_plus_rub
 		// and (ddeb is null OR
@@ -1193,7 +1194,7 @@ public class ClsSalariesEngine
 		// )
 		// OR
 		// nmat IN (select nmat from paevar b
-		// WHERE b.cdos = a.cdos
+		// WHERE b.identreprise = a.identreprise
 		// AND b.nmat = a.nmat
 		// AND b.aamm = w_aamm
 		// AND b.nbul = wsd_fcal1.nbul
@@ -1205,7 +1206,7 @@ public class ClsSalariesEngine
 		// -- Choix des salaries ayant un conges
 		// CURSOR curs_chx_opt4 IS
 		// SELECT * from pasa01
-		// where identreprise = wpdos.cdos
+		// where identreprise = wpdos.identreprise
 		// and niv1 between NVL(LTRIM(SUBSTR(woptions,26,3)),' ') and LTRIM(SUBSTR(woptions,29,3))
 		// and niv2 between NVL(LTRIM(SUBSTR(woptions,32,3)),' ') and LTRIM(SUBSTR(woptions,35,3))
 		// and niv3 between NVL(LTRIM(SUBSTR(woptions,38,8)),' ') and LTRIM(SUBSTR(woptions,46,8))
@@ -1222,14 +1223,14 @@ public class ClsSalariesEngine
 		// CURSOR curs_arp IS
 		// SELECT *
 		// FROM paarrpai
-		// where identreprise = wpdos.cdos
+		// where identreprise = wpdos.identreprise
 		// AND nmat = wsal01.nmat
 		// order by identreprise ,nmat,ddar;
 		//
 		// CURSOR curs_arp2 IS
 		// SELECT cdos,nmat,ddar,dfar,mtar
 		// FROM paharrpai
-		// where identreprise = wpdos.cdos
+		// where identreprise = wpdos.identreprise
 		// AND nmat = wsal01.nmat
 		// AND aamm = w_aamm
 		// AND nbul = wsd_fcal1.nbul
@@ -1383,8 +1384,8 @@ public class ClsSalariesEngine
 			// boolean autopaie = autorPaie(parameterOfSalary.getUti(), parameterOfSalary.getTypu(), ((Salarie)obj).getClas(), parameterOfSalary.getAccess());
 			// boolean bulletinbloque = salaryToProcess.bulletinBloque();
 			// boolean finArrierePaie = false;
-			// // IF PA_PAIE.autorpaie(wsd_fcal1.cdos,w_cuti,3,wsal01.clas,'I') AND
-			// // NOT PA_PAIE.Bulletin_Bloque(wsd_fcal1.cdos, wsal01.nmat)
+			// // IF PA_PAIE.autorpaie(wsd_fcal1.identreprise,w_cuti,3,wsal01.clas,'I') AND
+			// // NOT PA_PAIE.Bulletin_Bloque(wsd_fcal1.identreprise, wsal01.nmat)
 			// // THEN
 			// //
 			// autopaie = true;
@@ -1643,14 +1644,14 @@ public class ClsSalariesEngine
 			// // -- Suppression des pseudo-evs generes pour calcul des absences
 			// // IF retroactif THEN
 			// // DELETE FROM pahevar
-			// // where identreprise = wpdos.cdos
+			// // where identreprise = wpdos.identreprise
 			// // AND nmat = wsal01.nmat
 			// // AND aamm = w_aamm
 			// // AND nbul = wsd_fcal1.nbul
 			// // AND argu = 'PSEUDO-EV';
 			// // ELSE
 			// // DELETE FROM paevar
-			// // where identreprise = wpdos.cdos
+			// // where identreprise = wpdos.identreprise
 			// // AND nmat = wsal01.nmat
 			// // AND aamm = w_aamm
 			// // AND nbul = wsd_fcal1.nbul
@@ -1705,14 +1706,14 @@ public class ClsSalariesEngine
 			// //
 			// // IF retroactif THEN
 			// // DELETE FROM prcalc
-			// // where identreprise = wpdos.cdos
+			// // where identreprise = wpdos.identreprise
 			// // AND nmat = wsal01.nmat
 			// // AND aamm = w_aamm
 			// // AND nbul = wsd_fcal1.nbul
 			// // AND nlot = w_nlot;
 			// // ELSE
 			// // DELETE FROM pacalc
-			// // where identreprise = wpdos.cdos
+			// // where identreprise = wpdos.identreprise
 			// // AND nmat = wsal01.nmat
 			// // AND aamm = w_aamm
 			// // AND nbul = wsd_fcal1.nbul;
@@ -1723,7 +1724,7 @@ public class ClsSalariesEngine
 			// // IF NOT PA_PAIE.NouB(wsal01.pmcf) AND w_fictif = 'O' AND NOT retroactif THEN
 			// // IF wsal01.pmcf = w_aamm THEN
 			// // DELETE FROM pafic
-			// // where identreprise = wpdos.cdos
+			// // where identreprise = wpdos.identreprise
 			// // AND nmat = wsal01.nmat;
 			// // END IF;
 			// // END IF;
@@ -1909,9 +1910,9 @@ public class ClsSalariesEngine
 		//ApplicationContext app = ServiceFinder.applicationContext;
 
 		String sqlQ = "Select a.vall as idBean, c.vall as methodeCalcul, d.vall as colonneParam ";
-		sqlQ+=" From ParamData a, ParamData b, ParamData c, ParamData d where a.cdos='" + dossier + "' and a.ctab=99 and a.nume =1 and a.cacc='CALC_EXT' ";
-		sqlQ+=" and a.cdos=c.cdos and a.ctab=c.ctab and a.cacc=c.cacc and c.nume = 2";
-		sqlQ+=" and a.cdos=d.cdos and a.ctab=d.ctab and a.cacc=d.cacc and d.nume = 3";
+		sqlQ+=" From ParamData a, ParamData b, ParamData c, ParamData d where a.identreprise='" + dossier + "' and a.ctab=99 and a.nume =1 and a.cacc='CALC_EXT' ";
+		sqlQ+=" and a.identreprise=c.identreprise and a.ctab=c.ctab and a.cacc=c.cacc and c.nume = 2";
+		sqlQ+=" and a.identreprise=d.identreprise and a.ctab=d.ctab and a.cacc=d.cacc and d.nume = 3";
 
 		List<Object[]> fonctions = this.getService().find(sqlQ);
 		idBeanCalculExterne = null;

@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "ElementVariableEnteteMois")
 @Table(name = "elementvariableentetemois")
 public class ElementVariableEnteteMois extends AbstractEntity {
 

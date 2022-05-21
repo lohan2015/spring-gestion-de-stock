@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "LogElementSalaire")
 @Table(name = "logelementsalaire")
 public class LogElementSalaire extends AbstractEntity {
 

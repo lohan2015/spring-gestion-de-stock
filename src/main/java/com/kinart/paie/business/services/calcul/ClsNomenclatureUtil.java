@@ -428,7 +428,7 @@ public class ClsNomenclatureUtil
 		//
 		if (StringUtils.isBlank(periodeTraitement) || periodeTraitement.equals(moisPaieCourant))
 		{
-			l = service.find("select monp, ddeb, dfin from Rhteltfixagent " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and codp = '" + rubq + "'");
+			l = service.find("select monp, ddeb, dfin from ElementFixeSalarie " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and codp = '" + rubq + "'");
 			if (l != null && !l.isEmpty())
 			{
 				row = (Object[]) l.get(0);
@@ -505,7 +505,7 @@ public class ClsNomenclatureUtil
 		//
 		if (StringUtils.isBlank(periodeTraitement) || periodeTraitement.equals(moisPaieCourant))
 		{
-			l = service.find("select sum(mont) from Rhteltvardet " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and aamm = '" + moisPaieCourant + "'" + " and nbul = " + nbul
+			l = service.find("select sum(mont) from ElementVariableDetailMois " + " where identreprise = '" + cdos + "'" + " and nmat = '" + nmat + "'" + " and aamm = '" + moisPaieCourant + "'" + " and nbul = " + nbul
 					+ " and rubq = '" + rubq + "'");
 			if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 			{
@@ -1020,7 +1020,7 @@ public class ClsNomenclatureUtil
 	public String getTypePaiementOfSalary(String cdos, String moisPaieCourant, String matricule)
 	{
 		String modePaiement = "";
-		List l = service.find("select modp from Rhpagent " + " where identreprise = '" + cdos + "'" + " and nmat = '" + matricule + "'");
+		List l = service.find("select modp from Salarie " + " where identreprise = '" + cdos + "'" + " and nmat = '" + matricule + "'");
 		if (!ClsObjectUtil.isListEmty(l) && l.get(0) != null)
 		{
 			modePaiement = (String) l.get(0);
@@ -1194,7 +1194,7 @@ public class ClsNomenclatureUtil
 		Date dfin = new Date();
 		String motf = "";
 		//
-		String strPaevcgSqlString = "From Rhteltvarconge " + " where identreprise = '" + cdos
+		String strPaevcgSqlString = "From ElementVariableConge " + " where identreprise = '" + cdos
 				+ "'" + " and nmat = '" + i_nmat + "'" + " and aamm = '" + i_aamm + "'" + " and nbul = " + i_nbul + " and ddeb between '" + debutDateCls.getDateS()
 				+ "' and '" + finDateCls.getDateS() + "'" + " and dfin between '" + debutDateCls.getDateS() + "' and '" + finDateCls.getDateS() + "'" + " ORDER BY motf, ddeb";
 

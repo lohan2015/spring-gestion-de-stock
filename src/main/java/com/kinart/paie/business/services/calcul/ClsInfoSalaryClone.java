@@ -376,7 +376,7 @@ public class ClsInfoSalaryClone implements Serializable {
 	/** full constructor */
     public ClsInfoSalaryClone(Salarie salaryInfo) {
     	this.comp_id = new ClsInfoSalaryClonePK();
-        this.comp_id.setCdos(String.valueOf(salaryInfo.getIdEntreprise()));
+        this.comp_id.setCdos(String.valueOf(salaryInfo.getIdentreprise()));
         this.comp_id.setNmat(salaryInfo.getNmat());
         
         this.adr1 =  salaryInfo.getAdr1();

@@ -470,10 +470,10 @@ public class ClsSalaryWorkTime
 		// -- Fin Modif MM.
 		// END;
 		// END IF;
-		String queryStringRetro = "select ddpa, dfpa from Rhthev" + " where comp_id.cdos = '" + salary.getParameter().getDossier() + "'" + " and comp_id.nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
-				+ " and comp_id.aamm = '" + salary.getMonthOfPay() + "'" + " and comp_id.nbul = " + salary.getNbul();
-		String queryString = "select ddpa, dfpa from Rhteltvarent" + " where comp_id.cdos = '" + salary.getParameter().getDossier() + "'" + " and comp_id.nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
-				+ " and comp_id.aamm = '" + salary.getMonthOfPay() + "'" + " and comp_id.nbul = " + salary.getNbul();
+		String queryStringRetro = "select ddpa, dfpa from Rhthev" + " where identreprise = '" + salary.getParameter().getDossier() + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+				+ " and aamm = '" + salary.getMonthOfPay() + "'" + " and nbul = " + salary.getNbul();
+		String queryString = "select ddpa, dfpa from ElementVariableEnteteMois" + " where identreprise = '" + salary.getParameter().getDossier() + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+				+ " and aamm = '" + salary.getMonthOfPay() + "'" + " and nbul = " + salary.getNbul();
 		//
 		List listOfEv = (salary.getParameter().isUseRetroactif()) ? salary.getService().find(queryStringRetro) : salary.getService().find(queryString);
 		Object[] rowEv = null;
@@ -595,10 +595,10 @@ public class ClsSalaryWorkTime
 
 		ParameterUtil.println(">>calculateNbreJourCongeEtAbsence");
 		String nmat = salary.getInfoSalary().getComp_id().getNmat();
-		String queryString = "from Rhteltvarconge" + " where cdos='" + salary.getParameter().getDossier() + "'" + " and nmat ='" + nmat + "'" + " and aamm ='" + salary.getMonthOfPay() + "'" + " and nbul ="
+		String queryString = "from ElementVariableConge" + " where identreprise='" + salary.getParameter().getDossier() + "'" + " and nmat ='" + nmat + "'" + " and aamm ='" + salary.getMonthOfPay() + "'" + " and nbul ="
 				+ salary.getNbul();
 
-		String queryStringRetro = "from Rhthevcg" + " where cdos='" + salary.getParameter().getDossier() + "'" + " and nmat ='" + nmat + "'" + " and aamm ='" + salary.getMonthOfPay() + "'" + " and nbul ="
+		String queryStringRetro = "from Rhthevcg" + " where identreprise='" + salary.getParameter().getDossier() + "'" + " and nmat ='" + nmat + "'" + " and aamm ='" + salary.getMonthOfPay() + "'" + " and nbul ="
 				+ salary.getNbul();
 
 		ClsDate myMonthOfPay = new ClsDate(salary.getMonthOfPay(), ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM);

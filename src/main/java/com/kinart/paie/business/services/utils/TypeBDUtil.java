@@ -34,7 +34,7 @@ public class TypeBDUtil
 
 	public static String IN = "IN";
 
-	public static String typeBD = OR;
+	public static String typeBD = MY;
 
 	/**
 	 * Fonctions standard de sql

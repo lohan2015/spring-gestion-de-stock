@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "ParamTable")
 @Table(name = "paramtable")
 public class ParamTable extends AbstractEntity {
 

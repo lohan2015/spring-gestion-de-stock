@@ -15,7 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "PretExterneDetail")
 @Table(name = "pretexternedetail")
 public class PretExterneDetail extends AbstractEntity {
 

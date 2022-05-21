@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "SequenceAuto")
 @Table(name = "sequenceauto")
 public class SequenceAuto extends AbstractEntity {
 

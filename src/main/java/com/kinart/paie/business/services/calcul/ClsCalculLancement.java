@@ -423,7 +423,7 @@ public class ClsCalculLancement  implements Serializable{
 	
 public List<Salarie> ListeIntervalleAgent (ClsCalculLancement oCalcul,String cdos, String utilsateur, String activerSecuriteSalarie){
 	String requete = getFirstQuery(oCalcul, cdos, utilsateur, activerSecuriteSalarie);
-	//ClsParameter.println("requete finale  : "+ requete);
+
 	//
 	requete += StringUtils.isNotEmpty(partialQuery)?partialQuery:StringUtils.EMPTY;
 	List<Salarie> Agents = this.getService().find(requete);	
@@ -447,7 +447,7 @@ public List<Salarie> ListeIntervalleAgent (ClsCalculLancement oCalcul,String cdo
 		listeMatricule +=","+ listematricules;
 		listeMatricule = listeMatricule +")";
 		String queryListe = " and (a.nmat in " + listeMatricule + ")";
-		String query = "From Salarie a where ( a.cdos = '" + cdos + "' and "+cals+" and a.nmat in (select b.nmat from Salarie b where b.cdos = '" + cdos + "')";
+		String query = "From Salarie a where ( a.identreprise = '" + cdos + "' and "+cals+" and a.nmat in (select b.nmat from Salarie b where b.identreprise = '" + cdos + "')";
 		query = query + " " + queryListe + ")";
 		query += StringUtils.isNotEmpty(partialQuery)?partialQuery:StringUtils.EMPTY;
 		//ClsParameter.println(">> query: " + query);
@@ -596,7 +596,7 @@ public List<Salarie> ListeIntervalleAgent (ClsCalculLancement oCalcul,String cdo
 		if(! StringUtils.isEmpty(oCalcul.getModepaiement()))
 			query +=" AND (a.modp= '" + modepaiementmin + "')";
 				
-		String requete = query + " and a.nmat in (select b.nmat from Salarie b where b.cdos = '" + cdos + "'))";
+		String requete = query + " and a.nmat in (select b.nmat from Salarie b where b.identreprise = '" + cdos + "'))";
 		
 		//
 		return requete;

@@ -18,12 +18,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "Salarie")
 @Table(name = "salarie")
 public class Salarie extends AbstractEntity {
 
     @Column(name = "identreprise")
-    private Integer idEntreprise;
+    private Integer identreprise;
 
     @Size(max=6, message = "Le matricule du salarié devra avoir une taille maximale égale à 6")
     @Column(name = "nmat", length = 6)

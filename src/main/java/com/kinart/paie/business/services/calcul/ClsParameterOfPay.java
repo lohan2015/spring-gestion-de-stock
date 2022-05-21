@@ -15,9 +15,16 @@ import com.kinart.paie.business.services.impl.CalculPaieServiceImpl;
 import com.kinart.paie.business.services.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Cette permet d'initialiser les param�tres de calcul de la paie que toutes les autres classes utiliseront. Ainsi, ce sont des param�tres globaux. Une erreur
@@ -25,7 +32,7 @@ import org.springframework.dao.DataAccessException;
  * 
  * @author c.mbassi
  */
-
+//@EnableTransactionManagement
 public class ClsParameterOfPay
 {
 	public CalculPaieServiceImpl lanceur;
@@ -247,7 +254,7 @@ public class ClsParameterOfPay
 
 	protected String clas = "";
 
-	protected Integer sessionId = 0;
+	protected Integer session_id = 0;
 
 	protected String bankCcy = "CFA";
 
@@ -1402,14 +1409,14 @@ public class ClsParameterOfPay
 		this.useRetroactif = useRetroactif;
 	}
 
-	public Integer getSessionId()
+	public Integer getsession_id()
 	{
-		return sessionId;
+		return session_id;
 	}
 
-	public void setSessionId(Integer sessionId)
+	public void setsession_id(Integer session_id)
 	{
-		this.sessionId = sessionId;
+		this.session_id = session_id;
 	}
 
 	public int getAncienneteMaxi()
@@ -1492,12 +1499,12 @@ public class ClsParameterOfPay
 	 *            la p�riode de paie en yyyymm
 	 * @param clas
 	 *            la classe de salari�s
-	 * @param sessionId
+	 * @param session_id
 	 *            la session
 	 * @param modePaiement
 	 *            le mode de paiement (V, E, C)
 	 */
-	public ClsParameterOfPay(GeneriqueConnexionService service, ClsNomenclatureUtil utilNomenclature, boolean useRetroactif, int numeroBulletin, String periodPay, String clas, int sessionId, ClsEnumeration.EnModePaiement modePaiement)
+	public ClsParameterOfPay(GeneriqueConnexionService service, ClsNomenclatureUtil utilNomenclature, boolean useRetroactif, int numeroBulletin, String periodPay, String clas, int session_id, ClsEnumeration.EnModePaiement modePaiement)
 	{
 		this.useRetroactif = useRetroactif;
 		this.numeroBulletin = numeroBulletin;
@@ -1505,7 +1512,7 @@ public class ClsParameterOfPay
 		this.monthOfPay = periodPay;
 		this.clas = clas;
 		this.modePaiement = modePaiement;
-		this.sessionId = sessionId;
+		this.session_id = session_id;
 		this.service = service;
 		this.utilNomenclature = utilNomenclature;
 	}
@@ -1537,8 +1544,8 @@ public class ClsParameterOfPay
 		// AND nbul = wsd_fcal1.nbul
 		// AND NVL(valm,0) != 0;
 		// ----- Chargement des taux de reglement d'absence
-		String query = "select cacc, valm from ParamData" + " where cdos ='" + dossier + "'" + " and ctab = 22" + " and nume = 8" + " and valm <> 0";
-		String queryRetro = "select cacc, valm from Rhthfnom" + " where cdos ='" + dossier + "'" + " and ctab = 22" + " and nume = 8" + " and aamm = '" + monthOfPay + "'" + " and nbul = "
+		String query = "select cacc, valm from ParamData" + " where identreprise ='" + dossier + "'" + " and ctab = 22" + " and nume = 8" + " and valm <> 0";
+		String queryRetro = "select cacc, valm from Rhthfnom" + " where identreprise ='" + dossier + "'" + " and ctab = 22" + " and nume = 8" + " and aamm = '" + monthOfPay + "'" + " and nbul = "
 				+ numeroBulletin + " and valm <> 0";
 		List listOfParam = (useRetroactif) ? service.find(queryRetro) : service.find(query);
 		//
@@ -1566,8 +1573,8 @@ public class ClsParameterOfPay
 	
 	public void chargementDevises()
 	{
-		String query = "select cacc, valt from ParamData where cdos ='" + dossier + "' and ctab = 27 and nume = 1";
-		String queryRetro = "select cacc, valt from Rhthfnom where cdos ='" + dossier + "' and ctab = 27 and nume = 1 and aamm = '" + monthOfPay + "'" + " and nbul = "
+		String query = "select cacc, valt from ParamData where identreprise ='" + dossier + "' and ctab = 27 and nume = 1";
+		String queryRetro = "select cacc, valt from Rhthfnom where identreprise ='" + dossier + "' and ctab = 27 and nume = 1 and aamm = '" + monthOfPay + "'" + " and nbul = "
 				+ numeroBulletin;
 		List listOfParam = (useRetroactif) ? service.find(queryRetro) : service.find(query);
 		String cacc = "";
@@ -1592,6 +1599,8 @@ public class ClsParameterOfPay
 	 * => Charg_TmpNet initialise the table of adjustment values -- PAIE AU NET : -- Creation et chargement des tables temporaires contenant -- les rubriques
 	 * saisies en net -- les rubriques soumises a ajustement -- Les montants correspondant sont charges pour chaque salarie ( E.V. ou E.F. )
 	 */
+//    @Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED, rollbackFor =  {Exception.class}, readOnly = false)
+//    @Modifying
 	public void chargementTableValeurAjustement()
 	{
 		// com.cdi.deltarh.service.ClsParameter.println(">>chargementTableValeurAjustement");
@@ -1612,11 +1621,11 @@ public class ClsParameterOfPay
 		
 
 		// @Add by yannick : proposition de suppression de la table avant tout traitement
-		Session session = service.getSession();
-		session.createQuery("Delete From ElementSalaireNet where sessionId =" + sessionId).executeUpdate();
-		service.closeSession(session);
+        Session session = service.getSession();
+        session.createQuery("Delete From ElementSalaireNet where session_id =" + session_id).executeUpdate();;
+        service.closeSession(session);
 		
-		String queryString = "select 0, crub, ajnu from ElementSalaire a " + " where cdos ='" + dossier + "'" + " and calc = 'O'" + " and snet = 'O'";
+		String queryString = "select 0, crub, ajnu from ElementSalaire a " + " where identreprise ='" + dossier + "'" + " and calc = 'O'" + " and snet = 'O'";
 		if("ClsEntreprise.BGFIGE".equalsIgnoreCase(nomClient) || "ClsEntreprise.SONIBANK".equalsIgnoreCase(nomClient)){
 			queryString += " and (exists (";
 			queryString += " select 'X' from ElementVariableDetailMois c";
@@ -1642,13 +1651,13 @@ public class ClsParameterOfPay
 			row = (Object[]) object;
 			oParubnet = new ElementSalaireNet();
 			// if(row[0] != null)
-			// oParubnet.setSessionId(new BigDecimal((Integer)row[0]));
+			// oParubnet.setsession_id(new BigDecimal((Integer)row[0]));
 			if (row[1] != null)
 				oParubnet.setCrub((String) row[1]);
 			if (row[2] != null)
 				oParubnet.setAjnu(((Long) row[2]).intValue());
 			oParubnet.setMont(new BigDecimal(0));
-			oParubnet.setSessionId(new BigDecimal(sessionId));
+			oParubnet.setSession_id(new BigDecimal(session_id));
 			//
 			service.save(oParubnet);
 			listeRubriquesAAjouterAuNet.add(oParubnet.getCrub());
@@ -1660,7 +1669,7 @@ public class ClsParameterOfPay
 		// rubnet_exist := FALSE;
 		// END IF;
 		//
-		queryString = "select count(*) from Rhtrubnet " + " where session_id ='" + sessionId + "'";
+		queryString = "select count(*) from ElementSalaireNet " + " where session_id ='" + session_id + "'";
 		listOfRubrique = service.find(queryString);
 		if (listOfRubrique != null && listOfRubrique.size() > 0)
 		{
@@ -1683,10 +1692,10 @@ public class ClsParameterOfPay
 
 		// @Add by yannick : proposition de suppression de la table avant tout traitement
 		session = service.getSession();
-		session.createQuery("Delete From ElementSalaireAjus where sessionId =" + sessionId).executeUpdate();
+		session.createQuery("Delete From ElementSalaireAjus where session_id =" + session_id).executeUpdate();
 		service.closeSession(session);
 
-		queryString = "select " + sessionId + ", crub, ajnu from ElementSalaire a " + "where cdos ='" + dossier + "'" + " and calc = 'O'" + " and ajus = 'O'";
+		queryString = "select " + session_id + ", crub, ajnu from ElementSalaire a " + "where identreprise ='" + dossier + "'" + " and calc = 'O'" + " and ajus = 'O'";
 		if("ClsEntreprise.BGFIGE".equalsIgnoreCase(nomClient) || "ClsEntreprise.SONIBANK".equalsIgnoreCase(nomClient)){
 			if(listeRubriquesAAjouterAuNet!=null && listeRubriquesAAjouterAuNet.size()>=1)
 				queryString += " and a.snet = 'O'";
@@ -1715,14 +1724,15 @@ public class ClsParameterOfPay
 			row = (Object[]) object;
 			oParubajus = new ElementSalaireAjus();
 			// if(row[0] != null)
-			// oParubajus.setSessionId(new BigDecimal((Integer)row[0]));
+			// oParubajus.setsession_id(new BigDecimal((Integer)row[0]));
 			if (row[1] != null)
 				oParubajus.setCrub((String) row[1]);
 			if (row[2] != null)
 				oParubajus.setAjnu(((Long) row[2]).intValue());
 			oParubajus.setMont(new BigDecimal(0));
-			oParubajus.setSessionId(new BigDecimal(sessionId));
+			oParubajus.setSessionId(new BigDecimal(session_id));
 			//
+
 			service.save(oParubajus);
 			
 			listeRubriquesAAjuster.add(oParubajus.getCrub());
@@ -1733,7 +1743,7 @@ public class ClsParameterOfPay
 		// rubajus_exist := FALSE;
 		// END IF;
 		//
-		queryString = "select count(*) from ElementSalaireajus " + " where session_id ='" + sessionId + "'";
+		queryString = "select count(*) from ElementSalaireAjus " + " where session_id ='" + session_id + "'";
 		listOfRubrique = service.find(queryString);
 		if (listOfRubrique != null && listOfRubrique.size() > 0)
 		{
@@ -1808,7 +1818,7 @@ public class ClsParameterOfPay
 		// AND rman = 'N'
 		// ORDER BY cdos, crub;
 		//
-		String queryString = "select rcon from ElementSalaire where cdos ='" + dossier + "'" + " and rreg = 'O'" + " and rman = 'N'" + " order by cdos, crub";
+		String queryString = "select rcon from ElementSalaire where identreprise ='" + dossier + "'" + " and rreg = 'O'" + " and rman = 'N'" + " order by identreprise, crub";
 		// CURSOR curs_rubreg2 IS
 		// SELECT rcon FROM pahrubq
 		// WHERE cdos = wpdos.identreprise
@@ -1817,8 +1827,8 @@ public class ClsParameterOfPay
 		// AND aamm = w_aamm
 		// AND nbul = wsd_fcal1.nbul
 		// ORDER BY cdos, crub;
-		String queryStringRetro = "select rcon from Rhthrubq where cdos ='" + dossier + "'" + " and rreg = 'O'" + " and rman = 'N'" + " and aamm = '" + monthOfPay + "'" + " and nbul = " + numeroBulletin
-				+ " order by cdos, crub";
+		String queryStringRetro = "select rcon from Rhthrubq where identreprise ='" + dossier + "'" + " and rreg = 'O'" + " and rman = 'N'" + " and aamm = '" + monthOfPay + "'" + " and nbul = " + numeroBulletin
+				+ " order by identreprise, crub";
 
 		List listOfRubrique = (useRetroactif) ? service.find(queryStringRetro) : service.find(queryString);
 		//
@@ -1866,7 +1876,7 @@ public class ClsParameterOfPay
 	public void chargerMoisDonnees()
 	{
 		this.moisDonnees = new HashMap<String, Integer>();
-		List<ParamData> liste = service.find("From ParamData where cdos = '"+dossier+"' and ctab = 66 and nume = 1 order by cacc");
+		List<ParamData> liste = service.find("From ParamData where identreprise ='"+dossier+"' and ctab = 66 and nume = 1 order by cacc");
 		for(ParamData nome : liste)
 		{
 			if(nome.getValm() != null && nome.getValm().intValue() != 0)
@@ -1895,7 +1905,7 @@ public class ClsParameterOfPay
 		// AND nume = 3
 		// ORDER BY cacc;
 		//
-		// String queryString10 = "select cacc, vall, valm from ParamData " + " where cdos ='" + dossier + "'" + " and ctab = 10" + " and
+		// String queryString10 = "select cacc, vall, valm from ParamData " + " where identreprise ='" + dossier + "'" + " and ctab = 10" + " and
 		// nume = 3" + " order by cacc";
 		// -- Curseur sur les banques
 		// CURSOR Curs_TB10_2 IS
@@ -1906,7 +1916,7 @@ public class ClsParameterOfPay
 		// AND aamm = w_aamm
 		// AND nbul = wsd_fcal1.nbul
 		// ORDER BY cacc;
-		// String queryString10Retro = "select cacc, vall, valm from Rhthfnom " + " where cdos ='" + dossier + "'" + " and ctab = 10" + " and
+		// String queryString10Retro = "select cacc, vall, valm from Rhthfnom " + " where identreprise ='" + dossier + "'" + " and ctab = 10" + " and
 		// nume = 3" + " and aamm = '"
 		// + monthOfPay + "'" + " and nbul = " + numeroBulletin + " order by cacc";
 		//
@@ -1918,7 +1928,7 @@ public class ClsParameterOfPay
 		// AND cacc = Devise_Banque
 		// AND nume = 1;
 		//
-		// String queryString27 = "select valt, valm from ParamData " + " where cdos ='" + dossier + "'" + " and ctab = 27" + " and nume = 1" + "
+		// String queryString27 = "select valt, valm from ParamData " + " where identreprise ='" + dossier + "'" + " and ctab = 27" + " and nume = 1" + "
 		// and cacc = '" + bankCcy + "'"
 		// + " order by cacc";
 		// -- Curseur sur les devises
@@ -1930,7 +1940,7 @@ public class ClsParameterOfPay
 		// AND aamm = w_aamm
 		// AND nbul = wsd_fcal1.nbul
 		// AND nume = 1;
-		// String queryString27Retro = "select valt, valm from Rhthfnom " + " where cdos ='" + dossier + "'" + " and ctab = 27" + " and nume =
+		// String queryString27Retro = "select valt, valm from Rhthfnom " + " where identreprise ='" + dossier + "'" + " and ctab = 27" + " and nume =
 		// 1" + " and cacc = '" + bankCcy
 		// + "'" + " and aamm = '" + monthOfPay + "'" + " and nbul = " + numeroBulletin + " order by cacc";
 		//
@@ -2089,7 +2099,7 @@ public class ClsParameterOfPay
 		List<DossierPaie> list2 = null;
 		try
 		{
-			list2 = service.find("from Cpdo where cdos = '" + dossier + "'");
+			list2 = service.find("From DossierPaie a where identreprise ='" + dossier + "'");
 		}
 		catch (DataAccessException e)
 		{
@@ -2099,15 +2109,16 @@ public class ClsParameterOfPay
 		}
 		if (list2 != null && list2.size() > 0)
 		{
-			dossierInfo = list2.get(0);
+			dossierInfo = (DossierPaie)list2.get(0);
+
 			dossierCcy = dossierInfo.getDdev();
 			dossierNbreDecimale = dossierInfo.getNddd() == null ? 0 : dossierInfo.getNddd().intValue();
 
 		}
 		else
 		{
-			error = "Dossier " + dossier + " inconnu dans cpdos";
-			error = errorMessage("ERR-30032", langue, dossier) + "(cpdos)";
+			error = "Dossier " + dossier + " inconnu dans DossierPaie";
+			error = errorMessage("ERR-30032", langue, dossier) + "(DossierPaie)";
 
 			return false;
 		}
@@ -2473,7 +2484,7 @@ public class ClsParameterOfPay
 		// -- Lecture Mnt1 = Rubrique somme des nets a payer (avance conges)
 		// -- Lecture Mnt2 = jours minimum pour calcul rub. dernier mois
 		String query = " SELECT sum(case nume when 1 then valm else 0 end ) as somme1, sum(case nume when 2 then valm else 0 end) as somme2";
-		query += "  FROM ParamData WHERE cdos = '" + dossier + "' AND ctab = 99 AND cacc = 'FICTIF' AND nume IN (1,2)";
+		query += "  FROM ParamData WHERE identreprise ='" + dossier + "' AND ctab = 99 AND cacc = 'FICTIF' AND nume IN (1,2)";
 		List<Object[]> ls = this.getService().find(query);
 		if ((!ls.isEmpty()) && ls.get(0)[0] != null)
 		{
@@ -3202,7 +3213,7 @@ public class ClsParameterOfPay
 	{
 		Session session = service.getSession();
 		
-		String query = " SELECT count(*)  FROM ParamData WHERE cdos = '" + dossier + "' and ctab=91 and cacc = '" + cods + "' and nume = 1";
+		String query = " SELECT count(*)  FROM ParamData WHERE identreprise ='" + dossier + "' and ctab=91 and cacc = '" + cods + "' and nume = 1";
 		Integer count = Integer.valueOf(session.createSQLQuery(query).list().get(0).toString());
 		service.closeSession(session);
 		if(count==0)
@@ -3288,7 +3299,7 @@ public class ClsParameterOfPay
 	private boolean rubriqueExiste(String rubrique)
 	{
 		// com.cdi.deltarh.service.ClsParameter.println(">>rubriqueExiste");
-		List l = service.find("select a from ElementSalaire a where cdos = '" + dossier + "' and crub = '" + rubrique + "'");
+		List l = service.find("select a from ElementSalaire a where identreprise ='" + dossier + "' and crub = '" + rubrique + "'");
 		if (l != null && l.size() > 0)
 			return true;
 		else
@@ -3319,7 +3330,7 @@ public class ClsParameterOfPay
 	{
 		// com.cdi.deltarh.service.ClsParameter.println(">>clone");
 		// The constructor ClsParameterOfPay(ClsService, ClsNomenclatureUtil, boolean, int, String, int, ClsEnumeration.EnModePaiement) is undefined
-		ClsParameterOfPay param = new ClsParameterOfPay(service, utilNomenclature, useRetroactif, numeroBulletin, periodOfPay, clas, sessionId, modePaiement);
+		ClsParameterOfPay param = new ClsParameterOfPay(service, utilNomenclature, useRetroactif, numeroBulletin, periodOfPay, clas, session_id, modePaiement);
 		BeanUtils.copyProperties(this, param);
 		param.setMyMoisPaieCourant(myMoisPaieCourant.clone());
 		param.setMyMonthOfPay(myMonthOfPay.clone());
@@ -3402,10 +3413,10 @@ public class ClsParameterOfPay
 		// and clang = w_code_langue;
 		try
 		{
-			List result = service.find("SELECT a FROM Message WHERE clang='"+errorCode+"' AND cdmes='"+langue+"'");
+			List result = service.find("SELECT a FROM Message a WHERE clang='"+errorCode+"' AND cdmes='"+langue+"'");
 
 			Message message = null;
-			if(result!= null) message =(Message) result.get(0);
+			if(result!= null && result.size()>=1) message =(Message) result.get(0);
 			if (message == null){
 				message = new Message();
 				message.setCdmes(errorCode);
@@ -3512,7 +3523,7 @@ public class ClsParameterOfPay
 	{
 
 		Map<String, List<Object>> map = new HashMap<String, List<Object>>();
-		String queryStringZli = "from ElementSalaireZonelibre " + " where cdos = '" + this.getDossier() + "'";
+		String queryStringZli = "from ElementSalaireZonelibre " + " where identreprise ='" + this.getDossier() + "'";
 
 		List listOfRubZli = this.getService().find(queryStringZli);
 		//
@@ -3528,18 +3539,18 @@ public class ClsParameterOfPay
 	{
 
 		Map<String, List<Object[]>> map = new HashMap<String, List<Object[]>>();
-		String queryString = "select crub, nume, sign, rubk from ElementSalairebase " + " where cdos = '" + this.getDossier() + "'" +
+		String queryString = "select crub, nume, sign, rubk from ElementSalaireBase " + " where identreprise ='" + this.getDossier() + "'" +
 		// " and crub in ( select crub from ElementSalaire" +
-				// " where cdos = '" + this.getDossier() + "'" +
+				// " where identreprise ='" + this.getDossier() + "'" +
 				// " and ( (basc = 'O' and trtc = 'N') or mopa = 'O'))" +
-				" order by cdos, crub, nume";
+				" order by identreprise, crub, nume";
 
-		String queryStringRetro = "select crub, nume, sign, rubk from Rhthrbqba " + " where cdos = '" + this.getDossier() + "'" + " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = '"
+		String queryStringRetro = "select crub, nume, sign, rubk from Rhthrbqba " + " where identreprise ='" + this.getDossier() + "'" + " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = '"
 				+ this.getNumeroBulletin() + "'" +
 				// " and crub in ( select crub from ElementSalaire" +
-				// " where cdos = '" + this.getDossier() + "'" +
+				// " where identreprise ='" + this.getDossier() + "'" +
 				// " and ( (basc = 'O' and trtc = 'N') or mopa = 'O'))" +
-				" order by cdos, crub, nume";
+				" order by identreprise, crub, nume";
 
 		List listOfRubBase = (this.isUseRetroactif()) ? this.getService().find(queryStringRetro) : this.getService().find(queryString);
 		//
@@ -3571,14 +3582,14 @@ public class ClsParameterOfPay
 		List l1 = null;
 		if (!useRetroactif)
 		{
-			l = service.find("from ParamData " + " where cdos = '" + dossier + "'" + " and ctab = 63" + " and nume = 2");
-			l1 = service.find("from ParamData " + " where cdos = '" + dossier + "'" + " and ctab = 63" + " and nume = 1");
+			l = service.find("from ParamData " + " where identreprise ='" + dossier + "'" + " and ctab = 63" + " and nume = 2");
+			l1 = service.find("from ParamData " + " where identreprise ='" + dossier + "'" + " and ctab = 63" + " and nume = 1");
 		}
 		else
 		{
-			l = service.find("from Rhthfnom " + " where cdos = '" + dossier + "'" + " and ctab = 63" + " and nume = 2" + " and nbul = " + numeroBulletin + " and aamm = '"
+			l = service.find("from Rhthfnom " + " where identreprise ='" + dossier + "'" + " and ctab = 63" + " and nume = 2" + " and nbul = " + numeroBulletin + " and aamm = '"
 					+ periodOfPay + "'");
-			l1 = service.find("from Rhthfnom " + " where cdos = '" + dossier + "'" + " and ctab = 63" + " and nume = 1" + " and nbul = " + numeroBulletin + " and aamm = '"
+			l1 = service.find("from Rhthfnom " + " where identreprise ='" + dossier + "'" + " and ctab = 63" + " and nume = 1" + " and nbul = " + numeroBulletin + " and aamm = '"
 					+ periodOfPay + "'");
 		}
 		//
@@ -3622,11 +3633,11 @@ public class ClsParameterOfPay
 		List l = null;
 		if (!useRetroactif)
 		{
-			l = service.find("from ParamData " + " where cdos = '" + dossier + "'" + " and ctab in (51, 52, 99)");
+			l = service.find("from ParamData " + " where identreprise ='" + dossier + "'" + " and ctab in (51, 52, 99)");
 		}
 		else
 		{
-			l = service.find("from Rhthfnom " + " where cdos = '" + dossier + "'" + " and ctab in (51, 52, 99)" + " and nbul = " + numeroBulletin + " and aamm = '" + periodOfPay + "'");
+			l = service.find("from Rhthfnom " + " where identreprise ='" + dossier + "'" + " and ctab in (51, 52, 99)" + " and nbul = " + numeroBulletin + " and aamm = '" + periodOfPay + "'");
 		}
 		//
 		ParamData o1 = null;
@@ -3661,7 +3672,7 @@ public class ClsParameterOfPay
 	// public void buildRubriqueOfSessionMap()
 	// {
 	// Map<String, Object> map = new HashMap<String, Object>();
-	// String queryString = "select crub, mont from ElementSalaireajus" + " where session_id = " + this.sessionId + " order by mont ";
+	// String queryString = "select crub, mont from ElementSalaireAjus" + " where session_id = " + this.session_id + " order by mont ";
 	// List ListOfRow = service.find(queryString);
 	// double mont = 0;
 	// Object[] oo = null;
@@ -3748,8 +3759,8 @@ public class ClsParameterOfPay
 	{
 		// com.cdi.deltarh.service.ClsParameter.println("<<buildListOfRubrique");
 		listOfRubriquebaremeMap = new HashMap<String, Object>();
-		String queryString = "from ElementSalairebareme " + " where cdos = '" + dossier + "'" + " order by cdos , crub , nume";
-		String queryStringRetro = "from Rhthrubbarem " + " where cdos = '" + dossier + "'" + " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = " + this.getNumeroBulletin()
+		String queryString = "from ElementSalairebareme " + " where identreprise ='" + dossier + "'" + " order by cdos , crub , nume";
+		String queryStringRetro = "from Rhthrubbarem " + " where identreprise ='" + dossier + "'" + " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = " + this.getNumeroBulletin()
 				+ " order by cdos , crub , nume";
 		try
 		{
@@ -3785,9 +3796,9 @@ public class ClsParameterOfPay
 	{
 		// com.cdi.deltarh.service.ClsParameter.println("<<buildListOfRubrique");
 		listOfRubriquebaremeMap = new HashMap<String, Object>();
-		String queryString = "from ElementSalairebareme " + " where cdos = '" + dossier + "'" + " order by cdos , crub , nume";
-		String queryStringRetro = "from Rhthrubbarem " + " where cdos = '" + dossier + "'" + " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = " + this.getNumeroBulletin()
-				+ " order by cdos , crub , nume";
+		String queryString = "from ElementSalaireBareme " + " where identreprise ='" + dossier + "'" + " order by identreprise , crub , nume";
+		String queryStringRetro = "from Rhthrubbarem " + " where identreprise ='" + dossier + "'" + " and aamm = '" + this.getMonthOfPay() + "'" + " and nbul = " + this.getNumeroBulletin()
+				+ " order by identreprise , crub , nume";
 
 		List<Object> listOfRubriquebareme = new ArrayList<Object>();
 

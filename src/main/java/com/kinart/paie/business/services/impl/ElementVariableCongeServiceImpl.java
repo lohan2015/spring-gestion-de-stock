@@ -5,10 +5,7 @@ import com.kinart.api.gestiondepaie.dto.ParamDataDto;
 import com.kinart.paie.business.model.Salarie;
 import com.kinart.paie.business.repository.*;
 import com.kinart.paie.business.services.ElementVariableCongeService;
-import com.kinart.paie.business.services.utils.AbsenceCongeUtil;
-import com.kinart.paie.business.services.utils.ClsDate;
-import com.kinart.paie.business.services.utils.HibernateConnexionService;
-import com.kinart.paie.business.services.utils.TypeBDUtil;
+import com.kinart.paie.business.services.utils.*;
 import com.kinart.paie.business.validator.ElementVariableCongeValidator;
 import com.kinart.paie.business.model.ElementVariableConge;
 import com.kinart.paie.business.model.ElementVariableEnteteMois;
@@ -39,10 +36,10 @@ public class ElementVariableCongeServiceImpl implements ElementVariableCongeServ
     private CalendrierPaieRepository calendrierPaieRepository;
     private ElementVariableCongeRepository elementVariableCongeRepository;
     private ParamDataRepository paramDataRepository;
-    private HibernateConnexionService service;
+    private GeneriqueConnexionService service;
 
     @Autowired
-    public ElementVariableCongeServiceImpl(ElementVariableEnteteMoisRepository elementVariableEnteteMoisRepository, SalarieRepository salarieRepository, CalendrierPaieRepository calendrierPaieRepository, ElementVariableCongeRepository elementVariableCongeRepository, ParamDataRepository paramDataRepository, HibernateConnexionService service) {
+    public ElementVariableCongeServiceImpl(ElementVariableEnteteMoisRepository elementVariableEnteteMoisRepository, SalarieRepository salarieRepository, CalendrierPaieRepository calendrierPaieRepository, ElementVariableCongeRepository elementVariableCongeRepository, ParamDataRepository paramDataRepository, GeneriqueConnexionService service) {
         this.elementVariableEnteteMoisRepository = elementVariableEnteteMoisRepository;
         this.salarieRepository = salarieRepository;
         this.calendrierPaieRepository = calendrierPaieRepository;
@@ -296,7 +293,7 @@ public class ElementVariableCongeServiceImpl implements ElementVariableCongeServ
             if(org.apache.commons.lang3.StringUtils.isNotEmpty(matricule)) query.setParameter("matricule", "%"+matricule+"%");
             if(org.apache.commons.lang3.StringUtils.isNotEmpty(codemotif)) query.setParameter("codemotif", codemotif);
             List<Object[]> lst = query.getResultList();
-            service.closeConnexion(session);
+            service.closeSession(session);
 
             for (Object[] o : lst)
             {

@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "ElementVariableDetailMois")
 @Table(name = "elementvariabledetailmois")
 public class ElementVariableDetailMois extends AbstractEntity {
 

@@ -22,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 public class SalarieDto implements Serializable {
     private Integer id;
-    private Integer idEntreprise;
+    private Integer identreprise;
 
     private String nmat;
 
