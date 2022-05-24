@@ -87,11 +87,6 @@
 	<parameter name="INFO_TELEPHONE" class="java.lang.String"/>
 	<parameter name="INFO_CHARGE" class="java.lang.String"/>
 	<parameter name="tableData" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
-	<parameter name="NOM_COL1" class="java.lang.String"/>
-	<parameter name="NOM_COL2" class="java.lang.String"/>
-	<parameter name="NOM_COL3" class="java.lang.String"/>
-	<parameter name="NOM_COL4" class="java.lang.String"/>
-	<parameter name="NOM_COL5" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -749,41 +744,24 @@
 		<band height="29" splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="99" splitType="Stretch">
-			<rectangle>
-				<reportElement x="119" y="24" width="69" height="23" backcolor="#00C4FF" uuid="193a94aa-b64e-4227-9c85-bf35c9fd26de">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</rectangle>
-			<rectangle>
-				<reportElement x="49" y="24" width="69" height="23" backcolor="#00C4FF" uuid="f4454784-f45b-4ea2-97e4-821c01a8d180">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</rectangle>
-			<rectangle>
-				<reportElement x="329" y="47" width="69" height="47" uuid="ca20a7ad-eef0-43b2-88eb-e050bea733a3">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-			</rectangle>
+		<band height="84" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="5" width="544" height="15" uuid="147b7934-2a5e-46db-aa00-1c0db488665a">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Bookman Old Style" isBold="true"/>
+					<font fontName="Bookman Old Style"/>
 				</textElement>
 				<textFieldExpression><![CDATA["REGLEMENT : "+$P{INFO_CPTE_VIREMENT}]]></textFieldExpression>
 			</textField>
 			<rectangle>
-				<reportElement x="417" y="24" width="134" height="55" uuid="0ba71f81-2057-4fbd-9879-ea20cc5b8546"/>
+				<reportElement x="385" y="24" width="163" height="55" uuid="0ba71f81-2057-4fbd-9879-ea20cc5b8546"/>
 			</rectangle>
 			<line>
-				<reportElement x="419" y="50" width="131" height="1" uuid="f9a369ce-5068-4182-a09d-ffb9e7326c30"/>
+				<reportElement x="386" y="51" width="161" height="1" uuid="f9a369ce-5068-4182-a09d-ffb9e7326c30"/>
 			</line>
 			<staticText>
-				<reportElement x="430" y="30" width="111" height="15" uuid="64045b9a-be0e-4f3e-8ade-11327fb8aa37">
+				<reportElement x="415" y="30" width="111" height="15" uuid="64045b9a-be0e-4f3e-8ade-11327fb8aa37">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -792,7 +770,7 @@
 				<text><![CDATA[NET A PAYER]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="420" y="61" width="129" height="15" uuid="44568004-3214-41a0-9aac-9417e27e8940">
+				<reportElement x="407" y="61" width="129" height="15" uuid="44568004-3214-41a0-9aac-9417e27e8940">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -801,31 +779,25 @@
 				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{INFO_NAP})+" FCFA"]]></textFieldExpression>
 			</textField>
 			<rectangle>
-				<reportElement x="1" y="47" width="48" height="47" uuid="04f8dca2-ab4f-4a61-9892-268d7b335d4f"/>
+				<reportElement x="1" y="24" width="48" height="47" uuid="04f8dca2-ab4f-4a61-9892-268d7b335d4f"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="49" y="47" width="69" height="47" uuid="46a7bef6-1984-4b36-afa5-cba3923b0578"/>
+				<reportElement x="49" y="24" width="74" height="47" uuid="46a7bef6-1984-4b36-afa5-cba3923b0578"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="119" y="47" width="69" height="47" uuid="b3b2d802-c64a-4b86-b58a-74c50eb54342">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
+				<reportElement x="123" y="24" width="74" height="47" uuid="b3b2d802-c64a-4b86-b58a-74c50eb54342"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="189" y="47" width="69" height="47" uuid="7c9f2c24-4c6e-4b9c-b6fe-c7a992a31acd">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
+				<reportElement x="197" y="24" width="74" height="47" uuid="7c9f2c24-4c6e-4b9c-b6fe-c7a992a31acd"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="259" y="47" width="69" height="47" uuid="725fe52b-c075-43ed-b2c3-2c65852e408e">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
+				<reportElement x="271" y="24" width="74" height="47" uuid="725fe52b-c075-43ed-b2c3-2c65852e408e"/>
 			</rectangle>
 			<line>
-				<reportElement x="3" y="73" width="395" height="1" uuid="05948eed-320a-411b-b2bf-41569693382f"/>
+				<reportElement x="3" y="49" width="342" height="1" uuid="05948eed-320a-411b-b2bf-41569693382f"/>
 			</line>
 			<staticText>
-				<reportElement x="6" y="54" width="39" height="13" uuid="abd513b7-f63e-4efe-a90b-cae7d2cce13a">
+				<reportElement x="6" y="31" width="39" height="13" uuid="abd513b7-f63e-4efe-a90b-cae7d2cce13a">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
@@ -834,7 +806,7 @@
 				<text><![CDATA[MOIS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="6" y="78" width="39" height="13" uuid="2f9beedd-4ab5-48df-8664-84eb402196d3">
+				<reportElement x="4" y="55" width="39" height="13" uuid="2f9beedd-4ab5-48df-8664-84eb402196d3">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>
@@ -843,7 +815,7 @@
 				<text><![CDATA[ANNEE]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="53" y="53" width="61" height="13" uuid="00b3f9ee-2afe-4cfe-a4e3-b602ed8b47b4">
+				<reportElement x="57" y="30" width="61" height="13" uuid="00b3f9ee-2afe-4cfe-a4e3-b602ed8b47b4">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -852,9 +824,8 @@
 				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{MOIS_COL1})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="122" y="53" width="61" height="13" uuid="4a434720-a042-4cd6-affa-561117e605fe">
+				<reportElement x="128" y="30" width="64" height="13" uuid="4a434720-a042-4cd6-affa-561117e605fe">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bookman Old Style"/>
@@ -862,7 +833,7 @@
 				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{MOIS_COL2})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="195" y="54" width="61" height="13" uuid="5a8906a0-47cf-4b72-928a-8e2a48ed3303">
+				<reportElement x="206" y="31" width="61" height="13" uuid="5a8906a0-47cf-4b72-928a-8e2a48ed3303">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -871,129 +842,13 @@
 				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{MOIS_COL3})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="264" y="54" width="61" height="13" uuid="3a3a9fc1-56f8-4661-b987-360ae7397195">
+				<reportElement x="279" y="31" width="61" height="13" uuid="3a3a9fc1-56f8-4661-b987-360ae7397195">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Bookman Old Style"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{MOIS_COL4})]]></textFieldExpression>
-			</textField>
-			<line>
-				<reportElement x="4" y="47" width="395" height="1" uuid="d7811301-3729-4007-83fd-de5f779cd4b9"/>
-			</line>
-			<textField>
-				<reportElement x="334" y="54" width="61" height="12" uuid="231f7b97-7de6-4db6-b703-f338185e04f6">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Bookman Old Style"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{MOIS_COL5})]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="52" y="27" width="65" height="17" backcolor="#FFFFFF" uuid="cab01d87-fc44-4af4-bc4f-4b52f9c63e6a"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Bookman Old Style" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{NOM_COL1}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="120" y="27" width="66" height="17" uuid="710115f1-08c6-4592-acb2-ce2cf9a86b4f"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Bookman Old Style" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{NOM_COL2}]]></textFieldExpression>
-			</textField>
-			<rectangle>
-				<reportElement x="329" y="24" width="69" height="23" backcolor="#00C4FF" uuid="0d589ae2-72a2-4d05-b14f-f1a65068b26e">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</rectangle>
-			<rectangle>
-				<reportElement x="189" y="24" width="69" height="23" backcolor="#00C4FF" uuid="d1a73484-2978-4974-b8f7-b74847f4a48a">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</rectangle>
-			<rectangle>
-				<reportElement x="259" y="24" width="69" height="23" backcolor="#00C4FF" uuid="674ea89a-472e-4ff5-acdd-641b9efad001">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</rectangle>
-			<textField>
-				<reportElement x="190" y="27" width="66" height="17" uuid="445ec510-9566-4add-a8db-86d1cbb93edc">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Bookman Old Style" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{NOM_COL3}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="260" y="27" width="66" height="17" uuid="9a69841a-70ad-4c2a-9422-d5e516d156a7">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Bookman Old Style" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{NOM_COL4}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="330" y="27" width="66" height="17" uuid="314516df-5373-46cf-89ed-79177cd3ae64">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Bookman Old Style" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{NOM_COL5}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="55" y="78" width="61" height="13" uuid="4df21a17-21f5-4492-ba4e-b7b99d3e0dd9">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Bookman Old Style"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{CUM_COL1})]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="123" y="78" width="61" height="13" uuid="592003c1-73ae-4bfe-927f-82481b2a7ad1">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Bookman Old Style"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{CUM_COL2})]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="193" y="78" width="61" height="13" uuid="ce40fdbd-9542-49d4-ba80-bd1de562f9bf">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{MOIS_COL3})]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="262" y="78" width="61" height="13" uuid="490f10ce-5de9-40ff-a683-74a13c267bac">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{CUM_COL4})]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="332" y="78" width="61" height="13" uuid="5b7b10bf-9969-4a39-858f-0118076da570">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Bookman Old Style"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{CUM_COL5})]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

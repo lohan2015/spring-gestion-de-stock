@@ -198,7 +198,7 @@ public class CalculPaieServiceImpl implements CalculPaieService {
         parameter.setAppDateFormat(strDateFormat);
         // initialisation
 
-        String generationFichiers = "O";
+        String generationFichiers = "N";
         String dossierGenerationFichiers = "/";
         Integer nbrThread = NumberUtils.toInt("1");
         String synchro_traiter_salaire = "1";

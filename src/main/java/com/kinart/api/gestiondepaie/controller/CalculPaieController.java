@@ -4,14 +4,22 @@ import com.kinart.api.gestiondepaie.controller.api.CalculPaieApi;
 import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
 import com.kinart.api.gestiondepaie.dto.RechercheDto;
 import com.kinart.api.gestiondepaie.dto.SalarieDto;
+import com.kinart.api.gestiondepaie.dto.VirementSalarieDto;
 import com.kinart.api.gestiondestock.dto.LigneCommandeClientDto;
 import com.kinart.api.gestiondestock.report.LigneCommandeReport;
+import com.kinart.paie.business.model.ElementVariableDetailMois;
+import com.kinart.paie.business.model.VirementSalarie;
 import com.kinart.paie.business.services.CalculPaieService;
+import com.kinart.paie.business.services.VirementSalaireService;
 import com.kinart.paie.business.services.utils.ClsDate;
+import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -39,10 +47,14 @@ import java.util.Map;
 public class CalculPaieController implements CalculPaieApi {
 
     private CalculPaieService calculPaieService;
+    private GeneriqueConnexionService generiqueConnexionService;
+    private VirementSalaireService virementSalaireService;
 
     @Autowired
-    public CalculPaieController(CalculPaieService calculPaieService) {
+    public CalculPaieController(CalculPaieService calculPaieService, VirementSalaireService virementSalaireService, GeneriqueConnexionService generiqueConnexionService) {
          this.calculPaieService = calculPaieService;
+        this.virementSalaireService = virementSalaireService;
+        this.generiqueConnexionService = generiqueConnexionService;
     }
 
      @Override
@@ -124,7 +136,7 @@ public class CalculPaieController implements CalculPaieApi {
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(calculsPaieDto);
 
              // System.out.println("Ajout paramètres");
-             Map<String, Object> parameters = getReportParameters(SalarieDto);
+             Map<String, Object> parameters = getReportParameters(SalarieDto, dto.periodeDePaie, dto.numeroBulletin);
              parameters.put("DATE_DEBUT", new ClsDate(new ClsDate(dto.periodeDePaie, "yyyyMM").getFirstDayOfMonth()).getDateS("dd/MM/yyyy"));
              parameters.put("DATE_FIN", new ClsDate(new ClsDate(dto.periodeDePaie, "yyyyMM").getFirstDayOfMonth()).getDateS("dd/MM/yyyy"));
              parameters.put("tableData", dataSource);
@@ -187,28 +199,30 @@ public class CalculPaieController implements CalculPaieApi {
         return null;
      }
 
-     private Map<String, Object> getReportParameters(SalarieDto SalarieDto){
-         Map<String, Object> parameters = new HashMap<String, Object>();
+     private Map<String, Object> getReportParameters(SalarieDto salarieDto, String periode, String numbul){
+         VirementSalarieDto virDto = virementSalaireService.findByMatricule(salarieDto.getNmat());
+        Map<String, Object> parameters = new HashMap<String, Object>();
          parameters.put("NOM_SOCIETE", "KIN'ART REMAKE");
          parameters.put("ADRESSE_SOCIETE", "B.P.: 56789 DOUALA");
          parameters.put("CONTACT_SOCIETE", "Tél.: +237 694 45 67 23");
-         parameters.put("INFO_MATRICULE", SalarieDto.getNmat());
-         parameters.put("INFO_NOM", SalarieDto.getNom()+" "+SalarieDto.getPren());
-         parameters.put("INFO_NIU", SalarieDto.getNoss());
-         parameters.put("INFO_CATEGORIE", SalarieDto.getLibcategorie());
-         parameters.put("INFO_ECHELON", SalarieDto.getLibechelon());
-         parameters.put("INFO_CHARGE", SalarieDto.getNbpt().intValue()+"");
-         parameters.put("INFO_ADRESSE", SalarieDto.getAdr1());
-         parameters.put("INFO_FONCTION", SalarieDto.getLibfonction());
-         parameters.put("INFO_DATE_ENTREE", new ClsDate(SalarieDto.getDtes()).getDateS("dd/MM/yyyy"));
-         parameters.put("INFO_NUMERO_CNSS", SalarieDto.getCont());
-         parameters.put("INFO_CPTE_VIREMENT", SalarieDto.getGuic()+"-"+SalarieDto.getComp()+"-"+SalarieDto.getCle());
-         parameters.put("INFO_SEXE", SalarieDto.getLibsexe());
-         parameters.put("INFO_DIRECTION", SalarieDto.getLibniv1());
-         parameters.put("INFO_DEPARTEMENT", SalarieDto.getLibniv2());
-         parameters.put("INFO_SERVICE", SalarieDto.getLibniv3());
-         parameters.put("INFO_GRADE", SalarieDto.getLibgrade());
-         parameters.put("INFO_SITFAM", SalarieDto.getLibsitfam());
+         parameters.put("INFO_MATRICULE", salarieDto.getNmat());
+         parameters.put("INFO_NOM", salarieDto.getNom()+" "+salarieDto.getPren());
+         parameters.put("INFO_NIU", salarieDto.getNoss());
+         parameters.put("INFO_CATEGORIE", salarieDto.getLibcategorie());
+         parameters.put("INFO_ECHELON", salarieDto.getLibechelon());
+         parameters.put("INFO_CHARGE", salarieDto.getNbpt().intValue()+"");
+         parameters.put("INFO_ADRESSE", salarieDto.getAdr1());
+         parameters.put("INFO_FONCTION", salarieDto.getLibfonction());
+         parameters.put("INFO_DATE_ENTREE", new ClsDate(salarieDto.getDtes()).getDateS("dd/MM/yyyy"));
+         parameters.put("INFO_NUMERO_CNSS", salarieDto.getCont());
+         if(virDto != null) parameters.put("INFO_CPTE_VIREMENT", virDto.getGuic()+"-"+virDto.getComp()+"-"+virDto.getCle());
+         else parameters.put("INFO_CPTE_VIREMENT", salarieDto.getGuic()+"-"+salarieDto.getComp()+"-"+salarieDto.getCle());
+         parameters.put("INFO_SEXE", salarieDto.getLibsexe());
+         parameters.put("INFO_DIRECTION", salarieDto.getLibniv1());
+         parameters.put("INFO_DEPARTEMENT", salarieDto.getLibniv2());
+         parameters.put("INFO_SERVICE", salarieDto.getLibniv3());
+         parameters.put("INFO_GRADE", salarieDto.getLibgrade());
+         parameters.put("INFO_SITFAM", salarieDto.getLibsitfam());
          parameters.put("INFO_DEVISE", "F CFA");
          parameters.put("MOIS_COL1", new BigDecimal(165000));
          parameters.put("MOIS_COL2", new BigDecimal(125000));
@@ -221,6 +235,73 @@ public class CalculPaieController implements CalculPaieApi {
          parameters.put("CUM_COL4", new BigDecimal(0));
          parameters.put("CUM_COL5", new BigDecimal(0));
          parameters.put("CHEMIN_LOGO", "D:\\Programmation orientee objet\\Technologies\\Angular\\projets\\gestiondestock\\logo\\logo.jpg");
+
+         //TODO Entêtes colonnes cumuls
+         Session session = generiqueConnexionService.getSession();
+         String query = "\"SELECT DISTINCT \"+\n" +
+                 "\"case when NUME = 1 then VALL end PIED1, \"+\n" +
+                 "\"case when NUME = 2 then VALL end PIED2, \"+\n" +
+                 "\"case when NUME = 3 then VALL end PIED3, \"+\n" +
+                 "\"case when NUME = 4 then VALL end PIED4, \"+\n" +
+                 "\"case when NUME = 5 then VALL end PIED5, \"+\n" +
+                 "\"case when NUME = 6 then VALL end PIED6 \"+\n" +
+                 "\"FROM paramdata \"+\n" +
+                 "\"WHERE (CTAB = 99) AND (CACC = 'PIEDBUL') AND (NUME IN (1,2,3,4,5,6)) AND identreprise= \"+=:identreprise";
+         Query q = session.createSQLQuery(query);
+         q.setParameter("identreprise", salarieDto.getIdentreprise());
+
+         List<Object[]> lst = q.getResultList();
+         generiqueConnexionService.closeSession(session);
+
+         int i = 1;
+         for (Object[] o : lst)
+         {
+             parameters.put("NOM_COL"+i, o[i-1].toString());
+             i = i + 1;
+         }
+
+         //TODO Données des cumuls
+         session = generiqueConnexionService.getSession();
+         query = "SELECT DISTINCT RUB.EPBUL,AGENT.NMAT , CALCUL.RUBQ, RUB.CRUB,CALCUL.AAMM, CALCUL.NBUL , RUB.PRBUL, "+
+                 "CASE WHEN RUB.EPBUL = 1 THEN  NVL(CALCUL.MONT,0) END CUMUL11, "+
+                 "CASE WHEN RUB.EPBUL = 1 THEN  NVL(CALCUL.MONT,0) + NVL(TBCUMUL.MONT,0)  END CUMUL21,  "+
+
+                 "CASE WHEN RUB.EPBUL = 2 THEN  NVL(CALCUL.MONT,0)  END CUMUL12, "+
+                 "CASE WHEN RUB.EPBUL = 2 THEN  NVL(CALCUL.MONT,0)  + NVL(TBCUMUL.MONT,0)  END CUMUL22,  "+
+
+                 "CASE WHEN RUB.EPBUL = 3 THEN  NVL(CALCUL.MONT,0)   END CUMUL13,  "+
+                 "CASE WHEN RUB.EPBUL = 3 THEN  NVL(CALCUL.MONT,0)   + NVL(TBCUMUL.MONT,0) END CUMUL23,  "+
+
+                 "CASE WHEN RUB.EPBUL = 4 THEN  NVL(CALCUL.MONT,0)   END CUMUL14,  "+
+                 "CASE WHEN RUB.EPBUL = 4 THEN  NVL(CALCUL.MONT,0)  + NVL(TBCUMUL.MONT,0)  END CUMUL24,  "+
+
+                 "CASE WHEN RUB.EPBUL = 5 THEN  NVL(CALCUL.MONT,0)  END CUMUL15 , "+
+                 "CASE WHEN RUB.EPBUL = 5 THEN  NVL(CALCUL.MONT,0)  + NVL(TBCUMUL.MONT,0) END CUMUL25 , "+
+
+                 "CASE WHEN RUB.EPBUL = 6 THEN  NVL(CALCUL.MONT,0)  END CUMUL16 , "+
+                 "CASE WHEN RUB.EPBUL = 6 THEN  NVL(AGENT.JAPEC,0) + NVL(AGENT.JAPA,0)   END CUMUL26  "+
+
+                 "FROM SALARIE AGENT "+
+                 "JOIN ELEMENTSALAIRE RUB ON (RUB.IDENTREPRISE = AGENT.IDENTREPRISE) AND RUB.EPBUL in (1,2,3,4,5,6)  and (RUB.CALC='O')  "+
+                 "LEFT JOIN CALCULPAIE CALCUL  ON ( AGENT.IDENTREPRISE = CALCUL.IDENTREPRISE) AND (AGENT.NMAT=CALCUL.NMAT) AND (CALCUL.RUBQ=RUB.CRUB) AND  (CALCUL.IDENTREPRISE=AGENT.IDENTREPRISE) AND (CALCUL.NBUL = :nbul) AND (CALCUL.AAMM = :periode) "+
+                 " JOIN CUMULPAIE TBCUMUL ON (RUB.CRUB=TBCUMUL.RUBQ AND AGENT.IDENTREPRISE=TBCUMUL.IDENTREPRISE AND AGENT.NMAT=TBCUMUL.NMAT  AND TBCUMUL.NBUL=:nbul AND TBCUMUL.AAMM= :percumul)  "+
+                 "WHERE  (AGENT.IDENTREPRISE=:dossier)  AND (AGENT.NMAT = :matricule)  ORDER BY EPBUL";
+         q = session.createSQLQuery(query);
+         q.setParameter("dossier", salarieDto.getIdentreprise());
+         q.setParameter("matricule", salarieDto.getNmat());
+         q.setParameter("periode", periode);
+         q.setParameter("percumul", periode.substring(0, 4)+"99");
+         q.setParameter("nbul", numbul);
+
+         lst = q.getResultList();
+         generiqueConnexionService.closeSession(session);
+         i = 1;
+         for (Object[] o : lst)
+         {
+             parameters.put("MOIS_COL"+1, new BigDecimal(o[i+6].toString()));
+             parameters.put("CUM_COL"+1, new BigDecimal(o[i+7].toString()));
+             i = i + 1;
+         }
 
          return parameters;
      }

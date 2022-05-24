@@ -12,7 +12,8 @@ public class Interceptor extends EmptyInterceptor {
       // select utilisateu0_.
       try{
         final String entityName = sql.substring(7, sql.indexOf("."));
-        final String idEntreprise = MDC.get("idEntreprise");
+        String idEntreprise = MDC.get("idEntreprise");
+        if(org.apache.commons.lang3.StringUtils.isNotEmpty(idEntreprise)) idEntreprise = MDC.get("identreprise");
         if (StringUtils.hasLength(entityName)
                 && !entityName.toLowerCase().contains("entreprise")
                 && !entityName.toLowerCase().contains("roles")

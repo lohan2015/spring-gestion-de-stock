@@ -21,11 +21,11 @@ public class SalarieServiceImpl implements SalarieService {
     private SalarieRepository salarieRepository;
     private ElementFixeSalaireRepository elementFixeSalaireRepository;
     private CaisseMutuelleSalarieRepository caisseMutuelleSalarieRepository;
-    private VirementSalarieRepository virementSalarieRepository;
+    private VirementSalaireRepository virementSalarieRepository;
     private PretInterneRepository pretInterneRepository;
 
     @Autowired
-    public SalarieServiceImpl(SalarieRepository salarieRepository, ElementFixeSalaireRepository elementFixeSalaireRepository, CaisseMutuelleSalarieRepository caisseMutuelleSalarieRepository, VirementSalarieRepository virementSalarieRepository, PretInterneRepository pretInterneRepository) {
+    public SalarieServiceImpl(SalarieRepository salarieRepository, ElementFixeSalaireRepository elementFixeSalaireRepository, CaisseMutuelleSalarieRepository caisseMutuelleSalarieRepository, VirementSalaireRepository virementSalarieRepository, PretInterneRepository pretInterneRepository) {
         this.salarieRepository = salarieRepository;
         this.elementFixeSalaireRepository = elementFixeSalaireRepository;
         this.caisseMutuelleSalarieRepository = caisseMutuelleSalarieRepository;
