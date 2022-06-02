@@ -29,8 +29,11 @@ public class HistoConnexionController implements HistoConnexionApi {
     @Override
     public ResponseEntity<HistoConnexionDto> save(HistoConnexionDto dto) {
         try {
+            //System.out.println("SAUVAGARDE CONNEXION________________________");
             dto.setDatc(new Date());
             histoConnexionService.save(dto);
+            //System.out.println("SAUVAGARDE OK________________________");
+
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
         }

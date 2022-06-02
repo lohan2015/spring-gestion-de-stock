@@ -62,4 +62,12 @@ public interface ElementSalaireApi {
             @ApiResponse(code = 200, message = "L'élément a ete supprime")
     })
     void delete(@PathVariable("id") Integer id);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/elementsalaire/filter3/{keyword}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Renvoi la liste des salariés", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "List<ElementSalaireDto>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des éléments / Une liste vide")
+    })
+    ResponseEntity<List<ElementSalaireDto>> findDataByKeyWord(@PathVariable("keyword") String keyword);
 }

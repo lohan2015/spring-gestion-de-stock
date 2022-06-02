@@ -74,4 +74,14 @@ public class ElementSalaireController implements ElementSalaireApi {
     public void delete(Integer id) {
         elementSalaireService.delete(id);
     }
+
+    @Override
+    public ResponseEntity<List<ElementSalaireDto>> findDataByKeyWord(String keyword) {
+        List<ElementSalaireDto> elementSalaireDto = elementSalaireService.findDataByKeyWord(keyword);
+        if(elementSalaireDto!=null) {
+            return ResponseEntity.ok(elementSalaireDto);
+        } else {
+            throw new EntityNotFoundException("Pas d'éléments trouvés");
+        }
+    }
 }

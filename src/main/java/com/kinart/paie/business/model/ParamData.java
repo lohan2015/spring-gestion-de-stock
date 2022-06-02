@@ -30,7 +30,7 @@ public class ParamData extends AbstractEntity {
     @Column(name = "nume")
     private Integer nume;
 
-    @Column(name = "vall", length = 100)
+    @Column(name = "vall", length = 2000)
     private String vall;
 
     @Column(name = "valm")

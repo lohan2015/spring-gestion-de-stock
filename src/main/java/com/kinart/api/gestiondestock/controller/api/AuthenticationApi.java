@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Api("authentication")
 public interface AuthenticationApi {
 
-  @PostMapping(value=AUTHENTICATION_ENDPOINT + "/authenticate", produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+  @PostMapping(value=AUTHENTICATION_ENDPOINT + "/authenticate", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request);
 
 }

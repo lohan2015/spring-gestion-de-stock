@@ -1,5 +1,6 @@
 package com.kinart.paie.business.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kinart.stock.business.model.AbstractEntity;
 import lombok.*;
 
@@ -395,18 +396,23 @@ public class Salarie extends AbstractEntity {
     @Column(name = "photo")
     private String photo;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "salarie")
     private List<ElementFixeSalaire> elementFixeSalaire;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "salarie")
     private List<CaisseMutuelleSalarie> caisseMutuelleSalarie;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "salarie")
     private List<VirementSalarie> virementSalarie;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "salarie")
     private List<PretInterne> pretInterne;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "salarie")
     private List<PretExterneEntete> pretExterneEntete;
 }

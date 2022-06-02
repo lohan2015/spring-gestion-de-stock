@@ -1,6 +1,7 @@
 package com.kinart;
 
 import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
+import com.kinart.api.gestiondepaie.report.LigneMouvementCptble;
 import com.kinart.api.gestiondestock.dto.LigneCommandeClientDto;
 import com.kinart.api.gestiondestock.report.LigneCommandeReport;
 import com.kinart.paie.business.services.utils.ClsDate;
@@ -18,15 +19,13 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.NumberFormat;
+import java.util.*;
 
 public class TestReport {
 
     public static void main(String[] args) {
-       executeReport3();
+       executeReport4();
     }
 
     static void methode1(){
@@ -270,6 +269,76 @@ public class TestReport {
             parameters.put("CHEMIN_LOGO", "D:\\Programmation orientee objet\\Technologies\\Angular\\projets\\gestiondestock\\logo\\logo.jpg");
             parameters.put("tableData", dataSource);
             parameters.put("INFO_NAP", data.get(data.size()-1).getMont());
+
+            System.out.println("Compilation");
+            JasperReport report = JasperCompileManager.compileReport(filePath);
+
+            System.out.println("Association des données");
+            JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource(1));
+
+            String fileName = "CommandeCLientCMD0876.pdf";
+            System.out.println("Nom fihier: "+fileName);
+            String uploadDir = StringUtils.cleanPath("./generated-reports/");
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)){
+                Files.createDirectories(uploadPath);
+            }
+
+            System.out.println("Export PDF");
+            byte[] byteArray = JasperExportManager.exportReportToPdf(print);
+
+            System.out.println("Export PDF in file");
+            JasperExportManager.exportReportToPdfFile(print, uploadDir+fileName);
+
+        } catch(Exception e) {
+            System.out.println("Exception while creating report");
+            e.printStackTrace();
+        }
+    }
+
+    static void executeReport4(){
+        try {
+            String filePath = ResourceUtils.getFile("classpath:RptMouvementComptable.jrxml")
+                    .getAbsolutePath();
+
+            System.out.println("Chemin report="+filePath);
+            List<LigneMouvementCptble> data = new ArrayList<LigneMouvementCptble>();
+            BigDecimal totalDebit = BigDecimal.ZERO;
+            BigDecimal totalCredit = BigDecimal.ZERO;
+            for(int i=1; i<=5;i++){
+                LigneMouvementCptble lg = new LigneMouvementCptble();
+                lg.setNumcpte("Compte n° "+i);
+                lg.setSens("D");
+                lg.setLibecriture("ELEMENT SALAIRE "+i);
+                lg.setMntpce(NumberFormat.getInstance(Locale.FRENCH).format(new BigDecimal("50000").doubleValue()));
+                totalDebit = totalDebit.add(new BigDecimal("50000"));
+
+                data.add(lg);
+            }
+            for(int i=1; i<=5;i++){
+                LigneMouvementCptble lg = new LigneMouvementCptble();
+                lg.setNumcpte("Compte n° "+i);
+                lg.setSens("C");
+                lg.setLibecriture("ELEMENT SALAIRE "+i);
+                lg.setMntpce(NumberFormat.getInstance(Locale.FRENCH).format(new BigDecimal("40000").doubleValue()));
+                totalCredit = totalCredit.add(new BigDecimal("40000"));
+
+                data.add(lg);
+            }
+
+            System.out.println("Ajout datasource");
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data);
+
+            System.out.println("Ajout paramètres");
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("NOM_SOCIETE", "KIN'ART REMAKE");
+            parameters.put("ADRESSE_SOCIETE", "B.P.: 56789 DOUALA");
+            parameters.put("CONTACT_SOCIETE", "Tél.: +237 694 45 67 23");
+            parameters.put("TITRE_ETAT", "MOUVEMENT COMPTABLE JANVIER 2022");
+            parameters.put("CHEMIN_LOGO", "D:\\Programmation orientee objet\\Technologies\\Angular\\projets\\gestiondestock\\logo\\logo.jpg");
+            parameters.put("tableData", dataSource);
+            parameters.put("TOTAL_DEBIT", NumberFormat.getInstance(Locale.FRENCH).format(totalDebit.doubleValue()));
+            parameters.put("TOTAL_CREDIT", NumberFormat.getInstance(Locale.FRENCH).format(totalCredit.doubleValue()));
 
             System.out.println("Compilation");
             JasperReport report = JasperCompileManager.compileReport(filePath);

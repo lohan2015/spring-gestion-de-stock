@@ -1,16 +1,14 @@
 package com.kinart.paie.business.services.impl;
 
 import com.kinart.api.gestiondepaie.dto.*;
-import com.kinart.paie.business.model.CalculPaie;
-import com.kinart.paie.business.model.DossierPaie;
-import com.kinart.paie.business.model.ElementVariableDetailMois;
-import com.kinart.paie.business.model.Salarie;
+import com.kinart.paie.business.model.*;
 import com.kinart.paie.business.repository.CalculPaieRepository;
 import com.kinart.paie.business.repository.ParamDataRepository;
 import com.kinart.paie.business.services.CalculPaieService;
 import com.kinart.paie.business.services.CongeFictifService;
 import com.kinart.paie.business.services.DossierPaieService;
 import com.kinart.paie.business.services.calcul.*;
+import com.kinart.paie.business.services.cloture.*;
 import com.kinart.paie.business.services.utils.ClsDate;
 import com.kinart.paie.business.services.utils.ClsTreater;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
@@ -28,7 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -449,4 +450,192 @@ public class CalculPaieServiceImpl implements CalculPaieService {
     public void setNbrATraiter(int nbrATraiter) {
         this.nbrATraiter = nbrATraiter;
     }
+
+    public boolean cloturePaie(RechercheDto dto, HttpServletRequest request){
+        ClsUpdateBulletin update = new ClsUpdateBulletin();
+
+        ClsParameterOfPay parameter =  new ClsParameterOfPay();
+
+        ClsCentralisationService centraservice = new ClsCentralisationService();
+        centraservice.init(request, service, dto.identreprise);
+
+        ClsUpdateBulletinService updateservice = new ClsUpdateBulletinService();
+        updateservice.setService(service);
+
+        String cdos = dto.identreprise;
+        Date moispaie = new ClsDate(dto.periodeDePaie+"01", "yyyyMMdd").getDate();
+
+        ClsDate myDate = new ClsDate(moispaie);
+
+        update.dateformat = dto.dateformat;
+        update.updateservice = updateservice;
+
+        // ///////////////////////////////INITIALISATION DES PARAMETRES DU TRAITEMENT/////////////////////////////
+
+        ClsInfoCloture search = new ClsInfoCloture();
+
+        search.setAamm(myDate.getDateS(ClsParameterOfPay.FORMAT_DATE_PAY_PERIOD_YYYYMM));
+        ClsBulletin bulletin = new ClsBulletin(service);
+        //
+        Date d = myDate.getLastDayOfMonth();
+
+        ParamData fnom = centraservice.chercherEnNomenclature(cdos, 91, myDate.getYearAndMonth(), 3);
+
+        if (fnom != null && StringUtils.isNotBlank(fnom.getVall()))
+            d = new ClsDate(fnom.getVall(), "dd/MM/yyyy").getDate();
+
+        search.setDatecompta(new ClsDate(d).getDateS(dto.dateformat));
+        search.setDatevaleur(new ClsDate(d).getDateS(dto.dateformat));
+        //
+        ClsBulletin.InfoBulletin info = bulletin.rechercheBulletin(cdos, search.getAamm());
+        search.setNbul(info.getNbul());
+        //
+        String filepath = null;
+        ParamData oNomePAIEINTER = service.findAnyColumnFromNomenclature(cdos, "", "99", "PAIE-INTER", "2");
+        if (StringUtils.isEmpty(oNomePAIEINTER.getVall()))
+            filepath = org.springframework.util.StringUtils.cleanPath("./generated-reports/");
+        else filepath = oNomePAIEINTER.getVall();
+
+        oNomePAIEINTER = service.findAnyColumnFromNomenclature(cdos, "", "99", "PAIE-INTER", "3");
+        if (StringUtils.isNotBlank(oNomePAIEINTER.getVall()))
+            filepath += oNomePAIEINTER.getVall();
+
+        search.setFilepath(filepath);
+
+        String trait = dto.typetrt;//ClsInfoCloture.ALL;
+
+        search.setActiontoexec(trait);
+
+        // ///////////////////////////////FIN INITIALISATION DES PARAMETRES DU TRAITEMENT/////////////////////////////
+
+        String aamm = dto.periodeDePaie;
+        String datecompta = search.getDatecompta();
+        int nbul = search.getNbul();
+        String traitementlance = search.getActiontoexec();
+
+        parameter.setMonthOfPay(aamm);
+
+        parameter.setDossier(cdos);
+        parameter.setNumeroBulletin(nbul);
+        parameter.setMoisPaieCourant(aamm);
+        parameter.setPeriodOfPay(aamm);
+
+        String generationFichiers = "O";
+        String dossierGenerationFichiers = org.springframework.util.StringUtils.cleanPath("./generated-reports/");
+
+        String fusionRhtcongeagent = "O";
+        update.fusionRhtcongeagent = fusionRhtcongeagent;
+
+        parameter.setGenfile(generationFichiers.charAt(0));
+        parameter.setGenfilefolder(dossierGenerationFichiers);
+
+        // parameter.session = request.getSession();
+
+        Integer nbrThread = 5;
+        parameter.setThreadmax(nbrThread);
+        //
+        String session = dto.identreprise+"-"+dto.user;
+        centraservice.setRubriquesMap(new HashMap<String, ElementSalaire>());
+        centraservice.setRhfnomsMap(new HashMap<String, ParamData>());
+        Integer nddd = 0;
+        try
+        {
+            List<DossierPaie> list2 = service.find("from DossierPaie where idEntreprise = '" + cdos + "'");
+            if (list2 != null && list2.size() > 0)
+            {
+                DossierPaie dossierInfo = list2.get(0);
+                nddd = dossierInfo.getNddd() == null ? 0 : dossierInfo.getNddd().intValue();
+            }
+        }
+        catch (Exception e)
+        {
+
+        }
+
+        ClsGlobalUpdate globalUpdate = new ClsGlobalUpdate(request, service, centraservice, parameter, cdos, aamm, "0001", dto.user, nbul, new ClsDate(datecompta, dto.dateformat).getDate(), nddd, session,
+                update);
+        // globalUpdate.ui = this;
+        String execExternalFunctions = "O";
+        globalUpdate.setExecExternalFunction("O".equalsIgnoreCase(execExternalFunctions) ? true : false);
+        globalUpdate.init();
+        globalUpdate.printInitParameters();
+
+        boolean result = true;
+
+        if (ClsInfoCloture.CENTRA.equals(traitementlance))
+            result = globalUpdate.lancerCentralisation();
+
+        if (ClsInfoCloture.GENFICASCII.equals(traitementlance))
+            globalUpdate.genrateMouvement();
+
+        if (ClsInfoCloture.MAJ.equals(traitementlance))
+            result = globalUpdate.lancerMiseAJour();
+
+        if (ClsInfoCloture.ALL.equals(traitementlance))
+            result = globalUpdate.execute();
+
+        String error = globalUpdate.getError();
+
+        return true;
+    }
+
+    @Override
+    public List<CumulPaieDto> findCumulByFilter(RechercheDto dto) {
+        List<CumulPaieDto> liste = new ArrayList<CumulPaieDto>();
+        String sqlQuery = "SELECT e.*, s.nom as nomsal, s.pren as prensal, t.lrub as librub, t.typr as typerub " +
+                "FROM HistoCalculPaie e " +
+                "LEFT JOIN Salarie s ON (e.identreprise=s.identreprise AND e.nmat=s.nmat) "+
+                "LEFT JOIN ElementSalaire t ON (t.identreprise=s.identreprise AND t.crub=e.rubq) "+
+                "WHERE 1=1";
+
+        if(StringUtils.isNotEmpty(dto.nmatMin)) sqlQuery += " AND e.nmat >= '"+dto.nmatMin+"'";
+        if(StringUtils.isNotEmpty(dto.nmatMax)) sqlQuery += " AND e.nmat <= '"+dto.nmatMin+"'";
+
+        if(StringUtils.isNotEmpty(dto.niv1Min)) sqlQuery += " AND e.niv1 >= '"+dto.niv1Min+"'";
+        if(StringUtils.isNotEmpty(dto.niv1Max)) sqlQuery += " AND e.niv1 <= '"+dto.niv1Max+"'";
+
+        if(StringUtils.isNotEmpty(dto.niv2Min)) sqlQuery += " AND e.niv2 >= '"+dto.niv2Min+"'";
+        if(StringUtils.isNotEmpty(dto.niv2Max)) sqlQuery += " AND e.niv2 <= '"+dto.niv2Max+"'";
+
+        if(StringUtils.isNotEmpty(dto.niv3Min)) sqlQuery += " AND e.niv3 >= '"+dto.niv3Min+"'";
+        if(StringUtils.isNotEmpty(dto.niv3Max)) sqlQuery += " AND e.niv3 <= '"+dto.niv3Max+"'";
+
+        if(!dto.allRub) sqlQuery += " AND t.comp = 'O'";
+        sqlQuery += " AND e.aamm = '"+dto.periodeDePaie+"'";
+        sqlQuery += " AND e.nbul = "+dto.numeroBulletin;
+
+        sqlQuery += " ORDER BY e.nmat, e.rubq ASC ";
+
+        try {
+            Session session = service.getSession();
+            Query query  = session.createSQLQuery(sqlQuery)
+                    .addEntity("e", HistoCalculPaie.class)
+                    .addScalar("nomsal", StandardBasicTypes.STRING)
+                    .addScalar("prensal", StandardBasicTypes.STRING)
+                    .addScalar("librub", StandardBasicTypes.STRING)
+                    .addScalar("typerub", StandardBasicTypes.STRING);
+
+            List<Object[]> lst = query.getResultList();
+            service.closeSession(session);
+
+            for (Object[] o : lst)
+            {
+                HistoCalculPaie evDB = (HistoCalculPaie)o[0];
+                CumulPaieDto evDto = CumulPaieDto.fromEntity(evDB);
+                if(o[1]!=null) evDto.setNomSalarie(o[1].toString());
+                if(o[2]!=null) evDto.setNomSalarie(evDto.getNomSalarie()+" "+o[2].toString());
+                if(o[3]!=null) evDto.setLibRubrique(o[3].toString());
+                if(o[4]!=null) evDto.setTypeRubrique(o[4].toString());
+
+                liste.add(evDto);
+            }
+
+        } catch (Exception e){
+            throw e;
+        }
+
+        return liste;
+    }
+
+
 }

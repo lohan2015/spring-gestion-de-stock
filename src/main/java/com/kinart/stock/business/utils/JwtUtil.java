@@ -1,13 +1,15 @@
 package com.kinart.stock.business.utils;
 
 import com.kinart.stock.business.model.auth.ExtendedUser;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Logger;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -36,10 +38,21 @@ public class JwtUtil {
   }
 
   private Claims extractAllClaims(String token) {
-    return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+    try {
+      return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+    } catch (ExpiredJwtException e) {
+      System.out.println(" Token expired ");
+      e.printStackTrace();
+    } catch (SignatureException e) {
+      e.printStackTrace();
+    } catch(Exception e){
+      System.out.println(" Some other exception in JWT parsing ");
+    }
+    return null;
   }
 
   private Boolean isTokenExpired(String token) {
+    //return false;
     return extractExpiration(token).before(new Date());
   }
 
@@ -49,11 +62,15 @@ public class JwtUtil {
   }
 
   private String createToken(Map<String, Object> claims, ExtendedUser userDetails) {
-
+    //System.out.println("GENERATE TOCKEN.................");
     return Jwts.builder().setClaims(claims)
         .setSubject(userDetails.getUsername())
-        .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+        //.setIssuedAt(new Date(System.currentTimeMillis()))
+        // Fri Jun 24 2016 15:33:42 GMT-0400 (EDT)
+        .setIssuedAt(Date.from(Instant.ofEpochSecond(1466796822L)))
+        // Sat Jun 24 2116 15:33:42 GMT-0400 (EDT)
+        .setExpiration(Date.from(Instant.ofEpochSecond(4622470422L)))
+        //.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60000 * 60000 * 1000000))
         .claim("idEntreprise", userDetails.getIdEntreprise().toString())
         .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
   }

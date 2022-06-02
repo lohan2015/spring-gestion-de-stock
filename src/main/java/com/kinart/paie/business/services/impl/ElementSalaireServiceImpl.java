@@ -3,10 +3,14 @@ package com.kinart.paie.business.services.impl;
 import com.kinart.api.gestiondepaie.dto.ElementSalaireBaremeDto;
 import com.kinart.api.gestiondepaie.dto.ElementSalaireBaseDto;
 import com.kinart.api.gestiondepaie.dto.ElementSalaireDto;
+import com.kinart.api.gestiondepaie.dto.ParamDataDto;
+import com.kinart.paie.business.model.ElementSalaire;
+import com.kinart.paie.business.model.ParamData;
 import com.kinart.paie.business.repository.ElementSalaireBaremeRepository;
 import com.kinart.paie.business.repository.ElementSalaireBaseRepository;
 import com.kinart.paie.business.repository.ElementSalaireRepository;
 import com.kinart.paie.business.services.ElementSalaireService;
+import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.paie.business.validator.ElementSalaireValidator;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.ErrorCodes;
@@ -25,12 +29,14 @@ public class ElementSalaireServiceImpl implements ElementSalaireService {
     private ElementSalaireBaseRepository elementSalaireBaseRepository;
     private ElementSalaireBaremeRepository elementSalaireBaremeRepository;
     private ElementSalaireRepository elementSalaireRepository;
+    private GeneriqueConnexionService generiqueConnexionService;
 
     @Autowired
-    public ElementSalaireServiceImpl(ElementSalaireBaseRepository elementSalaireBaseRepository, ElementSalaireBaremeRepository elementSalaireBaremeRepository, ElementSalaireRepository elementSalaireRepository) {
+    public ElementSalaireServiceImpl(GeneriqueConnexionService generiqueConnexionService, ElementSalaireBaseRepository elementSalaireBaseRepository, ElementSalaireBaremeRepository elementSalaireBaremeRepository, ElementSalaireRepository elementSalaireRepository) {
         this.elementSalaireBaseRepository = elementSalaireBaseRepository;
         this.elementSalaireBaremeRepository = elementSalaireBaremeRepository;
         this.elementSalaireRepository = elementSalaireRepository;
+        this.generiqueConnexionService = generiqueConnexionService;
     }
 
     @Override
@@ -121,5 +127,11 @@ public class ElementSalaireServiceImpl implements ElementSalaireService {
         elementSalaireRepository.deleteBaremeByIdElement(id);
 
         elementSalaireRepository.deleteById(id);
+    }
+
+    @Override
+    public List<ElementSalaireDto> findDataByKeyWord(String keyword) {
+        List<ElementSalaire> result = generiqueConnexionService.find("FROM ElementSalaire WHERE (upper(crub) like upper('%"+keyword+"%') OR upper(lrub) like UPPER('%"+keyword+"%'))");
+        return result.stream().map(ElementSalaireDto::fromEntity).collect(Collectors.toList());
     }
 }

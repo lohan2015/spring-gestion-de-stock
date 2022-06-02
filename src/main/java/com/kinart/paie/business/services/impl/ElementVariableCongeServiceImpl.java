@@ -273,7 +273,7 @@ public class ElementVariableCongeServiceImpl implements ElementVariableCongeServ
     public List<ElementVariableCongeDto> findEVCongeByFilter(String matricule, String codemotif) {
         List<ElementVariableCongeDto> liste = new ArrayList<ElementVariableCongeDto>();
         String sqlQuery = "SELECT e.*, s.nom as nomsal, s.pren as prensal, t.vall as librub " +
-                "FROM ElementVariableCongeDto e " +
+                "FROM ElementVariableConge e " +
                 "LEFT JOIN Salarie s ON (e.identreprise=s.identreprise AND e.nmat=s.nmat) "+
                 "LEFT JOIN ParamData t ON (t.ctab=22 AND t.nume=1 AND t.identreprise=s.identreprise AND t.cacc=e.motf) "+
                 "WHERE 1=1";

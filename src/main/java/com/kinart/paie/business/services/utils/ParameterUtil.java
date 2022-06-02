@@ -3,6 +3,7 @@
  */
 package com.kinart.paie.business.services.utils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,6 +19,11 @@ public class ParameterUtil
 	public static String typeRefresh = "R";
 	public static String formatRubrique = "0000";
 	public static Integer longueurRubrique = 4;
+
+	public static final String SESSION_LOGIN = "login";
+	public static final String SESSION_DDMP = "ddmp";
+	public static final String SESSION_FORMAT_DATE = "dateformat";
+	public static final String SESSION_LANGUE = "langue";
 
 	public static final int YEAR_ON_2_CHARACTER = 0;
 
@@ -365,5 +371,25 @@ public class ParameterUtil
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public static String getSessionObject(HttpServletRequest request, String strObjectName)
+	{
+		try
+		{
+			if(request==null)
+				return "";
+			Object object = request.getSession().getAttribute(strObjectName);
+			if (object == null)
+				return "";
+			else
+				return object.toString();
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
 	}
 }

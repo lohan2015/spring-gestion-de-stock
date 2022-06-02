@@ -39,4 +39,8 @@ public interface ParamService {
     void deleteTable(Integer id);
 
     void deleteData(Integer id);
+
+    List<ParamTableDto> findTableByKeyWord(String keyword);
+
+    List<ParamDataDto> findDataByKeyWord(ParamDataDto search);
 }

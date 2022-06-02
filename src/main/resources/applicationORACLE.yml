@@ -1,0 +1,41 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    expose: "*"
+    shutdown:
+      enabled: "true"
+  trace.http.enabled: true
+  server:
+    port: 8081
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:iwomirh
+    username: root
+    password:
+    driver-class-name: oracle.jdbc.OracleDriver
+  ## Specify DBMS
+  jpa:
+    database: ORACLE
+    show-sql: true
+    properties:
+      hibernate:
+        allow_update_outside_transaction: true
+        session_factory:
+          interceptor: com.kinart.stock.business.interceptor.Interceptor
+
+    # Hibernate DDL Auto (create, create-drop, update)
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.OracleDialect
+
+server:
+  port: 8081
+
+flickr:
+  apiKey: da3d406c77a919c3f7b0d5f22f0fefb1
+  apiSecret: 586bedcf752a71c8
+  appKey: 72157720837293999-64c1ecc4e4e04542
+  appSecret: bec0945d201abfa3

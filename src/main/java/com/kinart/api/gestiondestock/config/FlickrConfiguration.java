@@ -1,4 +1,4 @@
-package com.kinart.stock.business.config;
+package com.kinart.api.gestiondestock.config;
 
 import com.flickr4java.flickr.Flickr;
 import com.flickr4java.flickr.REST;

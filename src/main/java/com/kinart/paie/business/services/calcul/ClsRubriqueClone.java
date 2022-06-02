@@ -3755,8 +3755,8 @@ public class ClsRubriqueClone
 		// AND nmat = wsal01.nmat
 		// AND (rscm = t_rub.rcon OR rpcm = t_rub.rcon);
 
-		String queryString = "from CaisseMutuelleSalarie" + " where comp_id.cdos = '" + salary.getParameter().getDossier() + "'" + " and comp_id.nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
-				+ " and (comp_id.rscm = '" + rubrique.getRcon() + "'" + " or rpcm = '" + rubrique.getRcon() + "')";
+		String queryString = "from CaisseMutuelleSalarie" + " where idEntreprise = '" + salary.getParameter().getDossier() + "'" + " and nmat = '" + salary.getInfoSalary().getComp_id().getNmat() + "'"
+				+ " and (rscm = '" + rubrique.getRcon() + "'" + " or rpcm = '" + rubrique.getRcon() + "')";
 		//
 		// l_dtad DATE;
 		// l_dtrd DATE;
@@ -3927,7 +3927,7 @@ public class ClsRubriqueClone
 		// END IF;
 		// END IF;
 		int pdap = 0;
-		if (!ClsObjectUtil.isNull(rubrique.getPdap()))
+		if (rubrique!=null && StringUtils.isNotEmpty(rubrique.getPdap()))
 		{
 			pdap = Integer.valueOf(rubrique.getPdap());
 			if (pdap >= debutPeriode && pdap <= finPeriode)
@@ -4295,7 +4295,7 @@ public class ClsRubriqueClone
 		
 		//Param�trage d'un taux tx dont tx*base <= montant
 		
-		String sql = " select valt from Rhfnom where cdos = '" + salary.getParameter().getDossier() + "' and ctab = 99 and cacc='POURCIMPOT' and nume = 1";
+		String sql = " select valt from ParamData where idEntreprise = '" + salary.getParameter().getDossier() + "' and ctab = 99 and cacc='POURCIMPOT' and nume = 1";
 		List o = salary.getService().find(sql);
 		if (o != null && !o.isEmpty() && o.get(0)!= null && new BigDecimal(o.get(0).toString()).intValue() != 0)
 		{
@@ -4957,11 +4957,11 @@ public class ClsRubriqueClone
 		double cumulCoti = 0;
 		double cumulRegu = 0;
 		int periodRegu = 0;
-		if (!ClsObjectUtil.isNull(rowCoti))
+		if (rowCoti!=null && !ClsObjectUtil.isNull(rowCoti))
 		{
-			if (!ClsObjectUtil.isNull(rowCoti[0]))
+			if (rowCoti[0]!=null && !ClsObjectUtil.isNull(rowCoti[0]))
 				cumulBaseCalc = ClsObjectUtil.getDoubleFromObject(rowCoti[0]);
-			if (!ClsObjectUtil.isNull(rowCoti[1]))
+			if (rowCoti[1]!=null && !ClsObjectUtil.isNull(rowCoti[1]))
 				cumulCoti = ClsObjectUtil.getDoubleFromObject(rowCoti[1]);
 
 			if ('O' == salary.getParameter().getGenfile())

@@ -1,8 +1,10 @@
 package com.kinart.paie.business.services.impl;
 
 import com.kinart.api.gestiondepaie.dto.*;
+import com.kinart.paie.business.model.Salarie;
 import com.kinart.paie.business.repository.*;
 import com.kinart.paie.business.services.SalarieService;
+import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.paie.business.validator.SalarieValidator;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.ErrorCodes;
@@ -23,14 +25,16 @@ public class SalarieServiceImpl implements SalarieService {
     private CaisseMutuelleSalarieRepository caisseMutuelleSalarieRepository;
     private VirementSalaireRepository virementSalarieRepository;
     private PretInterneRepository pretInterneRepository;
+    private GeneriqueConnexionService generiqueConnexionService;
 
     @Autowired
-    public SalarieServiceImpl(SalarieRepository salarieRepository, ElementFixeSalaireRepository elementFixeSalaireRepository, CaisseMutuelleSalarieRepository caisseMutuelleSalarieRepository, VirementSalaireRepository virementSalarieRepository, PretInterneRepository pretInterneRepository) {
+    public SalarieServiceImpl(GeneriqueConnexionService generiqueConnexionService, SalarieRepository salarieRepository, ElementFixeSalaireRepository elementFixeSalaireRepository, CaisseMutuelleSalarieRepository caisseMutuelleSalarieRepository, VirementSalaireRepository virementSalarieRepository, PretInterneRepository pretInterneRepository) {
         this.salarieRepository = salarieRepository;
         this.elementFixeSalaireRepository = elementFixeSalaireRepository;
         this.caisseMutuelleSalarieRepository = caisseMutuelleSalarieRepository;
         this.virementSalarieRepository = virementSalarieRepository;
         this.pretInterneRepository = pretInterneRepository;
+        this.generiqueConnexionService = generiqueConnexionService;
     }
 
     @Override
@@ -109,8 +113,10 @@ public class SalarieServiceImpl implements SalarieService {
             return null;
         }
 
-        return salarieRepository.findByMatricule("%"+nmat+"%").stream()
-                .map(SalarieDto::fromEntity).collect(Collectors.toList());
+        List<Salarie> result = generiqueConnexionService.find("FROM Salarie WHERE (nmat like UPPER('%"+nmat+"%') OR nom like UPPER('%"+nmat+"%') OR pren like UPPER('%"+nmat+"%'))");
+        return result.stream().map(SalarieDto::fromEntity).collect(Collectors.toList());
+
+        //return salarieRepository.findByMatricule("%"+nmat+"%").stream().map(SalarieDto::fromEntity).collect(Collectors.toList());
     }
 
     @Override

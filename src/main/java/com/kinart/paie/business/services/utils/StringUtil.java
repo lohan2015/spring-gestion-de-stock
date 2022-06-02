@@ -5,10 +5,20 @@ package com.kinart.paie.business.services.utils;
 
 import org.springframework.util.StringUtils;
 
+import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.Normalizer;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 /**
  * @author c.mbassi
@@ -436,5 +446,325 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
 	public static boolean notEquals(String chaine, String chainevaleurs)
 	{
 		return !chaine.equalsIgnoreCase(chainevaleurs);
+	}
+
+	public static void printOutObject(String texte, String absoluteFilePath)
+	{
+		printOutObject(texte, absoluteFilePath, true);
+	}
+
+	public static void printOutObject(String texte, String absoluteFilePath, boolean deleteExistingFile)
+	{
+		String nomfichier = absoluteFilePath;
+
+		File foutput = new File(nomfichier);
+		Writer output = null;
+
+		try
+		{
+			if (foutput.exists())
+				if (deleteExistingFile)
+					foutput.delete();
+
+			if (!foutput.exists())
+			{
+				_createFileFolder(nomfichier, "\\");
+				foutput.createNewFile();
+			}
+
+			output = new BufferedWriter(new FileWriter(foutput, true));
+		}
+		catch (IOException ioex)
+		{
+			// ioex.printStackTrace();
+		}
+
+		try
+		{
+			if (deleteExistingFile)
+				output.write(texte);
+			else
+			{
+				//output.append(texte);
+				PrintWriter pw = new PrintWriter(new FileWriter(foutput, true));
+
+				pw.println(texte);
+
+				pw.close();
+
+			}
+
+			output.close();
+		}
+		catch (Exception ioex)
+		{
+			// ioex.printStackTrace();
+		}
+	}
+
+	public static void _createFileFolder(String strAbsoluteFilePath, String strFileSeparator)
+	{
+		String folder = null;
+		try
+		{
+			File foutput = new File(strAbsoluteFilePath);
+			int indexOfFile = strAbsoluteFilePath.lastIndexOf(strFileSeparator);
+			if(indexOfFile != -1)
+			{
+				folder = strAbsoluteFilePath.substring(0, indexOfFile);
+				foutput = new File(folder);
+				if(! foutput.exists())
+				{
+					foutput.mkdirs();
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+
+	public static String toString(Object object)
+	{
+		Field[] fields = object.getClass().getDeclaredFields();
+
+		Field[] fields2 = object.getClass().getFields();
+		if (fields.length == 0)
+			fields = fields2;
+
+		return toString(fields, object, "get") + "\n" + toString(fields, object, "is");
+	}
+
+	private static String toString(Field[] fields, Object object, String methodNameStart)
+	{
+		String methodeName = null;
+		Method method = null;
+		String result = "";
+		Object returnValue = null;
+		Class returnType = null;
+		for (Field field : fields)
+		{
+			try
+			{
+				methodeName = methodNameStart + StringUtils.capitalize(field.getName());
+				method = object.getClass().getMethod(methodeName, null);
+
+				if (method == null)
+				{
+					methodeName = "is" + StringUtils.capitalize(field.getName());
+					method = object.getClass().getMethod(methodeName, null);
+				}
+
+				if (method != null)
+				{
+					returnValue = method.invoke(object, null);
+					if (returnValue != null)
+					{
+						if (returnValue instanceof Date)
+						{
+							result += "\n->" + field.getName() + " = " + new SimpleDateFormat("dd-MM-yyyy").format(returnValue);
+						}
+						else if ((returnValue instanceof List) || (returnValue instanceof ArrayList))
+						{
+							result += "\n->Liste " + field.getName() + " = " + toStringList(returnValue);
+						}
+						else if (returnValue instanceof Object[])
+						{
+							result += "\n->Tableau " + field.getName() + " = " + toStringArray(returnValue);
+						}
+						else
+						{
+							/*
+							 * returnType = method.getReturnType(); if( returnType.isPrimitive() ||
+							 * ClsEnumTypes.BIGDECIMAL.equalsIgnoreCase(returnType.getSimpleName()) ||
+							 * ClsEnumTypes.NUMBER.equalsIgnoreCase(returnType.getSimpleName()) ||
+							 * ClsEnumTypes.DATE.equalsIgnoreCase(returnType.getSimpleName()) ||
+							 * ClsEnumTypes.DOUBLE.equalsIgnoreCase(returnType.getSimpleName()) ||
+							 * ClsEnumTypes.FLOAT.equalsIgnoreCase(returnType.getSimpleName()) || ClsEnumTypes.INT.equalsIgnoreCase(returnType.getSimpleName()) ||
+							 * ClsEnumTypes.STRING.equalsIgnoreCase(returnType.getSimpleName())) result += "\n->"+field.getName()+" = "+ returnValue; else
+							 * result += "\n->Objet "+field.getName()+" = \n\t\t"+toString(returnValue);
+							 */
+
+							result += "\n->" + field.getName() + " = " + returnValue;
+
+						}
+					}
+					else result += "\n->" + field.getName() + " = " + returnValue;
+				}
+			}
+			catch (SecurityException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IllegalArgumentException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (NoSuchMethodException e)
+			{
+				// TODO Auto-generated catch block
+				// e.printStackTrace();
+			}
+			catch (IllegalAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (InvocationTargetException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		// if(isBlank(result))
+		// result = toStringMethode(object);
+		return result;
+	}
+
+	private static String toStringMethode(Object object)
+	{
+		Method[] methodes = object.getClass().getDeclaredMethods();
+		if (methodes.length == 0)
+			methodes = object.getClass().getMethods();
+		String result = "";
+		for (Method methode : methodes)
+		{
+			try
+			{
+				if (methode.getName().startsWith("get"))
+					result += "\n->" + methode.getName() + "=" + methode.invoke(object, null);
+			}
+			catch (SecurityException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IllegalArgumentException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IllegalAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (InvocationTargetException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		return result;
+	}
+
+	private static String toStringList(Object object)
+	{
+		String result = "\n----------------------------------------------------------------\n";
+		List<Object> liste = (List<Object>) object;
+		for (Object object3 : liste)
+		{
+			if (object3 != null)
+			{
+				if (!(object3 instanceof String) && !(object3 instanceof Integer) && !(object3 instanceof Date) && !(object3 instanceof Number))
+					result += "\t\t" + toString(object3);
+				else result += "\t\t" + object3;
+			}
+			else
+			{
+				result += "\t\t" + object3;
+			}
+			result += "\n";
+		}
+		result += "\n----------------------------------------------------------------";
+		return result;
+	}
+
+	private static String toStringArray(Object object)
+	{
+		String result = "\n----------------------------------------------------------------\n";
+		Object[] tableau = (Object[]) object;
+
+		int index = 0;
+		for (Object object3 : tableau)
+		{
+			if (object3 != null)
+			{
+				if (!(object3 instanceof String) && !(object3 instanceof Integer) && !(object3 instanceof Date) && !(object3 instanceof Number))
+					result += "\t\t" + toString(object3);
+				else result += "\t\t" + object3;
+			}
+			else
+			{
+				result += "\t\t" + object3;
+			}
+			result += "\n";
+
+		}
+		result += "\n----------------------------------------------------------------";
+		return result;
+	}
+
+	/**
+	 * Teste si la premiere chaine est nulle, auquel cas renvoyer la seconde
+	 *
+	 * @param chaine
+	 * @param remplacant
+	 * @return
+	 */
+	public static String nvl(String chaine, String remplacant)
+	{
+		if (isBlank(chaine))
+			return remplacant;
+		return chaine;
+	}
+
+	/**
+	 * Teste si l'objet 'chaine' est null, auquel cas renvoyer la chaine remplacant
+	 *
+	 * @param chaine
+	 * @param remplacant
+	 * @return
+	 */
+	public static String nvl(Object chaine, String remplacant)
+	{
+		if (chaine == null)
+			return remplacant;
+		if (isBlank((String) chaine))
+			return remplacant;
+		return (String) chaine;
+	}
+
+	/**
+	 * retrait des accents
+	 * @param s
+	 * @return
+	 */
+	public static final String unAccent(String s)
+	{
+		//
+		// JDK1.5
+		//   use sun.text.Normalizer.normalize(s, Normalizer.DECOMP, 0);
+		//
+		//	      String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
+		if (isBlank(s))
+			return EMPTY;
+		//String temp = Normalizer.decompose(s, false, 0).replaceAll("\\p{IsM}+", "");
+			      Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+			      return pattern.matcher(s).replaceAll("");
+		//return temp;
+	}
+
+	public static String lastCharacter(String chaine)
+	{
+		if (StringUtils.isEmpty(chaine))
+			return chaine;
+		return StringUtil.substring(chaine, chaine.length() - 1);
 	}
 }

@@ -31,6 +31,7 @@ public class AuthenticationController implements AuthenticationApi {
 
   @Override
   public ResponseEntity<AuthenticationResponse> authenticate(AuthenticationRequest request) {
+    //System.out.println("AUTHENTIFICATION...................");
         authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             request.getLogin(),
@@ -39,8 +40,11 @@ public class AuthenticationController implements AuthenticationApi {
     );
 
     try {
+      //System.out.println("LOAD USER...................");
       final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getLogin());
+      //System.out.println("GENERATE TOCKEN...................");
       final String jwt = jwtUtil.generateToken((ExtendedUser) userDetails);
+      //System.out.println("NEW TOCKEN="+jwt);
       return ResponseEntity.ok(AuthenticationResponse.builder().accessToken(jwt).build());
     } catch (UsernameNotFoundException e){
       return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);

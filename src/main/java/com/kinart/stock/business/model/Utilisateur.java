@@ -19,7 +19,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "Utilisateur")
 @Table(name = "utilisateur")
 public class Utilisateur extends AbstractEntity {
 
@@ -37,6 +37,9 @@ public class Utilisateur extends AbstractEntity {
 
   @Column(name = "motdepasse")
   private String moteDePasse;
+
+  @Column(name = "clang", length = 10)
+  private String clang;
 
   @Embedded
   private Adresse adresse;

@@ -1,4 +1,4 @@
-package com.kinart.stock.business.config;
+package com.kinart.api.gestiondestock.config;
 
 import java.sql.Timestamp;
 import java.util.Collections;

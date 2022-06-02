@@ -1,5 +1,6 @@
 package com.kinart.api.gestiondepaie.controller.api;
 
+import com.kinart.api.gestiondepaie.dto.ElementSalaireDto;
 import com.kinart.api.gestiondepaie.dto.ParamColumnDto;
 import com.kinart.api.gestiondepaie.dto.ParamDataDto;
 import com.kinart.api.gestiondepaie.dto.ParamTableDto;
@@ -145,4 +146,20 @@ public interface ParamApi {
             @ApiResponse(code = 200, message = "La donnée a ete supprime")
     })
     void deleteData(@PathVariable("id") Integer id);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/parametrage/donnee/filter4/{keyword}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Renvoi la liste des données", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "List<ParamTableDto>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des éléments / Une liste vide")
+    })
+    ResponseEntity<List<ParamTableDto>> findTableByKeyWord(@PathVariable("keyword") String keyword);
+
+    @PostMapping(value = APP_ROOT_PAIE + "/parametrage/filter4", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Enregistrer une donnée de paramétrage", notes = "Cette methode permet d'enregistrer ou modifier une donnée", responseContainer = "List<ParamTableDto>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La donnée cree / modifie"),
+            @ApiResponse(code = 400, message = "La donnée n'est pas valide")
+    })
+    ResponseEntity<List<ParamDataDto>> findDataByKeyWord(@RequestBody ParamDataDto search);
 }

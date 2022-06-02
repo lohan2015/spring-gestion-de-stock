@@ -1,6 +1,7 @@
 package com.kinart.api.gestiondepaie.controller.api;
 
 import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
+import com.kinart.api.gestiondepaie.dto.CumulPaieDto;
 import com.kinart.api.gestiondepaie.dto.RechercheDto;
 import com.kinart.api.gestiondepaie.dto.SalarieDto;
 import com.kinart.api.gestiondestock.dto.CommandeClientDto;
@@ -89,4 +90,21 @@ public interface CalculPaieApi {
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
     ResponseEntity<List<SalarieDto>> findListeSalarieByFilter(@RequestBody RechercheDto dto);
+
+    @PostMapping(value=APP_ROOT + "/calcul/cloture", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Clôture de la paie", notes = "Cette methode permet de clôturer la paie")
+    ResponseEntity<Object> cloturerPaie(@RequestBody RechercheDto dto, HttpServletRequest request, HttpServletResponse response);
+
+    @PostMapping(value = APP_ROOT_PAIE + "/calcul/historique", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Consulter un cumul", notes = "Cette methode permet de consulter un bulletin clôturé", responseContainer = "List<CumulPaieDto>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "L'élément cree / modifie"),
+            @ApiResponse(code = 400, message = "L'élément n'est pas valide")
+    })
+    ResponseEntity<List<CumulPaieDto>> findCumulByFilter(@RequestBody RechercheDto dto);
+
+    @PostMapping(value=APP_ROOT + "/mvtcptable/imprimer", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Générer mouvement comptable", notes = "Cette methode permet de générer mouvement comptable")
+    ResponseEntity<Object> getReportMvtCpte(@RequestBody RechercheDto dto, HttpServletRequest request, HttpServletResponse response);
+
 }

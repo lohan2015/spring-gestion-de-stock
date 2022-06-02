@@ -9,6 +9,8 @@ import java.util.Date;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ParamDataDto {
     private Integer id;
     private Integer idEntreprise;
@@ -29,29 +31,7 @@ public class ParamDataDto {
 
     private Date vald;
 
-    public ParamDataDto() {
-    }
-
-    public ParamDataDto(String cacc, String vall, Long valm, BigDecimal valt, Date vald) {
-        this.cacc = cacc;
-        this.vall = vall;
-        this.valm = valm;
-        this.valt = valt;
-        this.vald = vald;
-    }
-
-    public ParamDataDto(Integer id, Integer idEntreprise, Integer ctab, String cacc, Integer nume, String vall, Long valm, BigDecimal valt, String duti, Date vald) {
-        this.id = id;
-        this.idEntreprise = idEntreprise;
-        this.ctab = ctab;
-        this.cacc = cacc;
-        this.nume = nume;
-        this.vall = vall;
-        this.valm = valm;
-        this.valt = valt;
-        this.duti = duti;
-        this.vald = vald;
-    }
+    private String libcolonne;
 
     public static ParamDataDto fromEntity(ParamData paramData) {
         if (paramData == null) {

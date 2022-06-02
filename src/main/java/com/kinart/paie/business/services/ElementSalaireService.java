@@ -17,4 +17,6 @@ public interface ElementSalaireService {
     List<ElementSalaireDto> findByLibelle(String libelle);
 
     void delete(Integer id);
+
+    List<ElementSalaireDto> findDataByKeyWord(String keyword);
 }

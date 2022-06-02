@@ -1,12 +1,15 @@
 package com.kinart.paie.business.services.impl;
 
-import com.kinart.api.gestiondepaie.dto.ParamColumnDto;
-import com.kinart.api.gestiondepaie.dto.ParamDataDto;
-import com.kinart.api.gestiondepaie.dto.ParamTableDto;
+import com.kinart.api.gestiondepaie.dto.*;
+import com.kinart.paie.business.model.CumulPaie;
+import com.kinart.paie.business.model.ParamData;
+import com.kinart.paie.business.model.ParamTable;
+import com.kinart.paie.business.model.Salarie;
 import com.kinart.paie.business.repository.ParamColumnRepository;
 import com.kinart.paie.business.repository.ParamDataRepository;
 import com.kinart.paie.business.repository.ParamTableRepository;
 import com.kinart.paie.business.services.ParamService;
+import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.paie.business.validator.ParamColumnValidator;
 import com.kinart.paie.business.validator.ParamDataValidator;
 import com.kinart.paie.business.validator.ParamTableValidator;
@@ -14,9 +17,14 @@ import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.ErrorCodes;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Session;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,12 +35,14 @@ public class ParamServiceImpl implements ParamService {
     private ParamDataRepository paramDataRepository;
     private ParamColumnRepository paramColumnRepository;
     private ParamTableRepository paramTableRepository;
+    private GeneriqueConnexionService generiqueConnexionService;
 
     @Autowired
-    public ParamServiceImpl(ParamDataRepository paramDataRepository, ParamColumnRepository paramColumnRepository, ParamTableRepository paramTableRepository) {
+    public ParamServiceImpl(GeneriqueConnexionService generiqueConnexionService, ParamDataRepository paramDataRepository, ParamColumnRepository paramColumnRepository, ParamTableRepository paramTableRepository) {
         this.paramDataRepository = paramDataRepository;
         this.paramColumnRepository = paramColumnRepository;
         this.paramTableRepository = paramTableRepository;
+        this.generiqueConnexionService = generiqueConnexionService;
     }
 
     @Override
@@ -175,5 +185,38 @@ public class ParamServiceImpl implements ParamService {
     @Override
     public void deleteData(Integer id) {
         paramDataRepository.deleteById(id);
+    }
+
+    @Override
+    public List<ParamTableDto> findTableByKeyWord(String keyword) {
+        List<ParamTable> result = generiqueConnexionService.find("FROM ParamTable WHERE (ctab like '%"+keyword+"%' OR upper(libe) like UPPER('%"+keyword+"%') )");
+        return result.stream().map(ParamTableDto::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ParamDataDto> findDataByKeyWord(ParamDataDto search) {
+        String queryString = "select d.*, c.libe as libcolonne  from ParamData d, ParamColumn c "+
+                       "WHERE d.idEntreprise=c.idEntreprise and d.ctab=c.ctab and d.nume=c.nume and d.ctab = "+search.getCtab().intValue();
+        if(StringUtils.isNotEmpty(search.getCacc()) || StringUtils.isNotEmpty(search.getVall())) queryString += " AND (upper(d.cacc) like UPPER('%"+search.getCacc()+"%') OR upper(d.vall) like UPPER('%\"+search.getVall()+\"%'))";
+        //if(StringUtils.isNotEmpty(search.getVall())) queryString += " ";
+        queryString += " order by d.ctab, d.cacc, d.nume";
+        Session session = generiqueConnexionService.getSession();
+        Query query  = session.createSQLQuery(queryString)
+                .addEntity("e", ParamData.class)
+                .addScalar("libcolonne", StandardBasicTypes.STRING);
+
+        List<Object[]> lst = query.getResultList();
+        generiqueConnexionService.closeSession(session);
+        List<ParamDataDto> liste = new ArrayList<ParamDataDto>();
+        for (Object[] o : lst)
+        {
+            ParamData evDB = (ParamData)o[0];
+            ParamDataDto evDto = ParamDataDto.fromEntity(evDB);
+            if(o[1]!=null) evDto.setLibcolonne(o[1].toString());
+
+            liste.add(evDto);
+        }
+
+        return liste;
     }
 }

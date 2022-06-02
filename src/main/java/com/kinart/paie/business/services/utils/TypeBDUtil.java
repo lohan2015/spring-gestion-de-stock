@@ -1,5 +1,7 @@
 package com.kinart.paie.business.services.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class TypeBDUtil
 {
 
@@ -34,7 +36,7 @@ public class TypeBDUtil
 
 	public static String IN = "IN";
 
-	public static String typeBD = MY;
+	public static String typeBD = OR;
 
 	/**
 	 * Fonctions standard de sql
@@ -43,48 +45,48 @@ public class TypeBDUtil
 	/**
 	 * Concatenation de deux Chaines
 	 */
-//	public static String contatener(String... colonnes)
-//	{
-//		String result = StringUtils.EMPTY;
-//		if (StringUtils.equals(typeBD, ClsTypeBD.OR) || StringUtils.equals(typeBD, ClsTypeBD.DB) || StringUtils.equals(typeBD, ClsTypeBD.AS) || StringUtils.equals(typeBD, ClsTypeBD.IN)
-//				|| StringUtils.equals(typeBD, ClsTypeBD.ASA))
-//		{
-//			for (int i = 0; i < colonnes.length; i++)
-//				if (StringUtils.isEmpty(result))
-//					result = colonnes[i];
-//				else
-//					result += "||" + colonnes[i];
-//			return result;
-//		}
-//
-//		if (StringUtils.equals(typeBD, ClsTypeBD.MY) || StringUtils.equals(typeBD, ClsTypeBD.PG))
-//		{
-//			for (int i = 0; i < colonnes.length; i++)
-//				if (StringUtils.isEmpty(result))
-//					result = colonnes[i];
-//				else
-//					result += "," + colonnes[i];
-//			return "concat(" + result + ")";
-//		}
-//
-//		if (StringUtils.equals(typeBD, ClsTypeBD.MS) || StringUtils.equals(typeBD, ClsTypeBD.ASE))
-//		{
-//			for (int i = 0; i < colonnes.length; i++)
-//				if (StringUtils.isEmpty(result))
-//					result = colonnes[i];
-//				else
-//					result += "+" + colonnes[i];
-//			return result;
-//		}
-//
-//		for (int i = 0; i < colonnes.length; i++)
-//			if (StringUtils.isEmpty(result))
-//				result = colonnes[i];
-//			else
-//				result += "||" + colonnes[i];
-//		return result;
-//	}
-//
+	public static String contatener(String... colonnes)
+	{
+		String result = StringUtils.EMPTY;
+		if (StringUtils.equals(typeBD, TypeBDUtil.OR) || StringUtils.equals(typeBD, TypeBDUtil.DB) || StringUtils.equals(typeBD, TypeBDUtil.AS) || StringUtils.equals(typeBD, TypeBDUtil.IN)
+				|| StringUtils.equals(typeBD, TypeBDUtil.ASA))
+		{
+			for (int i = 0; i < colonnes.length; i++)
+				if (StringUtils.isEmpty(result))
+					result = colonnes[i];
+				else
+					result += "||" + colonnes[i];
+			return result;
+		}
+
+		if (StringUtils.equals(typeBD, TypeBDUtil.MY) || StringUtils.equals(typeBD, TypeBDUtil.PG))
+		{
+			for (int i = 0; i < colonnes.length; i++)
+				if (StringUtils.isEmpty(result))
+					result = colonnes[i];
+				else
+					result += "," + colonnes[i];
+			return "concat(" + result + ")";
+		}
+
+		if (StringUtils.equals(typeBD, TypeBDUtil.MS) || StringUtils.equals(typeBD, TypeBDUtil.ASE))
+		{
+			for (int i = 0; i < colonnes.length; i++)
+				if (StringUtils.isEmpty(result))
+					result = colonnes[i];
+				else
+					result += "+" + colonnes[i];
+			return result;
+		}
+
+		for (int i = 0; i < colonnes.length; i++)
+			if (StringUtils.isEmpty(result))
+				result = colonnes[i];
+			else
+				result += "||" + colonnes[i];
+		return result;
+	}
+
 //	/**
 //	 * Fonctions standard de sql
 //	 */

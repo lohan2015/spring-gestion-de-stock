@@ -1,8 +1,10 @@
 package com.kinart.api.gestiondepaie.dto;
 
 import com.kinart.paie.business.model.VirementSalarie;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
@@ -10,6 +12,8 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class VirementSalarieDto implements Serializable {
     private Integer id;
     private Integer nlig;
@@ -31,30 +35,8 @@ public class VirementSalarieDto implements Serializable {
     private String swift;
     private String titu;
 
-    public VirementSalarieDto() {
-    }
-
-    public VirementSalarieDto(Integer id, Integer nlig, Integer idEntreprise, String nmat, String bqag, String guic, String comp, String cle, String bqso, Integer pourc, BigDecimal mont, String dvd, BigDecimal txchg, BigDecimal mntdb, BigDecimal mntdvd, String aamm, String princ, String swift, String titu) {
-        this.id = id;
-        this.nlig = nlig;
-        this.idEntreprise = idEntreprise;
-        this.nmat = nmat;
-        this.bqag = bqag;
-        this.guic = guic;
-        this.comp = comp;
-        this.cle = cle;
-        this.bqso = bqso;
-        this.pourc = pourc;
-        this.mont = mont;
-        this.dvd = dvd;
-        this.txchg = txchg;
-        this.mntdb = mntdb;
-        this.mntdvd = mntdvd;
-        this.aamm = aamm;
-        this.princ = princ;
-        this.swift = swift;
-        this.titu = titu;
-    }
+    private String nomSalarie;
+    private String nomBanqueAgent;
 
     public static VirementSalarieDto fromEntity(VirementSalarie virementSalarie) {
         if (virementSalarie == null) {

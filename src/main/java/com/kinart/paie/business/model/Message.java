@@ -20,12 +20,12 @@ public class Message extends AbstractEntity {
     @Column(name = "identreprise")
     private Integer idEntreprise;
 
-    @Column(name = "cdmes", length = 10)
+    @Column(name = "cdmes", length = 20)
     private String cdmes;
 
     @Column(name = "clang", length = 5)
     private String clang;
 
-    @Column(name = "lbmes", length = 200)
+    @Column(name = "lbmes", length = 2000)
     private String lbmes;
 }

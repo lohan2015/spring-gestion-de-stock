@@ -39,5 +39,6 @@ public class RechercheDto {
     public boolean allRub = false;
     public String user = StringUtils.EMPTY;
     public String identreprise = StringUtils.EMPTY;
-    public String dateformat = "yyyy-MM-dd";
+    public String dateformat = "dd/MM/yyyy";
+    public String typetrt = "CENTRA";
 }

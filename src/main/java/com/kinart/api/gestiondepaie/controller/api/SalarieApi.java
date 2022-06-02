@@ -33,8 +33,7 @@ public interface SalarieApi {
     ResponseEntity<SalarieDto> findById(@PathVariable("idSalarie") Integer id);
 
     @GetMapping(value = APP_ROOT_PAIE + "/salaries/filter1/{nmat}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @ApiOperation(value = "Rechercher un salarié par matricule", notes = "Cette methode permet de chercher un salarié par son CODE", response =
-            SalarieDto.class)
+    @ApiOperation(value = "Rechercher un salarié par matricule", notes = "Cette methode permet de chercher un salarié par son CODE")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Le salarié a ete trouve dans la BDD"),
             @ApiResponse(code = 404, message = "Aucun salarié n'existe dans la BDD avec le CODE fourni")
@@ -50,8 +49,7 @@ public interface SalarieApi {
     ResponseEntity<List<SalarieDto>> findAll();
 
     @GetMapping(value = APP_ROOT_PAIE + "/salaries/filter2/{nom}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @ApiOperation(value = "Rechercher un salarié par matricule", notes = "Cette methode permet de chercher un salarié par son CODE", response =
-            SalarieDto.class)
+    @ApiOperation(value = "Rechercher un salarié par matricule", notes = "Cette methode permet de chercher un salarié par son CODE", responseContainer = "List<SalarieDto>")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Le salarié a ete trouve dans la BDD"),
             @ApiResponse(code = 404, message = "Aucun salarié n'existe dans la BDD avec le nom ou prénom fourni")
@@ -59,8 +57,7 @@ public interface SalarieApi {
     ResponseEntity<List<SalarieDto>> findByName(@PathVariable("nom") String nom);
 
     @GetMapping(value = APP_ROOT_PAIE + "/salaries/filter3/inactif/{nmat}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @ApiOperation(value = "Rechercher un salarié par matricule", notes = "Cette methode permet de chercher un salarié par son CODE", response =
-            SalarieDto.class)
+    @ApiOperation(value = "Rechercher un salarié par matricule", notes = "Cette methode permet de chercher un salarié par son CODE", responseContainer = "List<SalarieDto>")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Le salarié a ete trouve dans la BDD"),
             @ApiResponse(code = 404, message = "Aucun salarié n'existe dans la BDD avec le CODE fourni")

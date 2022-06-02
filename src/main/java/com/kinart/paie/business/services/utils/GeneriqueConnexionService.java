@@ -1,5 +1,6 @@
 package com.kinart.paie.business.services.utils;
 
+import com.kinart.paie.business.model.InterfComptable;
 import com.kinart.paie.business.model.ParamData;
 import com.kinart.paie.business.model.SequenceAuto;
 import com.kinart.paie.business.repository.SequenceAutoRepository;
@@ -16,9 +17,13 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -580,4 +585,158 @@ public class GeneriqueConnexionService {
         }
         return "0";
     }
+
+    /**
+     * Creer le dossier qui contient le fichier en paramètres
+     * @param strAbsoluteFilePath
+     * @return
+     */
+    public static void _createFileFolder(String strAbsoluteFilePath, String strFileSeparator)
+    {
+        String folder = null;
+        try
+        {
+            File foutput = new File(strAbsoluteFilePath);
+            int indexOfFile = strAbsoluteFilePath.lastIndexOf(strFileSeparator);
+            if(indexOfFile != -1)
+            {
+                folder = strAbsoluteFilePath.substring(0, indexOfFile);
+                foutput = new File(folder);
+                if(! foutput.exists())
+                {
+                    foutput.mkdirs();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+    public boolean insertIntoTable ( String queryString ) throws SQLException
+    {
+        this.updateFromTable(queryString);
+
+        return true;
+		/*
+		boolean result=false;
+		try {
+			Session session = this.getSession();
+			Connection conn = session.connection ( );
+			Statement statement = conn.createStatement ( );
+			result = statement.execute ( queryString );
+			statement.close ( );
+			conn.close ( );
+			this.closeConnexion(session);
+
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+		*/
+
+    }
+
+    public List<InterfComptable> findFromCpInt(String sqlQuery)
+    {
+        Session session = this.getSession();
+        List result = session.createSQLQuery(sqlQuery).list();
+        closeSession(session);
+        return result;
+    }
+
+    public List<InterfComptable> findFromCpInt(Session _o_Session, String sqlQuery)
+    {
+        //List<InterfComptable> oList = new ArrayList<InterfComptable>();
+        return _o_Session.createSQLQuery(sqlQuery).list();
+//        Connection oConnexion = null;
+//        Statement oStatement = null;
+//        ResultSet oResultSet = null;
+//        InterfComptable       _o_Data     = null;
+//        try
+//        {
+//            oConnexion = _o_Session.connection();
+//            oStatement = oConnexion.createStatement();
+//            oResultSet  = oStatement.executeQuery(sqlQuery);
+//
+//            while(oResultSet.next() )
+//            {
+//                try {
+//                    _o_Data = new InterfComptable();
+//
+//                    _o_Data.setIdEntreprise(oResultSet.getInt("cdos"));
+//                    _o_Data.setCodabr(oResultSet.getString("codabr"));
+//                    _o_Data.setCoddes1(oResultSet.getString("coddes1"));
+//                    _o_Data.setCoddes2(oResultSet.getString("coddes2"));
+//                    _o_Data.setCoddes3(oResultSet.getString("coddes3"));
+//                    _o_Data.setCoddes4(oResultSet.getString("coddes4"));
+//                    _o_Data.setCoddes5(oResultSet.getString("coddes5"));
+//                    _o_Data.setCoddes6(oResultSet.getString("coddes6"));
+//                    _o_Data.setCoddes7(oResultSet.getString("coddes7"));
+//                    _o_Data.setCoddes8(oResultSet.getString("coddes8"));
+//                    _o_Data.setCoddes9(oResultSet.getString("coddes9"));
+//                    _o_Data.setCoderr(oResultSet.getString("coderr"));
+//                    _o_Data.setCodets(oResultSet.getString("codets"));
+//                    _o_Data.setCodjou(oResultSet.getString("codjou"));
+//                    _o_Data.setCodtre(oResultSet.getString("codtre"));
+//                    _o_Data.setCoduti(oResultSet.getString("coduti"));
+//                    _o_Data.setDatcpt(oResultSet.getDate("datcpt"));
+//                    _o_Data.setDatcre(oResultSet.getDate("datcre"));
+//                    _o_Data.setDatech(oResultSet.getDate("datech"));
+//                    _o_Data.setDatmod(oResultSet.getDate("datmod"));
+//                    _o_Data.setDatpce(oResultSet.getDate("datpce"));
+//                    _o_Data.setDevpce(oResultSet.getString("devpce"));
+//                    _o_Data.setLibecr(oResultSet.getString("libecr"));
+//                    _o_Data.setLiberr(oResultSet.getString("liberr"));
+//                    _o_Data.setNumcpt(oResultSet.getString("numcpt"));
+//                    _o_Data.setNumpce(oResultSet.getString("numpce"));
+//                    _o_Data.setNumtie(oResultSet.getString("numtie"));
+//                    _o_Data.setPceMt(oResultSet.getBigDecimal("pce_Mt"));
+//                    _o_Data.setQuantite(oResultSet.getBigDecimal("quantite"));
+//                    _o_Data.setReflet(oResultSet.getString("reflet"));
+//                    _o_Data.setSens(oResultSet.getString("sens"));
+//                    oList.add(_o_Data);
+//
+//                } catch (Exception e) {
+//                    // TODO: handle exception
+//                    e.printStackTrace ( );
+//                    if(_o_Data != null)
+//                        oList.add(_o_Data);
+//                    continue;
+//                }
+//                finally
+//                {
+//                    _o_Data = null;
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            // TODO: handle exception
+//            e.printStackTrace ( );
+//        }
+//        finally
+//        {
+//            try
+//            {
+//                oResultSet.close();
+//                oResultSet = null;
+//                oStatement.close();
+//                oStatement =null;
+//                oConnexion.close();
+//                oConnexion =null;
+//            }
+//            catch (Exception e)
+//            {
+//                e.printStackTrace();
+//            }
+//
+//        }
+
+        //return oList;
+    }
+
+
 }

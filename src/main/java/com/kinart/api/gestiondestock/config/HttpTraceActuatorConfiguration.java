@@ -1,4 +1,4 @@
-package com.kinart.stock.business.config;
+package com.kinart.api.gestiondestock.config;
 
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;

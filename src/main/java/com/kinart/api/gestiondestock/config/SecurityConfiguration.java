@@ -1,4 +1,4 @@
-package com.kinart.stock.business.config;
+package com.kinart.api.gestiondestock.config;
 
 import com.kinart.stock.business.services.auth.ApplicationUserDetailsService;
 import java.util.Arrays;
@@ -41,8 +41,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     http.addFilterBefore(corsFilter(), SessionManagementFilter.class)
         .csrf().disable()
         .authorizeRequests().antMatchers("/**/authenticate",
-         "/**/dossierpaie/**",
-         "/**/calcul/**",
+//         "/**/dossierpaie/**",
+//         "/**/calcul/**",
+//         "/**/salaries/**",
+//         "/**/cloture/**",
          "/**/entreprises/create",
          "/**/actuator/**",
          "/**/generated-reports/**",

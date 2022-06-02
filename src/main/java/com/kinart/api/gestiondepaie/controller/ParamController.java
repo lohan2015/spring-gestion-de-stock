@@ -162,4 +162,24 @@ public class ParamController implements ParamApi {
     public void deleteData(Integer id) {
         paramService.deleteData(id);
     }
+
+    @Override
+    public ResponseEntity<List<ParamTableDto>> findTableByKeyWord(String keyword) {
+        List<ParamTableDto> paramsTableDto = paramService.findTableByKeyWord(keyword);
+        if(paramsTableDto!=null) {
+            return ResponseEntity.ok(paramsTableDto);
+        } else {
+            throw new EntityNotFoundException("Pas de tables trouveés");
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<ParamDataDto>> findDataByKeyWord(ParamDataDto search) {
+        List<ParamDataDto> paramsTableDto = paramService.findDataByKeyWord(search);
+        if(paramsTableDto!=null) {
+            return ResponseEntity.ok(paramsTableDto);
+        } else {
+            throw new EntityNotFoundException("Pas de tables trouveés");
+        }
+    }
 }
