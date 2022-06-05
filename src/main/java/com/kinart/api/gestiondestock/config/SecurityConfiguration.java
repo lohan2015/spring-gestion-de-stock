@@ -41,7 +41,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     http.addFilterBefore(corsFilter(), SessionManagementFilter.class)
         .csrf().disable()
         .authorizeRequests().antMatchers("/**/authenticate",
-//         "/**/dossierpaie/**",
+//           "/**/mail/**",
 //         "/**/calcul/**",
 //         "/**/salaries/**",
 //         "/**/cloture/**",

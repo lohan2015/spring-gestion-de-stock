@@ -16,6 +16,24 @@ spring:
     username: delta
     password: delta
     driver-class-name: oracle.jdbc.OracleDriver
+  mail:
+    host: smtp.gmail.com #SMTP server address
+    port: 465
+    username: lohanlaurel@gmail.com #Login account
+    password: qszduiavxyicburp #Login password (or authorization code)
+    properties:
+      from: sirh@megatim.com #Email sender (i.e. real email)
+      mail:
+        debug: true
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          connectiontimeout: 20000
+          timeout: 20000
+          writetimeout: 20000
+          ssl:
+            enable: true
   ## Specify DBMS
   jpa:
     database: ORACLE
@@ -39,3 +57,4 @@ flickr:
   apiSecret: 586bedcf752a71c8
   appKey: 72157720837293999-64c1ecc4e4e04542
   appSecret: bec0945d201abfa3
+

@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
+import javax.mail.*;
+import javax.mail.internet.*;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,10 +27,84 @@ import java.util.*;
 public class TestReport {
 
     public static void main(String[] args) {
-       executeReport4();
+       //executeReport4();
+        // Get system properties
+        Properties properties = new Properties();
+
+        // Setup mail server
+        properties.put("mail.smtp.auth", "true");
+        //properties.put("mail.transport.protocol", "smtps");
+        //properties.put("mail.smtp.socketFactory.port", "465");
+        //properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        properties.put("mail.smtp.ssl.enable", "true");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "465");
+        String username =  "lohanlaurel@gmail.com";
+        String pwd = "qszduiavxyicburp";
+
+        // Get the Session object.// and pass username and password
+        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, pwd);
+            }
+        });
+
+        // Get the default Session object.
+        //javax.mail.Session session = javax.mail.Session.getInstance(properties,null);
+
+        // Used to debug SMTP issues
+        session.setDebug(true);
+
+        try{
+            // Create a default MimeMessage object.
+            MimeMessage message = new MimeMessage(session);
+
+            // Set From: header field of the header.
+            message.setFrom(new InternetAddress("sirh@megatim.com"));
+
+            // Set To: header field of the header.
+            message.addRecipient(Message.RecipientType.TO,
+                    new InternetAddress("mbacyrille2002@yahoo.fr"));
+
+            // Set Subject: header field
+            message.setSubject("This is the Subject Line!");
+
+            MimeBodyPart messageBodyPart = new MimeBodyPart();
+
+
+            // Fill the message
+            String body = "Test envoi mail";
+            messageBodyPart.setText(body);
+            messageBodyPart.setContent(body, "text/html");
+
+            // Create a multipar message
+            Multipart multipart = new MimeMultipart();
+
+            // Set text message part
+            multipart.addBodyPart(messageBodyPart);
+
+//            if(StringUtils.isNotBlank(outPutFile)){
+//                // Part two is attachment
+//                messageBodyPart = new MimeBodyPart();
+//                DataSource source = new FileDataSource(outPutFile);
+//                messageBodyPart.setDataHandler(new DataHandler(source));
+//                messageBodyPart.setFileName(fileName);
+//                multipart.addBodyPart(messageBodyPart);
+//            }
+
+            // Send the complete message parts
+            message.setContent(multipart);
+
+            // Send message
+            javax.mail.Transport.send(message);
+    } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 
-    static void methode1(){
+        static void methode1(){
         try {
             String filePath = ResourceUtils.getFile("classpath:Student.jrxml")
                     .getAbsolutePath();

@@ -1,17 +1,24 @@
 package com.kinart.api.gestiondepaie.controller;
 
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.kinart.api.gestiondepaie.controller.api.CalculPaieApi;
 import com.kinart.api.gestiondepaie.dto.*;
 import com.kinart.api.gestiondepaie.report.LigneMouvementCptble;
 import com.kinart.api.gestiondestock.dto.LigneCommandeClientDto;
 import com.kinart.api.gestiondestock.report.LigneCommandeReport;
+import com.kinart.api.mail.EmailDetails;
+import com.kinart.api.mail.service.EmailService;
 import com.kinart.paie.business.model.ElementVariableDetailMois;
+import com.kinart.paie.business.model.FreeZone;
 import com.kinart.paie.business.model.HistoCalculPaie;
 import com.kinart.paie.business.model.VirementSalarie;
 import com.kinart.paie.business.services.CalculPaieService;
 import com.kinart.paie.business.services.VirementSalaireService;
 import com.kinart.paie.business.services.utils.ClsDate;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
+import com.kinart.paie.business.services.utils.StringUtil;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import net.sf.jasperreports.engine.*;
@@ -32,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -42,17 +50,18 @@ import java.util.*;
 
 @RestController
 public class CalculPaieController implements CalculPaieApi {
-
     private CalculPaieService calculPaieService;
     private GeneriqueConnexionService generiqueConnexionService;
     private VirementSalaireService virementSalaireService;
+    private EmailService emailService;
     private List<CumulPaieDto> histoCalcul;
 
     @Autowired
-    public CalculPaieController(CalculPaieService calculPaieService, VirementSalaireService virementSalaireService, GeneriqueConnexionService generiqueConnexionService) {
+    public CalculPaieController(EmailService emailService, CalculPaieService calculPaieService, VirementSalaireService virementSalaireService, GeneriqueConnexionService generiqueConnexionService) {
          this.calculPaieService = calculPaieService;
         this.virementSalaireService = virementSalaireService;
         this.generiqueConnexionService = generiqueConnexionService;
+        this.emailService = emailService;
     }
 
      @Override
@@ -123,6 +132,15 @@ public class CalculPaieController implements CalculPaieApi {
             List<CalculPaieDto> calculsPaieDto = calculPaieService.findResultCalculByFilter(dto);
             if(calculsPaieDto == null || calculsPaieDto.size()==0) return new ResponseEntity("Pas de bulletin à éditer", HttpStatus.BAD_REQUEST);
 
+            //Lecture du mot de passe
+            String password = "XXXXX";
+            List<FreeZone> result = generiqueConnexionService.find("From FreeZone Where idEntreprise='"+salDto.getIdentreprise()+"' And nmat='"+salDto.getNmat()+"' And numerozl=5");
+            FreeZone zl = null;
+            if(result!=null && result.size()>0){
+                zl = result.get(0);
+                if(zl!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(zl.getVallzl())) password = zl.getVallzl().trim();
+            }
+
             String filePath = ResourceUtils.getFile("classpath:RptBulletinPaie.jrxml")
                      .getAbsolutePath();
 
@@ -165,9 +183,21 @@ public class CalculPaieController implements CalculPaieApi {
 
              System.out.println("Fichier à télécharger: "+Paths.get(uploadDir).toString()+"/"+fileName);
              //System.out.println("URI: "+filePat.toUri());
+            //Envoi mail
+            if(org.apache.commons.lang3.StringUtils.isNotEmpty(salDto.getAdr4())){
+                EmailDetails paramMail = new EmailDetails();
+                paramMail.setAttachment(uploadDir+fileName);
+                paramMail.setFilename(fileName);
+                paramMail.setMsgBody("Bulletin de paie "+dto.periodeDePaie.substring(4,6)+"/"+dto.periodeDePaie.substring(0,4));
+                paramMail.setPassword(password);
+                paramMail.setRecipient(salDto.getAdr4());
+                if(paramMail.isValidEmailAddress())
+                    emailService.sendMailWithAttachmentPassword(paramMail);
+            }
 
              File file = new File(filePat.toUri());
              FileInputStream is = new FileInputStream(file);
+
              response.setContentType("application/blob");
 
              // Response header
