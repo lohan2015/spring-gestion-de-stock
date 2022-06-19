@@ -4,6 +4,7 @@ import com.kinart.paie.business.model.ElementFixeSalaire;
 import com.kinart.paie.business.model.ElementSalaire;
 import com.kinart.paie.business.model.Salarie;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
@@ -13,6 +14,9 @@ import java.util.Date;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ApiModel(description = "Model de gestion des éléments de salaire")
 public class ElementFixeSalaireDto {
     private Integer id;
     private Integer idEntreprise;
@@ -26,30 +30,15 @@ public class ElementFixeSalaireDto {
     private Date ddeb;
 
     private Date dfin;
+    private String nomSalarie;
+    private String librubrique;
 
-    @JsonIgnore
-    private Salarie salarie;
-
-    public ElementFixeSalaireDto() {
-    }
-
-    public ElementFixeSalaireDto(Integer id, Integer idEntreprise, String nmat, String codp, BigDecimal monp, Date ddeb, Date dfin, Salarie salarie) {
-        this.id = id;
-        this.idEntreprise = idEntreprise;
-        this.nmat = nmat;
-        this.codp = codp;
-        this.monp = monp;
-        this.ddeb = ddeb;
-        this.dfin = dfin;
-        this.salarie = salarie;
-    }
-
-    public static ElementSalaireDto fromEntity(ElementSalaire elementSalaire) {
+    public static ElementFixeSalaireDto fromEntity(ElementFixeSalaire elementSalaire) {
         if (elementSalaire == null) {
             return null;
         }
 
-        ElementSalaireDto dto = new  ElementSalaireDto();
+        ElementFixeSalaireDto dto = new  ElementFixeSalaireDto();
         BeanUtils.copyProperties(elementSalaire, dto);
         return dto;
     }

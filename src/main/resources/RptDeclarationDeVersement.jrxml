@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RptMouvementComptable" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="83b09582-c07c-4602-8d92-4fab331485f7">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<subDataset name="Dataset1" uuid="e21dd8e8-80e7-425f-893e-6aecb3101313">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="numcpte" class="java.lang.String"/>
+		<field name="sens" class="java.lang.String"/>
+		<field name="libecriture" class="java.lang.String"/>
+		<field name="mntpce" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="NOM_SOCIETE" class="java.lang.String"/>
+	<parameter name="PERIODE_DECLARATION" class="java.lang.String"/>
+	<parameter name="MNT_CNPS" class="java.lang.String"/>
+	<parameter name="MNT_IRPP" class="java.lang.String"/>
+	<parameter name="MNT_CFC_SAL" class="java.lang.String"/>
+	<parameter name="MNT_CFC_PAT" class="java.lang.String"/>
+	<parameter name="MNT_TD" class="java.lang.String"/>
+	<parameter name="MNT_RAV" class="java.lang.String"/>
+	<parameter name="MNT_FNE" class="java.lang.String"/>
+	<parameter name="MNT_CAC_IRPP" class="java.lang.String"/>
+	<parameter name="TOT_IRPP_CACIRPP" class="java.lang.String"/>
+	<parameter name="TOTAL_1" class="java.lang.String"/>
+	<parameter name="MNT_FEICOM" class="java.lang.String"/>
+	<parameter name="MNT_RECEVEUR_2" class="java.lang.String"/>
+	<parameter name="MNT_CFC" class="java.lang.String"/>
+	<parameter name="MNT_DIR_IMPOTS" class="java.lang.String"/>
+	<parameter name="TOTAL_2" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="81" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="5" width="281" height="15" uuid="a5df4109-8fc1-4fe3-9a2a-266d58497463"/>
+				<textElement>
+					<font fontName="Bookman Old Style" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOM_SOCIETE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="24" width="326" height="21" uuid="cd9cf7da-770b-4e03-abbd-33b0cc849ad7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DECLARATION DE VERSEMENT POUR LE MOIS DE:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="329" y="24" width="218" height="21" uuid="c5280e11-1b63-4888-941d-c91f4e10aa0b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PERIODE_DECLARATION}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="74" y="54" width="340" height="21" uuid="8abcad8f-8819-4021-81a4-35572c43f1ec"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[SYNTHESE]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="2" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="3" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="3" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="2" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="9" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="639" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="299" uuid="6fbbda95-1451-4efc-807a-12e68d1c5d49"/>
+			</rectangle>
+			<line>
+				<reportElement x="-2" y="40" width="557" height="1" uuid="4504e9cf-0a2f-42c2-806d-49286f5bd8b8"/>
+			</line>
+			<staticText>
+				<reportElement x="107" y="10" width="340" height="21" uuid="e9fab9fd-5f27-460b-bd35-a7880a9e92f7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MONTANT DES IMPOTS ET COTISATIONS SOCIALES]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="70" width="557" height="1" uuid="49eba14d-aaed-4e8d-8fcc-ba073b020a25"/>
+			</line>
+			<line>
+				<reportElement x="-2" y="268" width="557" height="1" uuid="7d1855ce-687a-439d-9f81-b6343ba7ef28"/>
+			</line>
+			<line>
+				<reportElement x="200" y="40" width="1" height="227" uuid="624cfdd3-1ba9-4447-bc2a-4066272e5be9"/>
+			</line>
+			<line>
+				<reportElement x="325" y="40" width="1" height="259" uuid="4b3ac103-30eb-4eac-bd89-5f7874a2fcfa"/>
+			</line>
+			<line>
+				<reportElement x="441" y="40" width="1" height="259" uuid="d12de1f1-e4e2-44cf-ae06-64845a6d677a"/>
+			</line>
+			<staticText>
+				<reportElement x="215" y="46" width="100" height="20" uuid="cb120633-a994-4f84-9fbb-a40b61579063"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRINCIPAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="335" y="46" width="100" height="20" uuid="7483ddcd-b460-402d-b189-fe06679353c0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CAC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="448" y="46" width="100" height="20" uuid="0d4b9dac-dcb8-44d7-9826-5dcb9369f0c1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL A VERSER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="80" width="183" height="20" uuid="3c6d85d2-e120-4e5f-b9c6-dd85d6e18b89"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CNPS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="107" width="183" height="20" uuid="fc979c19-2755-4daf-8be0-338075fdafaa"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[IRPP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="134" width="183" height="20" uuid="5065e58b-38e6-4938-b2fe-23b5d74dfa7e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CREDIT FONCIER(Salariés)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="162" width="183" height="20" uuid="897c8f80-f91b-4042-9ee6-6b5f71b1ad7b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CREDIT FONCIER(Employeur)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="188" width="183" height="20" uuid="31c92e22-89a1-4c5b-b394-451da27f5e56"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[TAXE DEVELOPPEMENT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="214" width="183" height="20" uuid="b68feb86-7c6c-4522-896b-4221242a6943"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[REDEVANCE AUDIO-VISUELLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="240" width="183" height="20" uuid="787f51aa-2a30-4403-b3d1-8e4d294ff973"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[F.N.E]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="335" y="274" width="100" height="20" uuid="86a864cf-5dbf-49fc-bc35-6a41c46e19fb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="210" y="79" width="109" height="20" uuid="245f54ef-5f0e-4541-a557-8bf6f4238eb6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_CNPS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="105" width="109" height="20" uuid="af5d8aae-6b3c-436d-970d-f7e280716cc4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_IRPP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="131" width="109" height="20" uuid="2340212d-e048-43ef-9107-08344c459197"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_CFC_SAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="160" width="109" height="20" uuid="205b42ef-9223-4729-9746-44abb2b27e7f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_CFC_PAT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="187" width="109" height="20" uuid="ed195adf-a5d1-4bc9-a1e4-9c4b7f205fa2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_TD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="214" width="109" height="20" uuid="1f437c2f-94d0-4985-8125-9051ed408310"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_RAV}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="240" width="109" height="20" uuid="355bb88e-5588-4785-adee-8baa5fa66da3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_FNE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="334" y="105" width="100" height="20" uuid="dfd2ce50-6c94-4e09-8916-f4ab4391c9ce">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_CAC_IRPP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="443" y="80" width="109" height="20" uuid="ef7eea54-c7d9-43c9-9a0f-c854c3ff1352"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_CNPS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="443" y="131" width="109" height="20" uuid="d80cad08-cb2d-402e-a2b1-61656c026aa4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_CFC_SAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="158" width="109" height="20" uuid="a838c22c-18a3-4b35-bf0a-3f2605138b40"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_CFC_PAT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="443" y="184" width="109" height="20" uuid="ad271e20-6f68-47d9-b00b-509ccf953020"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_TD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="443" y="212" width="109" height="20" uuid="2b7ec228-980e-4e93-be67-7624187e6ff3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_RAV}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="443" y="238" width="109" height="20" uuid="a232f022-a3dd-41a6-b086-6c0fb132ff39"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_FNE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="441" y="102" width="109" height="20" uuid="f74a3b5d-2185-4087-8a8b-d6ba7afb496d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TOT_IRPP_CACIRPP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="450" y="275" width="100" height="20" uuid="6e7c48ca-6a56-45f7-ac9b-d0243967c6bc"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TOTAL_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="94" y="310" width="340" height="21" uuid="c1a50b4f-a5f0-40d8-8a6c-c8cc6d735a58"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CHEQUES A ETABLIR]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="340" width="555" height="294" uuid="07791dad-bf40-498a-a823-8c1e521211ca"/>
+			</rectangle>
+			<line>
+				<reportElement x="0" y="380" width="557" height="1" uuid="c231b127-b33f-447e-81e3-6c04ee845b95"/>
+			</line>
+			<line>
+				<reportElement x="-2" y="603" width="557" height="1" uuid="572740ae-2598-41bf-909b-b39e659e1cdd"/>
+			</line>
+			<line>
+				<reportElement x="222" y="340" width="1" height="293" uuid="373f36a4-2e6f-4866-9a16-0d3381f73717"/>
+			</line>
+			<line>
+				<reportElement x="376" y="340" width="1" height="292" uuid="90ec0b7e-94b3-4968-a8ba-114c5b892237"/>
+			</line>
+			<staticText>
+				<reportElement x="62" y="354" width="100" height="20" uuid="a9f8f9df-9138-4116-9dce-c3145b8c5e1b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BENEFICIAIRES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="265" y="354" width="100" height="20" uuid="650e98bf-5786-4f9a-a370-f69e2453cf31"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MONTANT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="354" width="100" height="20" uuid="27e5cf97-b180-47dd-a473-c384ef88aad4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NUMERO CHEQUE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="415" width="183" height="20" uuid="344ee00f-cb33-416e-a085-8d7c93e53af6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[AGENT COMPTABLE FEICOM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="442" width="183" height="20" uuid="bffbe2ff-b059-48fb-b953-c10209d4246e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[RECEVEUR MINICIPAL DOUALA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="469" width="183" height="20" uuid="0e4cb16a-24a2-4885-b21f-eb4491d2d5a5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CREDIT FONCIER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="497" width="183" height="20" uuid="1a0415b2-90ba-4f4b-bea5-0612c42ee170"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CRTV]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="523" width="183" height="20" uuid="8dee5284-42c1-4a45-8a3b-e312ee6b8c95"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[FNE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="549" width="183" height="20" uuid="44f02003-ed8b-41bc-b40c-0daeb3c3ef63"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CNPS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="575" width="183" height="20" uuid="ca24977c-db1c-44c5-a833-57efe7b052cd"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[DIRECTEUR DES IMPOTS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="112" y="609" width="100" height="20" uuid="08cffd61-5f2a-4b82-85c8-587236becac2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="262" y="547" width="109" height="20" uuid="ddf5c03f-2384-4c22-9e94-697fc2a1111e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_CNPS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="262" y="388" width="109" height="20" uuid="24ec7564-8a84-4587-950d-087998eb7bb2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_IRPP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="261" y="494" width="109" height="20" uuid="961305a4-1abf-4a94-a7b7-6153987267da"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_RAV}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="262" y="520" width="109" height="20" uuid="78d00779-dbc3-4e86-a160-b67260a5ffbc"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_FNE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="6" y="390" width="183" height="20" uuid="13c6073e-e7c6-44d6-8bf7-e54e136485d0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="false"/>
+				</textElement>
+				<text><![CDATA[RECEVEUR DES IMPOTS DGE]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="262" y="576" width="109" height="20" uuid="c45ee783-8224-4047-9cd6-dbf393dc43e3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_DIR_IMPOTS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="263" y="467" width="109" height="20" uuid="8ff9c1a3-bae3-4f47-828f-57998dfcab20">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_CFC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="262" y="439" width="109" height="20" uuid="74109639-0a40-47d9-b826-d3c56b1ab064"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_RECEVEUR_2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="263" y="414" width="109" height="20" uuid="75c67a0d-a500-42e1-86a4-261e998f77f4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MNT_FEICOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="250" y="610" width="120" height="20" uuid="662f07fd-c0ba-4e8c-93a9-625bce836abe">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Bookman Old Style" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TOTAL_2}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

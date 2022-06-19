@@ -87,6 +87,81 @@ public class TypeBDUtil
 		return result;
 	}
 
+	/**
+	 * Extraction d'une sous chaine
+	 */
+	public static String souschaine(String chaine, int depart, int longueur)
+	{
+		String result = StringUtils.EMPTY;
+		if (StringUtils.equals(typeBD, TypeBDUtil.OR) || StringUtils.equals(typeBD, TypeBDUtil.DB) || StringUtils.equals(typeBD, TypeBDUtil.AS) || StringUtils.equals(typeBD, TypeBDUtil.MY) || StringUtils.equals(typeBD, TypeBDUtil.IN)|| StringUtils.equals(typeBD, TypeBDUtil.PG))
+		{
+			return "substr(" + chaine + ","+depart+","+longueur+")";
+		}
+
+		if (StringUtils.equals(typeBD, TypeBDUtil.MS) || StringUtils.equals(typeBD, TypeBDUtil.ASE))
+		{
+			return "substring(" + chaine + ","+depart+","+longueur+")";
+		}
+
+		return chaine;
+	}
+
+	/**
+	 * Extraction d'une sous chaine
+	 */
+	public static String souschaine(String chaine, String depart, String longueur)
+	{
+		String result = StringUtils.EMPTY;
+		if (StringUtils.equals(typeBD, TypeBDUtil.OR) || StringUtils.equals(typeBD, TypeBDUtil.DB) || StringUtils.equals(typeBD, TypeBDUtil.AS) || StringUtils.equals(typeBD, TypeBDUtil.MY) || StringUtils.equals(typeBD, TypeBDUtil.IN)|| StringUtils.equals(typeBD, TypeBDUtil.PG))
+		{
+			return "substr(" + chaine + ","+depart+","+longueur+")";
+		}
+
+		if (StringUtils.equals(typeBD, TypeBDUtil.MS) || StringUtils.equals(typeBD, TypeBDUtil.ASE))
+		{
+			return "substring(" + chaine + ","+depart+","+longueur+")";
+		}
+
+		return chaine;
+	}
+
+	public static String convertirEnChaineDeCaractere2(String colonne)
+	{
+		if (StringUtils.equals(typeBD, TypeBDUtil.DB))
+		{
+			return "char(" + colonne + ")";
+		}
+
+		return colonne;
+	}
+
+	public static String convertirEnNumeric(String colonne)
+	{
+		String result = StringUtils.EMPTY;
+		if (StringUtils.equals(typeBD, TypeBDUtil.OR) || StringUtils.equals(typeBD, TypeBDUtil.DB) || StringUtils.equals(typeBD, TypeBDUtil.AS) || StringUtils.equals(typeBD, TypeBDUtil.MY) || StringUtils.equals(typeBD, TypeBDUtil.IN)|| StringUtils.equals(typeBD, TypeBDUtil.PG))
+		{
+			return "cast(" + colonne + " as Decimal)";
+		}
+
+		if (StringUtils.equals(typeBD, TypeBDUtil.MS) || StringUtils.equals(typeBD, TypeBDUtil.ASE))
+		{
+			return "cast(" + colonne + " as Numeric)";
+		}
+
+		return colonne;
+	}
+
+	public static String convertirEnChaineDeCaractere1(String colonne)
+	{
+		if (StringUtils.equals(typeBD, TypeBDUtil.DB))
+		{
+			return "'" + colonne + "'";
+		}
+
+		return "'" + colonne + "'";
+	}
+
+
 //	/**
 //	 * Fonctions standard de sql
 //	 */

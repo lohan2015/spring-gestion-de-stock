@@ -191,6 +191,7 @@ public class CalculPaieController implements CalculPaieApi {
                 paramMail.setMsgBody("Bulletin de paie "+dto.periodeDePaie.substring(4,6)+"/"+dto.periodeDePaie.substring(0,4));
                 paramMail.setPassword(password);
                 paramMail.setRecipient(salDto.getAdr4());
+                paramMail.setSubject("Bulletin de paie");
                 if(paramMail.isValidEmailAddress())
                     emailService.sendMailWithAttachmentPassword(paramMail);
             }

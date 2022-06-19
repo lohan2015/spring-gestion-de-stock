@@ -10,11 +10,15 @@ management:
   server:
     port: 8081
 
+jasypt:
+  encryptor:
+    password: megatimgroupe
+
 spring:
   datasource:
     url: jdbc:oracle:thin:@localhost:1521:iwomirh
     username: delta
-    password: delta
+    password: ENC(FsSQiV5g7h53d9FwuaGf+Q==)
     driver-class-name: oracle.jdbc.OracleDriver
   mail:
     host: smtp.gmail.com #SMTP server address

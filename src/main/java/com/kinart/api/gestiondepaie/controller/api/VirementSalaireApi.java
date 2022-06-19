@@ -34,13 +34,12 @@ public interface VirementSalaireApi {
     ResponseEntity<VirementSalarieDto> findById(@PathVariable("id") Integer id);
 
     @GetMapping(value = APP_ROOT_PAIE + "/virementsalaire/filter2/{matricule}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @ApiOperation(value = "Rechercher un compte de virement par ID", notes = "Cette methode permet de chercher un compte de virement par son CODE", response =
-            VirementSalarieDto.class)
+    @ApiOperation(value = "Rechercher un compte de virement par ID", notes = "Cette methode permet de chercher un compte de virement par son CODE", responseContainer = "List<VirementSalarieDto>")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément a ete trouve dans la BDD"),
             @ApiResponse(code = 404, message = "Aucun élément n'existe dans la BDD avec le CODE fourni")
     })
-    ResponseEntity<VirementSalarieDto> findByMatricule(@PathVariable("matricule") String matricule);
+    ResponseEntity<List<VirementSalarieDto>> findByMatricule(@PathVariable("matricule") String matricule);
 
     @GetMapping(value = APP_ROOT_PAIE + "/virementsalaire/all", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Renvoi la liste des calendrier", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
@@ -50,10 +49,10 @@ public interface VirementSalaireApi {
     })
     ResponseEntity<List<VirementSalarieDto>> findAll();
 
-    @DeleteMapping(value = APP_ROOT_PAIE + "/virementsalaire/delete/{id}")
+    @DeleteMapping(value = APP_ROOT_PAIE + "/virementsalaire/delete")
     @ApiOperation(value = "Supprimer un dossier", notes = "Cette methode permet de supprimer un élément par ID")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément a ete supprime")
     })
-    void delete(@PathVariable("id") Integer id);
+    void delete(@RequestParam("id") Integer id);
 }

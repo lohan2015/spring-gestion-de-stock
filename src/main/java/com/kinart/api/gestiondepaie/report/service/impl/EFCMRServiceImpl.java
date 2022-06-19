@@ -7,6 +7,7 @@ import com.kinart.paie.business.model.ParamData;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.paie.business.services.utils.NumberUtils;
 import com.kinart.paie.business.services.utils.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
+@Slf4j
 public class EFCMRServiceImpl implements EFCMRService {
     /**
      * @param service
@@ -49,7 +51,7 @@ public class EFCMRServiceImpl implements EFCMRService {
                 continue;
 
             for (String str2 : split)
-                if(NumberUtils.isInteger(str2))
+                //if(NumberUtils.isInteger(str2))
                     formule = StringUtils.isBlank(formule) ? "'" + str2 + "'" : formule + ",'" + str2 + "'";
             //Nume 1 : CNPS
             if(StringUtils.equals("DECL-VERS1", cacc))

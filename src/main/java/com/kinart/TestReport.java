@@ -1,7 +1,10 @@
 package com.kinart;
 
 import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
+import com.kinart.api.gestiondepaie.report.LigneDeclarationVersement;
 import com.kinart.api.gestiondepaie.report.LigneMouvementCptble;
+import com.kinart.api.gestiondepaie.report.parameter.EFCMRParameter;
+import com.kinart.api.gestiondepaie.report.service.impl.EFCMRServiceImpl;
 import com.kinart.api.gestiondestock.dto.LigneCommandeClientDto;
 import com.kinart.api.gestiondestock.report.LigneCommandeReport;
 import com.kinart.paie.business.services.utils.ClsDate;
@@ -27,7 +30,11 @@ import java.util.*;
 public class TestReport {
 
     public static void main(String[] args) {
-       //executeReport4();
+       executeReport5();
+        //envoiMail();
+    }
+
+    private static void envoiMail() {
         // Get system properties
         Properties properties = new Properties();
 
@@ -43,7 +50,7 @@ public class TestReport {
         String pwd = "qszduiavxyicburp";
 
         // Get the Session object.// and pass username and password
-        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+        Session session = Session.getInstance(properties, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, pwd);
             }
@@ -96,7 +103,7 @@ public class TestReport {
             message.setContent(multipart);
 
             // Send message
-            javax.mail.Transport.send(message);
+            Transport.send(message);
     } catch (AddressException e) {
             e.printStackTrace();
         } catch (MessagingException e) {
@@ -104,7 +111,7 @@ public class TestReport {
         }
     }
 
-        static void methode1(){
+    static void methode1(){
         try {
             String filePath = ResourceUtils.getFile("classpath:Student.jrxml")
                     .getAbsolutePath();
@@ -423,6 +430,50 @@ public class TestReport {
             JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource(1));
 
             String fileName = "CommandeCLientCMD0876.pdf";
+            System.out.println("Nom fihier: "+fileName);
+            String uploadDir = StringUtils.cleanPath("./generated-reports/");
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)){
+                Files.createDirectories(uploadPath);
+            }
+
+            System.out.println("Export PDF");
+            byte[] byteArray = JasperExportManager.exportReportToPdf(print);
+
+            System.out.println("Export PDF in file");
+            JasperExportManager.exportReportToPdfFile(print, uploadDir+fileName);
+
+        } catch(Exception e) {
+            System.out.println("Exception while creating report");
+            e.printStackTrace();
+        }
+    }
+
+    static void executeReport5(){
+        try {
+            String filePath = ResourceUtils.getFile("classpath:RptDeclarationDeVersement.jrxml")
+                    .getAbsolutePath();
+
+            System.out.println("Ajout datasource");
+            LigneDeclarationVersement declarationVersement = new LigneDeclarationVersement();
+            declarationVersement.setFne(new BigDecimal(1250));
+            declarationVersement.setCfcpat(new BigDecimal(6500));
+            declarationVersement.setCfcsal(new BigDecimal(12700));
+            declarationVersement.setIrpp(new BigDecimal(45000));
+            declarationVersement.setTd(new BigDecimal(24500));
+            declarationVersement.setCacirpp(new BigDecimal(2100));
+            declarationVersement.setCnps(new BigDecimal(78000));
+            declarationVersement.setRav(new BigDecimal(2300));
+            Map<String, Object> parameters = EFCMRParameter.setParametersDeclVersement(declarationVersement,"202105");
+
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(List.of());
+            System.out.println("Compilation");
+            JasperReport report = JasperCompileManager.compileReport(filePath);
+
+            System.out.println("Association des données");
+            JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource(1));
+
+            String fileName = "DeclarationDeVersement.pdf";
             System.out.println("Nom fihier: "+fileName);
             String uploadDir = StringUtils.cleanPath("./generated-reports/");
             Path uploadPath = Paths.get(uploadDir);

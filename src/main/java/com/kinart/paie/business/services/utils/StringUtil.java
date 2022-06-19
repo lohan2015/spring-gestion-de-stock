@@ -381,7 +381,7 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
 
 	public static String oraSubstring(String chaine, int debut, int longueur)
 	{
-		return substring(chaine, debut - 1, longueur + debut - 1);
+		return substring(chaine, debut, longueur + debut - 1);
 	}
 
 //	public static String lastCharacter(String chaine)
@@ -766,5 +766,107 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
 		if (StringUtils.isEmpty(chaine))
 			return chaine;
 		return StringUtil.substring(chaine, chaine.length() - 1);
+	}
+
+	public static String getEmptyString(int size)
+	{
+		String result = "";
+		for (int i = 0; i < size; i++)
+		{
+			result += " ";
+		}
+		return result;
+	}
+
+	public static String oraRPad(String chaine, int totalLength, String charToAdd)
+	{
+		if (StringUtils.isEmpty(chaine))
+			return chaine;
+		String add = "";
+//		if (ClsParameter._isStringNull(chaine))
+//			chaine = "";
+		if (chaine.length() < totalLength)
+			for (int i = 0; i < totalLength - chaine.length(); i++)
+				add += charToAdd;
+		return chaine + add;
+	}
+
+	public static String oraRPad(String chaine, int totalLength)
+	{
+		return StringUtil.oraRPad(chaine, totalLength, " ");
+	}
+
+	public static String oraToChar(Number nombre)
+	{
+		if (nombre == null)
+			return " ";
+
+		if (nombre.intValue() > 0)
+			return " " + nombre.toString();
+
+		return nombre.toString();
+	}
+
+	public static String join2(Object... objs)
+	{
+		return join(objs);
+	}
+
+	public static String lpad(String c, int longueur){
+		String resultat="";
+		for(int i=0;i<longueur;i++ ) resultat=resultat+c;
+		return resultat;
+	}
+
+	public  static  String rpad(String c, int longueur){
+		String resultat="";
+		for(int i=0;i<longueur;i++ ) resultat=resultat + c;
+		return resultat;
+	}
+
+	/**
+	 * 	Ajout des caractères à gauche d'une chaîne
+	 */
+
+	public  static String lpad(String chaine,int longueur, char c){
+		String resultat="";
+		int reste=0;
+		String ajout="";
+
+		if(chaine!=null) resultat=chaine;
+		if(resultat.length()< longueur){
+			reste=longueur-resultat.length();
+			for(int i=0;i<reste;i++ ) ajout=ajout+String.valueOf(c);
+			resultat=ajout+resultat;
+		}
+		return resultat;
+	}
+
+	/**
+	 * 	Ajout des caractères à droite d'une chaîne
+	 */
+
+	public  static  String rpad(String chaine,int longueur, char c){
+		String resultat="";
+		int reste=0;
+		String ajout="";
+
+		if(chaine!=null) resultat=chaine;
+		if(resultat.length()< longueur){
+			reste=longueur-resultat.length();
+			for(int i=0;i<reste;i++ ) ajout=ajout+String.valueOf(c);
+			resultat=resultat+ajout;
+		}
+		return resultat;
+	}
+
+	public  static  String nvl(Double premierChoix, String secondChoix){
+		if((premierChoix != null) && (premierChoix != 0)) return premierChoix.toString();
+		else return secondChoix;
+	}
+
+	public  static String nvl(Integer premierChoix, String secondChoix){
+		if((premierChoix != null) && (premierChoix != 0)) return premierChoix.toString();
+		else return secondChoix;
 	}
 }

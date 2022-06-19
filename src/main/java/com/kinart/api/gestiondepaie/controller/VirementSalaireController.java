@@ -41,9 +41,9 @@ public class VirementSalaireController implements VirementSalaireApi {
     }
 
     @Override
-    public ResponseEntity<VirementSalarieDto> findByMatricule(String matricule) {
-        VirementSalarieDto virementSalarieDto = virementSalaireService.findByMatricule(matricule);
-        if(virementSalarieDto!=null) return ResponseEntity.ok(virementSalarieDto);
+    public ResponseEntity<List<VirementSalarieDto>> findByMatricule(String matricule) {
+        List<VirementSalarieDto> virementSalarieDtos = virementSalaireService.findDetailByMatricule(matricule);
+        if(virementSalarieDtos!=null) return ResponseEntity.ok(virementSalarieDtos);
         return new ResponseEntity(null, HttpStatus.NO_CONTENT);
     }
 

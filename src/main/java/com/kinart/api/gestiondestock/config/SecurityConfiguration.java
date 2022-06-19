@@ -46,6 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //         "/**/salaries/**",
 //         "/**/cloture/**",
          "/**/entreprises/create",
+         "/**/efcmr/dipemagnetique",
          "/**/actuator/**",
          "/**/generated-reports/**",
 //         "/**/parametrage/**",
