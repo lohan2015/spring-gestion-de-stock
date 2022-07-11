@@ -24,6 +24,10 @@ public class ParameterUtil
 	public static final String SESSION_DDMP = "ddmp";
 	public static final String SESSION_FORMAT_DATE = "dateformat";
 	public static final String SESSION_LANGUE = "langue";
+	public static final String SESSION_DOSSIER = "dossier";
+
+	public static String RUBRIQUE_BRUTE="RUBBRUT";
+	public static String RUBRIQUE_NAP="RUBNAP";
 
 	public static final int YEAR_ON_2_CHARACTER = 0;
 
@@ -391,5 +395,35 @@ public class ParameterUtil
 			e.printStackTrace();
 		}
 		return "";
+	}
+
+	public static String _completerLongueurRubrique(String strCodeRubrique)
+	{
+		BigDecimal bd = new BigDecimal(strCodeRubrique);
+		bd.setScale(0);
+		strCodeRubrique = String.valueOf(bd.intValue());
+		if(1==1) return StringUtil.oraLPad(strCodeRubrique, longueurRubrique,"0");
+		if (strCodeRubrique.length() == 1)
+			return "000" + strCodeRubrique;
+
+		if (strCodeRubrique.length() == 2)
+			return "00" + strCodeRubrique;
+
+		if (strCodeRubrique.length() == 3)
+			return "0" + strCodeRubrique;
+
+		if (strCodeRubrique.length() == 4)
+			return strCodeRubrique;
+
+		return "";
+	}
+
+	public static boolean _isStringNull(String _strString)
+	{
+		if (_strString == null)
+			return true;
+		if (_strString != null && _strString.trim().length() == 0)
+			return true;
+		return false;
 	}
 }

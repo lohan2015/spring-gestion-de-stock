@@ -14,8 +14,10 @@ public class RechercheDto {
     public String periodeDePaie = StringUtils.EMPTY;
     public String numeroBulletin = StringUtils.EMPTY;
     public String nmatMin = StringUtils.EMPTY;
+    public String libNmatMin = StringUtils.EMPTY;
     public String nomNmatMin = StringUtils.EMPTY;
     public String nmatMax = StringUtils.EMPTY;
+    public String libNmatMax = StringUtils.EMPTY;
     public String nomNmatMax = StringUtils.EMPTY;
     public String niv1Min = StringUtils.EMPTY;
     public String libNiv1Min = StringUtils.EMPTY;
@@ -41,4 +43,7 @@ public class RechercheDto {
     public String identreprise = StringUtils.EMPTY;
     public String dateformat = "dd/MM/yyyy";
     public String typetrt = "CENTRA";
+    public String libNiv1Max = StringUtils.EMPTY;
+    public String libNiv2Max = StringUtils.EMPTY;
+    public String libNiv3Max = StringUtils.EMPTY;
 }

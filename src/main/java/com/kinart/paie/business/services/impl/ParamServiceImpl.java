@@ -196,8 +196,8 @@ public class ParamServiceImpl implements ParamService {
     @Override
     public List<ParamDataDto> findDataByKeyWord(ParamDataDto search) {
         String queryString = "select d.*, c.libe as libcolonne  from ParamData d, ParamColumn c "+
-                       "WHERE d.idEntreprise=c.idEntreprise and d.ctab=c.ctab and d.nume=c.nume and d.ctab = "+search.getCtab().intValue();
-        if(StringUtils.isNotEmpty(search.getCacc()) || StringUtils.isNotEmpty(search.getVall())) queryString += " AND (upper(d.cacc) like UPPER('%"+search.getCacc()+"%') OR upper(d.vall) like UPPER('%\"+search.getVall()+\"%'))";
+                       "WHERE d.idEntreprise=c.idEntreprise and d.ctab=c.ctab and d.nume=c.nume and c.nume=1 and d.ctab = "+search.getCtab().intValue();
+        if(StringUtils.isNotEmpty(search.getCacc()) || StringUtils.isNotEmpty(search.getVall())) queryString += " AND (upper(d.cacc) like UPPER('%"+search.getCacc()+"%') OR upper(d.vall) like UPPER('%"+search.getVall()+"%'))";
         //if(StringUtils.isNotEmpty(search.getVall())) queryString += " ";
         queryString += " order by d.ctab, d.cacc, d.nume";
         Session session = generiqueConnexionService.getSession();

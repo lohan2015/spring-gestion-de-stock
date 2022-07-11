@@ -96,7 +96,7 @@ public class SuspensionPaieServiceImpl implements SuspensionPaieService {
     public List<SuspensionPaieDto> findByMatricule(String matricule) {
         List<SuspensionPaieDto> liste = new ArrayList<SuspensionPaieDto>();
         String sqlQuery = "SELECT e.*, s.nom as nomsal, s.pren as prensal, t.vall as libsuspension " +
-                "FROM SuspensionPaieDto e " +
+                "FROM SuspensionPaie e " +
                 "LEFT JOIN Salarie s ON (e.identreprise=s.identreprise AND e.nmat=s.nmat) "+
                 "LEFT JOIN ParamData t ON (t.identreprise=e.identreprise AND t.cacc=e.mtar AND t.ctab=21 AND t.nume=1) "+
                 "WHERE e.nmat='"+matricule+"'";

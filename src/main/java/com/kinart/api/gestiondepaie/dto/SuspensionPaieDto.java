@@ -26,6 +26,7 @@ public class SuspensionPaieDto {
     private String mtar;
     private String nomSalarie;
     private String libmotif;
+    private String mode;
 
     public static SuspensionPaieDto fromEntity(SuspensionPaie suspensionPaie) {
         if (suspensionPaie == null) {

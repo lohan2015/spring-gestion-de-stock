@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,7 @@ public class SalarieServiceImpl implements SalarieService {
         salarieRepository.deleteElementFixeByMatricule(dto.getNmat());
         if(dto!=null && dto.getElementFixeSalaire()!=null && !dto.getElementFixeSalaire().isEmpty()){
             for(ElementFixeSalaireDto elementFixeSalaireDto : dto.getElementFixeSalaire()){
+                elementFixeSalaireDto.setNmat(dto.getNmat());
                 elementFixeSalaireRepository.save(ElementFixeSalaireDto.toEntity(elementFixeSalaireDto));
             }
         }
@@ -66,6 +68,7 @@ public class SalarieServiceImpl implements SalarieService {
         salarieRepository.deletePretInterneByMatricule(dto.getNmat());
         if(dto!=null && dto.getPretInterne()!=null && !dto.getPretInterne().isEmpty()){
             for(PretInterneDto pretInterneDto : dto.getPretInterne()){
+                pretInterneDto.setNmat(dto.getNmat());
                 pretInterneRepository.save(PretInterneDto.toEntity(pretInterneDto));
             }
         }
@@ -74,6 +77,9 @@ public class SalarieServiceImpl implements SalarieService {
         salarieRepository.deleteBanqueByMatricule(dto.getNmat());
         if(dto!=null && dto.getVirementSalarie()!=null && !dto.getVirementSalarie().isEmpty()){
             for(VirementSalarieDto virementSalarieDto : dto.getVirementSalarie()){
+                virementSalarieDto.setNmat(dto.getNmat());
+                virementSalarieDto.setTxchg(BigDecimal.ONE);
+                virementSalarieDto.setDvd("N");
                 virementSalarieRepository.save(VirementSalarieDto.toEntity(virementSalarieDto));
             }
         }

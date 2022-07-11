@@ -26,10 +26,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class GeneriqueConnexionService {
@@ -432,9 +429,9 @@ public class GeneriqueConnexionService {
         ArrayList<ParamData> liste = new ArrayList<ParamData> ( );
         ParamData nomenclature = null;
         String strSortColumn = enumSortColumn==ClsNomenclatureSortColumnEnum.NomenclatureSortColumnEnum.CACC ? "cacc" : "vall";
-        String queryString = "Select ParamData.cacc,ParamData.vall,ParamData.valm,ParamData.valt,ParamData.vald from ParamData ParamData where ParamData.identreprise=" + "'" + strCodeDossier + "'"
-                + " and ParamData.ctab="  + strCodeTable +  " and ParamData.nume=" + strColumnNumber;
-        queryString += " order by ParamData."+strSortColumn+" ASC";
+        String queryString = "Select paramData.cacc,paramData.vall,paramData.valm,paramData.valt,paramData.vald from ParamData paramData where paramData.idEntreprise=" + "'" + strCodeDossier + "'"
+                + " and paramData.ctab="  + strCodeTable +  " and paramData.nume=" + strColumnNumber;
+        queryString += " order by paramData."+strSortColumn+" ASC";
         Session session = this.getSession();
         try {
             org.hibernate.Query query = session.createQuery ( queryString );
@@ -461,9 +458,12 @@ public class GeneriqueConnexionService {
                     nomenclature = new ParamData();
                     nomenclature.setCacc(code);
                     nomenclature.setVall(libelle);
-                    nomenclature.setValm(Long.valueOf(montant));
-                    nomenclature.setValt(new BigDecimal(taux));
-                    nomenclature.setVald(new ClsDate(date).getDate());
+                    if(StringUtils.isNotEmpty(montant))
+                     nomenclature.setValm(Long.valueOf(montant));
+                    if(StringUtils.isNotEmpty(taux))
+                        nomenclature.setValt(new BigDecimal(taux));
+                    if(StringUtils.isNotEmpty(date))
+                        nomenclature.setVald(new ClsDate(date).getDate());
                     liste.add ( nomenclature );
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
@@ -558,6 +558,50 @@ public class GeneriqueConnexionService {
             this.closeSession(session);
         }
         return nomenclature;
+    }
+
+    public List<ParamData>  findAnyByOrderColumnFromNomenclature ( String strCodeDossier , String codeLangue , String strCodeTable , String strColumnNumber,String strSortColumn ) {
+        String code = "";
+        String libelle = "";
+        String montant = "";
+        String taux = "";
+        String date = "";
+        String queryString = "Select paramData.cacc,paramData.vall,paramData.valm,paramData.valt,paramData.vald from ParamData paramData where paramData.idEntreprise=" + "'" + strCodeDossier + "'"
+                + " and paramData.ctab="  + strCodeTable  + " and paramData.nume="  + strColumnNumber;
+        queryString += " order by paramData."+strSortColumn+" ASC";
+        Session session = this.getSession();
+        List<ParamData> result = new ArrayList<ParamData>();
+        try {
+            org.hibernate.Query query = session.createQuery ( queryString );
+            Iterator iterator = query.iterate();
+            while (iterator.hasNext ( )) {
+                ParamData nomenclature = new ParamData();
+                Object [ ] ligne = ( Object [ ] ) iterator.next ( );
+                code = ligne [ 0 ]+"";
+                if (ligne [ 1 ] != null) libelle = ligne [ 1 ]+"";
+                if (ligne [ 2 ] != null) montant = ligne [ 2 ]+"";
+                if (ligne [ 3 ] != null) taux = ligne [ 3 ]+"";
+                if (ligne [ 4 ] != null) date = ligne [ 4 ]+"";
+                nomenclature.setCacc(code);
+                nomenclature.setVall(libelle);
+                if(StringUtils.isNotEmpty(montant))
+                    nomenclature.setValm(Long.valueOf(montant));
+                if(StringUtils.isNotEmpty(taux))
+                    nomenclature.setValt(new BigDecimal(taux));
+                if(StringUtils.isNotEmpty(date))
+                    nomenclature.setVald(new ClsDate(date).getDate());
+                result.add(nomenclature);
+                //libelle = Convertisseur.getMessage2(libelle, codeLangue, libelle); //libelle = getLibelleFromEvMsg(session,libelle,codeLangue);
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally{
+            this.closeSession(session);
+        }
+        return result;
     }
 
     public String getMoisPaieReel(final String cdos, final String datedebut){
@@ -736,6 +780,25 @@ public class GeneriqueConnexionService {
 //        }
 
         //return oList;
+    }
+
+    public void saveCollection(Collection liste){
+        Session sess = this.getSession();
+        Transaction tx = null;
+
+        try {
+            tx = sess.beginTransaction();
+            for (Iterator iter = liste.iterator(); iter.hasNext();) sess.save(iter.next());
+            tx.commit();
+        }
+        catch (RuntimeException e) {
+            if (tx != null) tx.rollback();
+            //throw e; // or display error message
+            e.printStackTrace();
+        }
+        finally {
+            sess.close();
+        }
     }
 
 

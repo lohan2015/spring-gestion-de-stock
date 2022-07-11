@@ -57,4 +57,20 @@ public interface ElementVariableCongeApi {
             @ApiResponse(code = 200, message = "L'élément a ete supprime")
     })
     void delete(@PathVariable("id") Integer id);
+
+    @PostMapping(value = APP_ROOT_PAIE + "/eltvarconge/setenddate", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Fixer la date de fin", notes = "Cette methode permet la date de fin de congé", response = ElementVariableCongeDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "L'élément cree / modifie"),
+            @ApiResponse(code = 400, message = "L'élément n'est pas valide")
+    })
+    ResponseEntity<ElementVariableCongeDto> setEndDate(@RequestBody ElementVariableCongeDto dto);
+
+    @PostMapping(value = APP_ROOT_PAIE + "/eltvarconge/calculnbjr", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Calcul des jours d'absence et de congés acquis", notes = "Cette methode permet de calculer les jours d'absences et de congé acquis", response = ElementVariableCongeDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "L'élément cree / modifie"),
+            @ApiResponse(code = 400, message = "L'élément n'est pas valide")
+    })
+    ResponseEntity<ElementVariableCongeDto> calculJourAcquis(@RequestBody ElementVariableCongeDto dto);
 }

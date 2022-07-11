@@ -192,8 +192,14 @@ public class CalculPaieController implements CalculPaieApi {
                 paramMail.setPassword(password);
                 paramMail.setRecipient(salDto.getAdr4());
                 paramMail.setSubject("Bulletin de paie");
-                if(paramMail.isValidEmailAddress())
-                    emailService.sendMailWithAttachmentPassword(paramMail);
+                if(paramMail.isValidEmailAddress()){
+                    try {
+                        emailService.sendMailWithAttachmentPassword(paramMail);
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+
             }
 
              File file = new File(filePat.toUri());

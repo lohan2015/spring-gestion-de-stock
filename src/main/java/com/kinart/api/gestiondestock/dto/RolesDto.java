@@ -2,28 +2,40 @@ package com.kinart.api.gestiondestock.dto;
 
 import com.kinart.stock.business.model.Roles;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
+import java.util.Date;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ApiModel(description = "Model de gestion des rôles")
 public class RolesDto {
 
   private Integer id;
 
   private String roleName;
 
+  private String module;
+
+  private String droit;
+
+  private String actif;
+
+  private Date dateDeb;
+
+  private Date dateFin;
+
+  private String mode;
+
   @JsonIgnore
   private UtilisateurDto utilisateur;
-
-  public RolesDto() {
-  }
-
-  public RolesDto(Integer id, String roleName, UtilisateurDto utilisateur) {
-    this.id = id;
-    this.roleName = roleName;
-    this.utilisateur = utilisateur;
-  }
 
   public static RolesDto fromEntity(Roles roles) {
     if (roles == null) {

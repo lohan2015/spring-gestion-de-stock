@@ -1,6 +1,7 @@
 package com.kinart.api.gestiondepaie.dto;
 
 import com.kinart.paie.business.model.VirementSalarie;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(description = "Model de gestion des entêtes des virements")
 public class VirementSalarieDto implements Serializable {
     private Integer id;
     private Integer nlig;
@@ -37,6 +39,8 @@ public class VirementSalarieDto implements Serializable {
 
     private String nomSalarie;
     private String nomBanqueAgent;
+    private String nomBanqueSociete;
+    private String mode;
 
     public static VirementSalarieDto fromEntity(VirementSalarie virementSalarie) {
         if (virementSalarie == null) {

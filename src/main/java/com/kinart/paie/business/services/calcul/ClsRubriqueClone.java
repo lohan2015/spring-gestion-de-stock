@@ -1870,9 +1870,9 @@ public class ClsRubriqueClone
 			if (string.startsWith(","))
 				string = string.replaceFirst(",", "");
 			if (kk == 0)
-				result = " ( comp_id.aamm in (" + string + ")";
+				result = " ( aamm in (" + string + ")";
 			else
-				result += " or comp_id.aamm in (" + string + ")";
+				result += " or aamm in (" + string + ")";
 		}
 		if (StringUtils.isNotBlank(result))
 		result += " )";
@@ -1949,9 +1949,9 @@ public class ClsRubriqueClone
 			if (string.startsWith(","))
 				string = string.replaceFirst(",", "");
 			if (kk == 0)
-				result = " ( comp_id.rubq in (" + string + ")";
+				result = " ( rubq in (" + string + ")";
 			else
-				result += " or comp_id.rubq in (" + string + ")";
+				result += " or rubq in (" + string + ")";
 		}
 		if (StringUtils.isNotBlank(result))
 			result += " )";

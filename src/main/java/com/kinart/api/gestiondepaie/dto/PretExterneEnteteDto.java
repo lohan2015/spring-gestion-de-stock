@@ -4,6 +4,7 @@ import com.kinart.paie.business.model.PretExterneEntete;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kinart.paie.business.services.utils.HibernateConnexionService;
+import io.swagger.annotations.ApiModel;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Data
 @Builder
+@ApiModel(description = "Model de gestion des entêtes des prêts externes")
 public class PretExterneEnteteDto implements Serializable {
     private Integer id;
     private Integer idEntreprise;

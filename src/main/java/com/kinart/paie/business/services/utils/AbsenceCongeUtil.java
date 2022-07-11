@@ -116,6 +116,7 @@ public class AbsenceCongeUtil {
 //	           Nbj_max_par_mois := 30;
 //	   END;
 
+        if(paramDataRepository==null) System.out.println("Repository NULL_________________");
         ParamDataDto fnom = paramDataRepository.findByNumeroLigne(Integer.valueOf(99), "BASE30", Integer.valueOf(1))
                                 .map(ParamDataDto::fromEntity)
                                 .orElseThrow(() ->

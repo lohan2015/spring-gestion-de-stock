@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.kinart.paie.business.model.Salarie;
 import com.kinart.stock.business.utils.NoUTCInstant;
+import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
@@ -20,6 +21,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(description = "Model de gestion des salariés")
 public class SalarieDto implements Serializable {
     private Integer id;
     private Integer identreprise;

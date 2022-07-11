@@ -32,6 +32,7 @@ public class ElementFixeSalaireDto {
     private Date dfin;
     private String nomSalarie;
     private String librubrique;
+    private String mode;
 
     public static ElementFixeSalaireDto fromEntity(ElementFixeSalaire elementSalaire) {
         if (elementSalaire == null) {

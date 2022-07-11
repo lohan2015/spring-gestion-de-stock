@@ -3,11 +3,15 @@ package com.kinart.api.gestiondepaie.dto;
 import com.kinart.paie.business.model.ElementSalaire;
 import com.kinart.paie.business.model.ElementSalaireBase;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ApiModel(description = "Model de gestion des bases de calcul")
 public class ElementSalaireBaseDto {
     private Integer id;
     private Integer idEntreprise;
@@ -20,21 +24,11 @@ public class ElementSalaireBaseDto {
 
     private String rubk;
 
+    private String libRubrique;
+    private String mode;
+
     @JsonIgnore
     private ElementSalaire elementSalaire;
-
-    public ElementSalaireBaseDto() {
-    }
-
-    public ElementSalaireBaseDto(Integer id, Integer idEntreprise, String crub, Integer nume, String sign, String rubk, ElementSalaire elementSalaire) {
-        this.id = id;
-        this.idEntreprise = idEntreprise;
-        this.crub = crub;
-        this.nume = nume;
-        this.sign = sign;
-        this.rubk = rubk;
-        this.elementSalaire = elementSalaire;
-    }
 
     public static ElementSalaireBaseDto fromEntity(ElementSalaireBase elementSalaireBase) {
         if (elementSalaireBase == null) {

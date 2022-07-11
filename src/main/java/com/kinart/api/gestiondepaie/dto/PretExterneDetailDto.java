@@ -2,6 +2,7 @@ package com.kinart.api.gestiondepaie.dto;
 
 import com.kinart.paie.business.model.PretExterneDetail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
@@ -12,6 +13,7 @@ import java.util.Date;
 
 @Data
 @Builder
+@ApiModel(description = "Model de gestion des détails des prêts internes")
 public class PretExterneDetailDto implements Serializable {
     private Integer id;
     private Integer idEntreprise;

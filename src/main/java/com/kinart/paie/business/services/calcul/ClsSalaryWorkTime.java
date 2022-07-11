@@ -940,8 +940,8 @@ public class ClsSalaryWorkTime
 		complexQuery += ", max(case when nume = 4 then (case vall when 'O' then 1 else 0 end) else 0 end)";
 		complexQuery += ", max(case when nume = 10 then valm else 0 end)";
 		complexQuery += ", max(case when nume = 11 then valm else 0 end)";
-		complexQuery += " from table" + " where cdos = '" + salary.getParameter().getDossier() + "'" + " and ctab = " + 22 + " and cacc = '" + motif + "'" + " and nume in (1, 2, 3, 4, 5, 5, 6, 7, 8,10,11)";
-		complexQuery = salary.getParameter().isUseRetroactif() ? complexQuery.replace("table", "Rhthfnom") : complexQuery.replace("table", "Rhfnom");
+		complexQuery += " from table" + " where idEntreprise = '" + salary.getParameter().getDossier() + "'" + " and ctab = " + 22 + " and cacc = '" + motif + "'" + " and nume in (1, 2, 3, 4, 5, 5, 6, 7, 8,10,11)";
+		complexQuery = salary.getParameter().isUseRetroactif() ? complexQuery.replace("table", "HistoParamData") : complexQuery.replace("table", "ParamData");
 		ParameterUtil.println("...complexQuery : " + complexQuery);
 		List listOfMaxsum = salary.getService().find(complexQuery);
 		if (listOfMaxsum != null && listOfMaxsum.size() > 0)
