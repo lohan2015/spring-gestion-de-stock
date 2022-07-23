@@ -20,6 +20,7 @@ import java.util.Date;
 public class SuspensionPaieDto {
 
     private Integer idEntreprise;
+    private Integer id;
     private String nmat;
     private Date ddar;
     private Date dfar;

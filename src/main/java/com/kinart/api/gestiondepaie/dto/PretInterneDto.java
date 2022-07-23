@@ -21,6 +21,7 @@ import java.util.Date;
 public class PretInterneDto implements Serializable {
 
     private Integer idEntreprise;
+    private Integer id;
     private Integer lg;
     private String nmat;
     private String crub;

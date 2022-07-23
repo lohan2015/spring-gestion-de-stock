@@ -104,7 +104,7 @@ public class SuspensionPaieServiceImpl implements SuspensionPaieService {
         try {
             Session session = service.getSession();
             Query query  = session.createSQLQuery(sqlQuery)
-                    .addEntity("e", VirementSalarie.class)
+                    .addEntity("e", SuspensionPaie.class)
                     .addScalar("nomsal", StandardBasicTypes.STRING)
                     .addScalar("prensal", StandardBasicTypes.STRING)
                     .addScalar("libsuspension", StandardBasicTypes.STRING);
