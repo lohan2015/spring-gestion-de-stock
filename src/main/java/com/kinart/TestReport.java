@@ -30,6 +30,7 @@ import java.util.*;
 public class TestReport {
 
     public static void main(String[] args) {
+       executeReport3();
        executeReport5();
         //envoiMail();
     }

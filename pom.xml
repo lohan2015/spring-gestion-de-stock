@@ -11,6 +11,7 @@
 	<groupId>com.mbassi</groupId>
 	<artifactId>gestiondestock</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<!--packaging>war</packaging-->
 	<name>API_Gestion_paie_stock</name>
 	<description>API de gestion paie et stock</description>
 	<properties>
@@ -140,13 +141,18 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>6.11.0</version>
+			<version>6.19.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.lowagie</groupId>
 					<artifactId>itext</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-fonts</artifactId>
+			<version>6.19.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -1,0 +1,10 @@
+--------------------------------SALARIE 000150 NOM 000150 PRENOM 000150-------------
+--------------------------------SALARIE 000134 NOM 000134 PRENOM 000134-------------
+--------------------------------SALARIE 000134 NOM 000134 PRENOM 000134-------------
+--------------------------------SALARIE 000150 NOM 000150 PRENOM 000150-------------
+Rubrique = 1000 SALAIRE DE BASE CATEGORIEL
+Rubrique = 1000 SALAIRE DE BASE CATEGORIEL
+--------------------------------SALARIE 000134 NOM 000134 PRENOM 000134-------------
+--------------------------------SALARIE 000150 NOM 000150 PRENOM 000150-------------
+Rubrique = 2050 PRIME CONJONCTURELLE
+Rubrique = 1046 SURSALAIRE PRORATE

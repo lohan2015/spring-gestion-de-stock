@@ -1,0 +1,3 @@
+Enregistrement|Num Dipe|Cle Num Dipe|Num Contribuable|Num Feuillet|Num Employeur| Cle Num Empl|Regime CNPS|Annee Dipe|Num assure|Cle num assure|Nbr Jours|Sal Brut|Sal Except|Sal Taxable|Sal Cotisable Cnps|Sal Cotisable plaf|Retenue irpp|Retenue taxe communale|Num Ligne|Matricule Interne|Filler
+C04|62264|K|0TM0907967686Z|11|0102392101|K|1|2018|3511117075|0|00|0001604991|0000000000|0001512789|0001762789|0000750000|  270024|008120|06|        000134| 
+C04|62265|A|0TM0907967686Z|11|0102392101|K|1|2018|3511121419|4|00|0000950000|0000000000|0001098000|0001148000|0000750000|  168401|008120|03|        000150| 

@@ -16,8 +16,8 @@ jasypt:
 
 spring:
   datasource:
-    url: jdbc:oracle:thin:@localhost:1521:iwomirh
-    username: delta
+    url: jdbc:oracle:thin:@localhost:1521:corisrh
+    username: megatim
     password: ENC(FsSQiV5g7h53d9FwuaGf+Q==)
     driver-class-name: oracle.jdbc.OracleDriver
   mail:
