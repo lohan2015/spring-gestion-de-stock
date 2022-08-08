@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 
 /** @author Hibernate CodeGenerator */
@@ -14,9 +15,9 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity(name = "Orgniveaumetier")
-@Table(name = "orgniveaumetier")
-public class Orgniveaumetier extends AbstractEntity {
+@Entity(name = "Orgniveauemploitype")
+@Table(name = "orgniveauemploitype")
+public class Orgniveauemploitype extends AbstractEntity {
 
     @Column(name = "identreprise")
     private Integer idEntreprise;
@@ -26,5 +27,4 @@ public class Orgniveaumetier extends AbstractEntity {
 
     @Column(name = "codeemploitype", length = 10)
     private String codeemploitype;
-
 }

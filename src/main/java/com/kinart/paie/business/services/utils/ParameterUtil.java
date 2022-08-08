@@ -4,6 +4,9 @@
 package com.kinart.paie.business.services.utils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,6 +18,9 @@ import java.util.List;
  */
 public class ParameterUtil
 {
+	public static final String CHEMIN_GENERATION_FILES = "pages//genfiles//";
+	private static boolean showPhoto = false;
+
 	public static boolean refreshWholePage = false;
 	public static String typeRefresh = "R";
 	public static String formatRubrique = "0000";
@@ -68,6 +74,41 @@ public class ParameterUtil
 	public final static String SEPARATOR = "§";
 
 	public final static String CHAINE_DEUX_POINTS = " : ";
+
+	/** *******************ORGANIGRAMME AND NIVEAU******************************** */
+	public static String STR_CODEORGANIGRAMME = "codeorganigramme";
+
+	public static String STR_CODENIVEAU = "codeniveau";
+
+	public static String STR_CODEPERE = "codepere";
+
+	public static String STR_CODEPOSTE = "codeposte";
+
+	public static String STR_CODEMATRICULE = "codematricule";
+
+	public static String STR_LIBELLE = "libelle";
+
+	public static String STR_ACCEPTEEXTERNE = "accepteexterne";
+
+	public static String STR_CODECOULEUR = "codecouleur";
+
+	public static String STR_CODE_MAT = "nmat";
+
+	public static String STR_CODE_CAT_POSTE = "pcat";
+
+	public static String STR_CODE_CAT_AGENT = "cat";
+
+	public static String STR_NOM_AGENT = "nom";
+
+	public static String STR_PRENOM_AGENT = "pren";
+
+	public static String STR_PRISE_EN_COMPTE_COULEUR = "priseencomptecouleur";
+
+	public static String STR_INIT_CODEPERE = "00";
+
+	public static String STR_NB_FILS_TOTAL = "nbFilsTotal";
+
+	/** ************************************************************************* */
 
 	public static Integer getMaxRubrique()
 	{
@@ -426,4 +467,137 @@ public class ParameterUtil
 			return true;
 		return false;
 	}
+
+	/**
+	 * Invoke garbage collection.
+	 *
+	 */
+	public static void __invokeGarbageCollection()
+	{
+		try {
+//    		System.out.println("----------------Free memory size before-------" + ClsTools.__getFreeMemory());
+			Runtime _o_Hrm_Rtme = Runtime.getRuntime();
+			_o_Hrm_Rtme.gc();
+//    		System.out.println("----------------Free memory size after-------" + ClsTools.__getFreeMemory());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	public static String getPhotoPath(HttpServletRequest request, GeneriqueConnexionService service, String matricule, String dossier, String langue)
+	{
+		String relPath = "photos/";
+
+		// path = ClsConfigurationParameters.getConfigParameterValue(service, dossier, langue, ClsConfigurationParameters.CHEMIN_STOCKAGE_PHOTOS_SALARIE);
+
+		File file = new File(relPath);
+
+		// if(file.isAbsolute())
+		// return ClsAgent.getPhotoFromAbsolutePath(path, matricule);
+
+		String absPath = request.getSession().getServletContext().getRealPath("/"+relPath);
+		if (!absPath.endsWith(File.separator))
+			absPath += File.separator;
+
+		if (!relPath.endsWith(File.separator))
+			relPath += File.separator;
+
+		return getPath(absPath, relPath, matricule);
+	}
+
+	public static String getPhotoPath(String matricule, HttpServletRequest request)
+	{
+		GeneriqueConnexionService service = (GeneriqueConnexionService) request.getSession().getAttribute("oservice");
+		String strCodeDossier = ParameterUtil.getSessionObject(request, ParameterUtil.SESSION_DOSSIER);
+		String strCodeLangue = ParameterUtil.getSessionObject(request, ParameterUtil.SESSION_LANGUE);
+
+		return getPhotoPath(request, service, matricule, strCodeDossier, strCodeLangue);
+	}
+
+	// public static String getPhotoFromAbsolutePath(String absolutePath, String matricule)
+	// {
+	// if (!absolutePath.endsWith("\\"))
+	// absolutePath += "\\";
+	// return ClsAgent.getPath(absolutePath, matricule);
+	// }
+
+	public static String getPath(String path, String relPath, String matricule)
+	{
+		if (!showPhoto)
+			return relPath + "photoorg.gif";
+
+		if (1 == 1)
+		{
+			File file = new File(path);
+			final String debut = matricule;
+			File[] tf = file.listFiles(new FilenameFilter()
+			{
+
+				public boolean accept(File r, String n)
+				{
+					return n.startsWith(debut + ".");
+				}
+			});
+			if (tf==null || tf.length == 0)
+				return relPath + "photoorg.gif";
+
+			int indexOfFile = tf[0].getAbsolutePath().lastIndexOf(File.separator);
+			String fichierFinal = tf[0].getAbsolutePath().substring(indexOfFile + 1);
+			return "photos/" + fichierFinal;
+
+		}
+
+		String strPath = path + matricule + ".png";
+		String strRelPath = relPath + matricule + ".png";
+		File file = new File(strPath);
+		if (!file.exists())
+		{
+			strPath = path + matricule + ".gif";
+			strRelPath = relPath + matricule + ".gif";
+			file = new File(strPath);
+			if (!file.exists())
+			{
+				strPath = path + matricule + ".jpeg";
+				strRelPath = relPath + matricule + ".jpeg";
+				file = new File(strPath);
+				if (!file.exists())
+				{
+					strPath = path + matricule + ".jpg";
+					strRelPath = relPath + matricule + ".jpg";
+					file = new File(strPath);
+					if (!file.exists())
+					{
+						strPath = path + matricule + ".JPG";
+						strRelPath = relPath + matricule + ".JPG";
+						file = new File(strPath);
+						if (!file.exists())
+							strRelPath = relPath + "photoorg.gif";
+					}
+				}
+			}
+		}
+		try
+		{
+			System.out.println(file.getCanonicalPath());
+			System.out.println(file.getCanonicalFile());
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return strRelPath;
+	}
+
+	/**
+	 * Retourne le chemin réelle du dossier contenant l'application.<br>
+	 *
+	 * @param request l'{@link HttpServletRequest} courant
+	 * @return le chemin d'accès à l'application
+	 */
+	public static String getApplicationContextRealPath(HttpServletRequest request){
+//    	return request.getRealPath(CommonFunctions.CHEMIN_GENERATION_FILES);
+		return request.getSession().getServletContext().getRealPath("/"+ParameterUtil.CHEMIN_GENERATION_FILES);
+	}
+
 }

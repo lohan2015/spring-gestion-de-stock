@@ -549,7 +549,7 @@ public class CalculPaieServiceImpl implements CalculPaieService {
         }
         catch (Exception e)
         {
-
+            e.printStackTrace();
         }
 
         ClsGlobalUpdate globalUpdate = new ClsGlobalUpdate(request, service, centraservice, parameter, cdos, aamm, "0001", dto.user, nbul, new ClsDate(datecompta, dto.dateformat).getDate(), nddd, session,

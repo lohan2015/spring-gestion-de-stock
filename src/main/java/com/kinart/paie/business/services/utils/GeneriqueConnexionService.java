@@ -8,6 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.internal.SessionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.jpa.repository.Modifying;
@@ -41,6 +44,12 @@ public class GeneriqueConnexionService {
 
     public Session getSession(){
         return entityManager.unwrap(Session.class);
+    }
+
+    public Connection getConnection(){
+        //return entityManager.unwrap(Connection.class);
+        Session hibernateSession = this.entityManager.unwrap(Session.class);
+        return ((SessionImpl) hibernateSession).connection();
     }
 
     public void closeSession(Session session){
