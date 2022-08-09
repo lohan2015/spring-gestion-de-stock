@@ -2,6 +2,7 @@ package com.kinart.api.organisation.dto;
 
 import com.kinart.organisation.business.model.Orgniveauemploitype;
 import com.kinart.organisation.business.model.Orgposteinfo;
+import com.kinart.organisation.business.services.competence.CompetencePosteVO;
 import com.kinart.stock.business.model.AbstractEntity;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
@@ -56,6 +57,21 @@ public class PosteinfoDto {
         Orgposteinfo orgniveau = new Orgposteinfo();
         BeanUtils.copyProperties(dto, orgniveau);
         return orgniveau;
+    }
+
+    public static List<PosteinfoDto> fromCompetence(List<CompetencePosteVO> competences) {
+        if (competences == null) {
+            return null;
+        }
+
+        List<PosteinfoDto> dtos = new ArrayList<PosteinfoDto>();
+        for (CompetencePosteVO vo: competences) {
+            PosteinfoDto dto = new  PosteinfoDto();
+            BeanUtils.copyProperties(vo, dto);
+            dtos.add(dto);
+        }
+
+        return dtos;
     }
 
 }

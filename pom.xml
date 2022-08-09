@@ -237,6 +237,7 @@
 							<locations>
 								<location>com.kinart.api.gestiondestock.controller.api</location>
 								<location>com.kinart.api.gestiondepaie.controller.api</location>
+								<location>com.kinart.api.organisation.controller.api</location>
 							</locations>
 							<basePath>http://localhost:8081</basePath>
 							<info>

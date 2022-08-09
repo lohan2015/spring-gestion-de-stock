@@ -89,6 +89,21 @@ public class ComputeCompetencePosteVO implements Serializable
 		comp.setOmoyens(comp.getSortableList(liste));
 	}
 
+	public List<CompetencePosteVO> computeSavoir()
+	{
+		return this._loadInformationsMap(_getSavoirQueryString());
+	}
+
+	public List<CompetencePosteVO> computeSavoirEtre()
+	{
+		return this._loadInformationsMap(_getSavoirEtreQueryString());
+	}
+
+	public List<CompetencePosteVO> computeSavoirFaire()
+	{
+		return this._loadInformationsMap(_getSavoirFaireQueryString());
+	}
+
 	private String _getBeginQuery()
 	{
 		String queryString = "select competenceinfo.codeinfo1 as codeinfo1,competenceinfo.typeinfo as typeinfo,competenceinfo.codeinfo2 as codeinfo2, "
