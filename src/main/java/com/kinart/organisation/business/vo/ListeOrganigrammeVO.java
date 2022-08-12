@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.kinart.api.organisation.dto.RechercheListeOrganigrammeDto;
 import com.kinart.organisation.business.model.Organigramme;
 import com.kinart.paie.business.services.cloture.ClsNomenclature;
 import com.kinart.paie.business.services.utils.ClsResultat;
@@ -169,7 +170,7 @@ public class ListeOrganigrammeVO extends Organigramme
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<ListeOrganigrammeVO> buildListOfDataToDisplay(GeneriqueConnexionService service, RechercheListeOrganigrammeVO search, boolean showChildNumber)
+	public static List<ListeOrganigrammeVO> buildListOfDataToDisplay(GeneriqueConnexionService service, RechercheListeOrganigrammeDto search, boolean showChildNumber)
 	{
 		List<ListeOrganigrammeVO> listOfDataToDisplay = new ArrayList<ListeOrganigrammeVO>();
 		
@@ -252,7 +253,7 @@ public class ListeOrganigrammeVO extends Organigramme
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Map<String, Integer> buildMapOfChildNumber(GeneriqueConnexionService service, RechercheListeOrganigrammeVO search)
+	private static Map<String, Integer> buildMapOfChildNumber(GeneriqueConnexionService service, RechercheListeOrganigrammeDto search)
 	{
 		Map<String, Integer> map = new HashMap<String, Integer>();
 
@@ -285,7 +286,7 @@ public class ListeOrganigrammeVO extends Organigramme
 		return map;
 	}
 	
-	private static Map<String, Integer> buildMapOfTotalChildNumber(GeneriqueConnexionService service, RechercheListeOrganigrammeVO search)
+	private static Map<String, Integer> buildMapOfTotalChildNumber(GeneriqueConnexionService service, RechercheListeOrganigrammeDto search)
 	{
 		Map<String, Integer> map = new HashMap<String, Integer>();
 
@@ -320,7 +321,7 @@ public class ListeOrganigrammeVO extends Organigramme
 		return map;
 	}
 
-	private static String getQueryString(RechercheListeOrganigrammeVO search, String sites)
+	private static String getQueryString(RechercheListeOrganigrammeDto search, String sites)
 	{
 
 		String queryString = "Select a.*, b.libelle as libelleniveau, c.vall as libellesite, d.nmat as nmat, d.nom as nomagent, d.pren as prenomagent From Organigramme a ";
@@ -337,7 +338,7 @@ public class ListeOrganigrammeVO extends Organigramme
 		return queryString;
 	}
 
-	private static void setQueryParameters(Query query, RechercheListeOrganigrammeVO search)
+	private static void setQueryParameters(Query query, RechercheListeOrganigrammeDto search)
 	{
 		query.setParameter("nume1", 1, StandardBasicTypes.INTEGER);
 
@@ -346,7 +347,7 @@ public class ListeOrganigrammeVO extends Organigramme
 		setWhereParQueryParameters(query, search);
 	}
 
-	private static String getWherePart(RechercheListeOrganigrammeVO search, String queryString, boolean addGroupBy)
+	private static String getWherePart(RechercheListeOrganigrammeDto search, String queryString, boolean addGroupBy)
 	{
 		if (StringUtils.isNotBlank(search.code))
 			queryString += " and UPPER(a.codeorganigramme) like :code ";
@@ -374,7 +375,7 @@ public class ListeOrganigrammeVO extends Organigramme
 		return queryString;
 	}
 
-	private static void setWhereParQueryParameters(Query query, RechercheListeOrganigrammeVO search)
+	private static void setWhereParQueryParameters(Query query, RechercheListeOrganigrammeDto search)
 	{
 		query.setParameter("cdos", search.cdos, StandardBasicTypes.STRING);
 
@@ -399,7 +400,7 @@ public class ListeOrganigrammeVO extends Organigramme
 			query.setParameter("prestataire", search.prestataire.toUpperCase(), StandardBasicTypes.STRING);
 	}
 
-	private static String getCountChildQueryString(RechercheListeOrganigrammeVO search)
+	private static String getCountChildQueryString(RechercheListeOrganigrammeDto search)
 	{
 
 		String queryString = "Select count(b.codeorganigramme) as nombrefils, a.codeorganigramme as codeorg From Organigramme a ";
@@ -411,7 +412,7 @@ public class ListeOrganigrammeVO extends Organigramme
 		return queryString;
 	}
 	
-	private static String getCountTotalChildQueryString(RechercheListeOrganigrammeVO search)
+	private static String getCountTotalChildQueryString(RechercheListeOrganigrammeDto search)
 	{
 
 		String queryString = "Select count(b.codeorganigramme) as nombrefils, a.codeorganigramme as codeorg From Organigramme a ";
@@ -424,7 +425,7 @@ public class ListeOrganigrammeVO extends Organigramme
 		return queryString;
 	}
 	
-	private static String _getSites(GeneriqueConnexionService service,RechercheListeOrganigrammeVO search)
+	private static String _getSites(GeneriqueConnexionService service, RechercheListeOrganigrammeDto search)
 	{
 		//ClsAutorisationsUtilisateur auto = new ClsAutorisationsUtilisateur(search.cdos, search.cuti, "a", ClsTypeProfilAgent.COLONNES, service);
 

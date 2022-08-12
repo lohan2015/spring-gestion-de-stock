@@ -1,6 +1,6 @@
-package com.kinart.organisation.business.vo;
+package com.kinart.api.organisation.dto;
 
-public class RechercheListeOrganigrammeVO
+public class RechercheListeOrganigrammeDto
 {
 	public String libelle;
 
@@ -21,7 +21,7 @@ public class RechercheListeOrganigrammeVO
 	public String prestataire;
 		
 
-	public RechercheListeOrganigrammeVO(String cdos, String clang, String cuti)
+	public RechercheListeOrganigrammeDto(String cdos, String clang, String cuti)
 	{
 		super();
 		this.cdos = cdos;

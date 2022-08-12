@@ -44,7 +44,7 @@ public interface PosteinfoApi {
     })
     ResponseEntity<List<PosteinfoDto>> findAll(@RequestParam("codedossier") String codeDossier);
 
-    @GetMapping(value = APP_ROOT_PAIE + "/posteinfo/allposteinfo", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = APP_ROOT_PAIE + "/posteinfo/posteinfobytype", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Renvoi la liste des niveaux", notes = "Cette methode permet de chercher et renvoyer la liste des posteinfos qui existent "
             + "dans la BDD", responseContainer = "List<PosteinfoDto>")
     @ApiResponses(value = {

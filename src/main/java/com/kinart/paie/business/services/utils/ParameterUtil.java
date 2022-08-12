@@ -110,6 +110,25 @@ public class ParameterUtil
 
 	/** ************************************************************************* */
 
+	public static String _STR_CONFIRMATION_DELETE = "<table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px' width='100%' bordercolor='#00FF99' bgcolor='#D9FFFF'><tr><td><span style='color: #00FF99; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight:bold'><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Suppression effectuée avec succè!</p></span></td></tr></table>";
+	public static String _STR_CONFIRMATION_DESAFFECTATION = "<table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px' width='100%' bordercolor='#00FF99' bgcolor='#D9FFFF'><tr><td><span style='color: #00FF99; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight:bold'><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DESAFFECTATION effectuée avce succès!</p></span></td></tr></table>";
+	public static String _STR_ERROR_DELETE = "<table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px' width='100%' bordercolor='#CC3333' bgcolor='#FFCBB3'><tr><td><span style='color: red; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight:bold'><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color: red'><p>Echec de la suppression!</p></span></td></tr></table>";
+	public static String _STR_CONFIRMATION_SAVE = "<table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px' width='100%' bordercolor='#00FF99' bgcolor='#D9FFFF'><tr><td><span style='color: #00FF99; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight:bold'><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sauvegarde effectuée avec succès!</p></span></td></tr></table>";
+	public static String _STR_CONFIRMATION_START = "<table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px' width='100%' bordercolor='#00FF99' bgcolor='#D9FFFF'><tr><td><span style='color: #00FF99; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight:bold'><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	public static String _STR_CONFIRMATION_START_1 = "<table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px;font-size: 9px' width='100%'  bgcolor='#D9FFFF';><tr><td nowrap='nowrap'><span style='color: #6e6e6e; font-family: Verdana; font-weight:bold'><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	public static String _STR_CONFIRMATION_END = "</p></span></td></tr></table>";
+	public static String _STR_ERROR_SAVE = "<table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px' width='100%' bordercolor='#CC3333' bgcolor='#FFCBB3'><tr><td><span style='color: red; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight:bold'><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color: red; font-weight:bold'><p>Echec de la sauvegarde!</p></span></td></tr></table>";
+	public static String _STR_ERROR_SAVE_DATE = "<br /><table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px' width='100%' bordercolor='#CC3333' bgcolor='#FFCBB3'><tr><td><span style='color: red; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight:bold'><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color: red; font-weight:bold'><p>Vérifier aussi que les dates théoriques des objectifs spécifiques sont contenues dans l'intervalle de dates de l'objectif global. <br />Voici les dates : début début théorique %s et date fin théorique %s</p></span></td></tr></table>";
+	private static String _STR_ERROR_ELT_START = "<tr><td><span style='color: red; font-family: Verdana, Arial, Helvetica, sans-serif'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<li>";
+	private static String _STR_ERROR_ELT_CLOSE = "</li></span></td></tr>";
+	//private static String _STR_ERROR_START = "<table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px' width='100%' bordercolor='#CC3333' bgcolor='#FFCBB3'><tr><td><span style='color: red; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight:bold'><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Veillez corriger les erreurs suivantes:</p></span></td></tr>";
+	//private static String _STR_ERROR_START_ = "<table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px' width='100%' bordercolor='#CC3333' bgcolor='#FFCBB3'><tr><td><span style='color: red; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight:bold'><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Veillez corriger les erreurs suivantes:<br>";
+	private static String _STR_ERROR_START_ = "<table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px' width='100%' bordercolor='#CC3333' bgcolor='#FFCBB3'><tr><td><span style='color: red; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight:bold'><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>";
+	//private static String _STR_ERROR_CLOSE = "</table>";
+	private static String _STR_ERROR_CLOSE_ = "</p></span></td></tr></table>";
+	public static String _STR_ERROR_SAVE2 = "<table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px' width='100%' bordercolor='#CC3333' bgcolor='#FFCBB3'><tr><td><span style='color: red; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight:bold'><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color: red; font-weight:bold'><p>Echec de la sauvegarde! Le participant est déja inscrit à une session concurrente.</p></span></td></tr></table>";
+
+
 	public static Integer getMaxRubrique()
 	{
 		String n="";
@@ -598,6 +617,16 @@ public class ParameterUtil
 	public static String getApplicationContextRealPath(HttpServletRequest request){
 //    	return request.getRealPath(CommonFunctions.CHEMIN_GENERATION_FILES);
 		return request.getSession().getServletContext().getRealPath("/"+ParameterUtil.CHEMIN_GENERATION_FILES);
+	}
+
+	public static String __getConfirmationMsg(String _strMessage)
+	{
+		return _STR_CONFIRMATION_START + _strMessage + _STR_CONFIRMATION_END;
+	}
+
+	public static String __getConfirmationMsg2(String _strMessage)
+	{
+		return _STR_CONFIRMATION_START_1 + _strMessage + _STR_CONFIRMATION_END;
 	}
 
 }

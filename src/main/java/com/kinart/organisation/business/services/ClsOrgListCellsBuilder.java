@@ -1107,7 +1107,7 @@ public class ClsOrgListCellsBuilder
 
 		}
 
-		Collections.sort(fils, new ClsGenericComparator(ClsOrgCellule.class, "comp_id.codeorganigramme", "ASC"));
+		Collections.sort(fils, new ClsGenericComparator(ClsOrgCellule.class, "codeorganigramme", "ASC"));
 
 		return fils;
 	}

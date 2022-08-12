@@ -119,7 +119,8 @@ public class ClsOrgCellsExtract implements ICellsDesigner
 		}
 		
 		genererFicierExcel(cellules, appRealPath);
-		return appUrlPath;
+		//return appUrlPath;
+		return appRealPath;
 	}
 	
 	private void genererFicierExcel(List<ClsOrgCellule> cellules, String appRealPath) throws Exception{
