@@ -18,6 +18,9 @@ public class ParametreOrganigrammeDto {
     /** The site. */
     private String site;
 
+    /** The dossier. */
+    private String dossier = "45";
+
     /** The niveau arrive. */
     private String niveauArrive;
 

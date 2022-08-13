@@ -15,7 +15,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NiveauDto {
-
+    private Integer id;
     private Integer idEntreprise;
     private String codeniveau;
     private String libelle;

@@ -14,4 +14,8 @@ public interface OrganigrammeService {
     List<OrganigrammeDto> findAll(RechercheListeOrganigrammeDto search);
 
     void delete(String codeOrganigramme);
+
+    boolean isCelluleExist(String codeOrganigramme);
+
+    String getPossibilites(String codePere);
 }

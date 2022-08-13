@@ -5,7 +5,9 @@ import com.kinart.organisation.business.model.Organigramme;
 import com.kinart.organisation.business.repository.OrganigrammeRepository;
 import com.kinart.organisation.business.services.OrganigrammeService;
 import com.kinart.api.organisation.dto.RechercheListeOrganigrammeDto;
+import com.kinart.paie.business.model.ParamData;
 import com.kinart.paie.business.services.cloture.ClsNomenclature;
+import com.kinart.paie.business.services.utils.ClsStringUtil;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.paie.business.services.utils.TypeBDUtil;
 import com.kinart.stock.business.exception.EntityNotFoundException;
@@ -168,6 +170,57 @@ public class OrganigrammeImpl implements OrganigrammeService {
         }
     }
 
+    @Override
+    public boolean isCelluleExist(String codeOrganigramme) {
+        List<Organigramme> listeCellules = repository.findCelluleByCode(codeOrganigramme);
+        if(listeCellules!=null && listeCellules.size()>=1)return true;
+        return false;
+    }
+
+    @Override
+    public String getPossibilites(String codePere) {
+        ParamData data = null;
+        int nbr = 0;
+        List<ParamData> list = service.find("from ParamData " + " where ctab=266 and nume=2 and cacc='FCNOTUSED'");
+        if (list != null && list.size() > 0)
+        {
+            data = list.get(0);
+            nbr = Integer.parseInt(data.getVall());
+        }
+        List<String> posibilites = new ArrayList<String>();
+        List<String> posibilitesend = new ArrayList<String>();
+        for(int i=1; i< 100; i++)
+            posibilites.add(ClsStringUtil.formatNumber(i, "00"));
+
+        String numerovide = StringUtils.EMPTY;
+        List<Organigramme> listeCellules = repository.findCellulePereByCode(codePere);
+        //if(listeCellules!=null && listeCellules.size()>=0){
+            String codeorg;
+            for (Organigramme org : listeCellules)
+            {
+                codeorg = StringUtils.substring( org.getCodeorganigramme(), codePere.length());
+                posibilitesend.add(codeorg);
+            }
+
+            int j = 0;
+            for(int i=1; i< 100; i++)
+            {
+                codeorg = posibilites.get(i - 1);
+                if(posibilitesend.contains(codeorg))
+                    continue;
+                j++;
+                if(StringUtils.isBlank(numerovide))
+                    numerovide = String.valueOf(Integer.parseInt(codeorg));
+                else
+                    numerovide +=","+ String.valueOf(Integer.parseInt(codeorg));
+
+                if(j % nbr == 0)
+                    break;
+            }
+        //}
+        return numerovide;
+    }
+
     private String getQueryString(RechercheListeOrganigrammeDto search)
     {
 
@@ -248,8 +301,8 @@ public class OrganigrammeImpl implements OrganigrammeService {
     {
 
         String queryString = "Select count(b.codeorganigramme) as nombrefils, a.codeorganigramme as codeorg From Organigramme a ";
-        queryString += " Left join Organigramme b on a.cdos=b.cdos and b.codepere = a.codeorganigramme ";
-        queryString += " Where a.cdos = :cdos ";
+        queryString += " Left join Organigramme b on a.identreprise=b.identreprise and b.codepere = a.codeorganigramme ";
+        queryString += " Where a.identreprise = :cdos ";
 
         queryString = getWherePart(search, queryString, true);
 

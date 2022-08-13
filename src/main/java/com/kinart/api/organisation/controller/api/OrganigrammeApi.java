@@ -38,7 +38,7 @@ public interface OrganigrammeApi {
     })
     ResponseEntity<OrganigrammeDto> findById(@PathVariable("id") Integer id);
 
-    @GetMapping(value = APP_ROOT_PAIE + "/organigramme/allorganigramme", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PostMapping(value = APP_ROOT_PAIE + "/organigramme/allorganigramme", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Renvoi la liste des organigrammex", notes = "Cette methode permet de chercher et renvoyer la liste des organigrammes qui existent "
             + "dans la BDD", responseContainer = "List<OrganigrammeDto>")
     @ApiResponses(value = {
@@ -60,4 +60,21 @@ public interface OrganigrammeApi {
             @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
     })
     ResponseEntity<ResultatDessinOrganigrammeDto> dessinerOrganigramme(@RequestBody ParametreOrganigrammeDto dto, HttpServletRequest request, HttpServletResponse response);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/organigramme/existcellule", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Vérifier l'existence d'une cellule", notes = "Cette methode permet de chercher et renvoyer la liste des organigrammes qui existent "
+            + "dans la BDD")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    boolean existCellule(@RequestParam("codeorganigramme") String codeorganigramme);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/organigramme/possibilite", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Lecture des possibilités de création d'une cellule", notes = "Cette methode permet de chercher et renvoyer la liste des organigrammes qui existent "
+            + "dans la BDD")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    String getPossibilites(@RequestParam("codepere")  String codepere);
+
 }

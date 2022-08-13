@@ -160,6 +160,16 @@ public class OrganigrammeController implements OrganigrammeApi {
         return ResponseEntity.ok(result);
     }
 
+    @Override
+    public boolean existCellule(String codeorganigramme) {
+        return organigrammeService.isCelluleExist(codeorganigramme);
+    }
+
+    @Override
+    public String getPossibilites(String codepere) {
+        return organigrammeService.getPossibilites(codepere);
+    }
+
     private void genererOrganigramme(){
         try {
 

@@ -18,6 +18,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrganigrammeDto {
+    private Integer id;
     private Integer idEntreprise;
     private String codeorganigramme;
     private String libelle;

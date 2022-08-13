@@ -23,7 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PosteDto {
-
+    private Integer id;
     private Integer idEntreprise;
     private String codeposte;
     private String codeorganigramme;
