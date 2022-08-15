@@ -1,6 +1,6 @@
 package com.kinart.api.organisation.controller.api;
 
-import com.kinart.api.organisation.dto.PosteDto;
+import com.kinart.api.organisation.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -55,4 +55,44 @@ public interface PosteApi {
             @ApiResponse(code = 200, message = "L'élément a ete supprime")
     })
     void delete(@RequestParam("id") Integer id);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/poste/popupmetier", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Renvoi la liste des postes", notes = "Cette methode permet de chercher et renvoyer la liste des postes qui existent "
+            + "dans la BDD", responseContainer = "List<PosteDto>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    ResponseEntity<List<ElementDto>> findMetierDataPopup(@RequestParam("codedossier") String codeDossier);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/poste/popupposte", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Renvoi la liste des postes", notes = "Cette methode permet de chercher et renvoyer la liste des postes qui existent "
+            + "dans la BDD", responseContainer = "List<ElementDto>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    ResponseEntity<List<ElementDto>> findPosteDataPopup(@RequestParam("codedossier") String codeDossier);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/poste/occupation", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Renvoi la liste des postes", notes = "Cette methode permet de chercher et renvoyer la liste des postes qui existent "
+            + "dans la BDD", responseContainer = "List<OccupationPosteDto>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    ResponseEntity<List<OccupationPosteDto>> historiqueOccupation(@RequestBody RecherchePosteDto dto);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/poste/procedures", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Renvoi la liste des postes", notes = "Cette methode permet de chercher et renvoyer la liste des postes qui existent "
+            + "dans la BDD", responseContainer = "List<PosteinfoDto>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    ResponseEntity<List<PosteinfoDto>> loadProcedures(@RequestBody RecherchePosteDto dto);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/poste/poids", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Renvoi la liste des postes", notes = "Cette methode permet de chercher et renvoyer la liste des postes qui existent "
+            + "dans la BDD", responseContainer = "List<PosteinfoDto>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    ResponseEntity<List<PosteinfoDto>> loadPoids(@RequestBody RecherchePosteDto dto);
 }

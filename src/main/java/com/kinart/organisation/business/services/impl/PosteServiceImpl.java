@@ -108,11 +108,21 @@ public class PosteServiceImpl implements PosteService {
 
         try {
             Session session = service.getSession();
-            javax.persistence.Query query  = session.createSQLQuery(queryString)
+            Query query  = session.createSQLQuery(queryString)
                     .addEntity("a", Orgposte.class)
                     .addScalar("libellefiliere", StandardBasicTypes.STRING).addScalar("libellespecialite", StandardBasicTypes.STRING)
                     .addScalar("libelleorganigramme", StandardBasicTypes.STRING)
                     .addScalar("organigramme2", StandardBasicTypes.STRING).addScalar("libelleemploitype", StandardBasicTypes.STRING);
+
+            query.setParameter("nume1", 1, StandardBasicTypes.INTEGER);
+            query.setParameter("ctab1", Integer.parseInt(ClsNomenclature.FILIERE), StandardBasicTypes.INTEGER);
+            query.setParameter("ctab2", Integer.parseInt(ClsNomenclature.SPECIALITE), StandardBasicTypes.INTEGER);
+            query.setParameter("ctab3", Integer.parseInt(ClsNomenclature.CATEGORIE), StandardBasicTypes.INTEGER);
+            query.setParameter("ctab4", Integer.parseInt(ClsNomenclature.NIVEAU1), StandardBasicTypes.INTEGER);
+            query.setParameter("ctab5", Integer.parseInt(ClsNomenclature.NIVEAU2), StandardBasicTypes.INTEGER);
+            query.setParameter("ctab6", Integer.parseInt(ClsNomenclature.NIVEAU3), StandardBasicTypes.INTEGER);
+            query.setParameter("ctab7", Integer.parseInt(ClsNomenclature.SITE_TRAVAIL), StandardBasicTypes.INTEGER);
+
 
             List<Object[]> lst = query.getResultList();
             service.closeSession(session);
@@ -156,11 +166,20 @@ public class PosteServiceImpl implements PosteService {
 
         try {
             Session session = service.getSession();
-            javax.persistence.Query query  = session.createSQLQuery(queryString)
+            Query query  = session.createSQLQuery(queryString)
                     .addEntity("a", Orgposte.class)
                     .addScalar("libellefiliere", StandardBasicTypes.STRING).addScalar("libellespecialite", StandardBasicTypes.STRING)
                     .addScalar("libelleorganigramme", StandardBasicTypes.STRING)
                     .addScalar("organigramme2", StandardBasicTypes.STRING).addScalar("libelleemploitype", StandardBasicTypes.STRING);
+
+            query.setParameter("nume1", 1, StandardBasicTypes.INTEGER);
+            query.setParameter("ctab1", Integer.parseInt(ClsNomenclature.FILIERE), StandardBasicTypes.INTEGER);
+            query.setParameter("ctab2", Integer.parseInt(ClsNomenclature.SPECIALITE), StandardBasicTypes.INTEGER);
+            query.setParameter("ctab3", Integer.parseInt(ClsNomenclature.CATEGORIE), StandardBasicTypes.INTEGER);
+            query.setParameter("ctab4", Integer.parseInt(ClsNomenclature.NIVEAU1), StandardBasicTypes.INTEGER);
+            query.setParameter("ctab5", Integer.parseInt(ClsNomenclature.NIVEAU2), StandardBasicTypes.INTEGER);
+            query.setParameter("ctab6", Integer.parseInt(ClsNomenclature.NIVEAU3), StandardBasicTypes.INTEGER);
+            query.setParameter("ctab7", Integer.parseInt(ClsNomenclature.SITE_TRAVAIL), StandardBasicTypes.INTEGER);
 
             List<Object[]> lst = query.getResultList();
             service.closeSession(session);
