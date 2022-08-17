@@ -104,9 +104,29 @@ public class ComputeCompetencePosteVO implements Serializable
 		return this._loadInformationsMap(_getSavoirFaireQueryString());
 	}
 
+	public List<CompetencePosteVO> computeFonction()
+	{
+		return this._loadInformationsMap(_getFonctionQueryString());
+	}
+
+	public List<CompetencePosteVO> computeLanguage()
+	{
+		return this._loadInformationsMap(_getLangueQueryString());
+	}
+
+	public List<CompetencePosteVO> computeDiplome()
+	{
+		return this._loadInformationsMap(_getGenericQueryString("diplome", ClsTypeCompetence.DIPLOME, ClsNomenclature.DIPLOME));
+	}
+
+	public List<CompetencePosteVO> computeFormation()
+	{
+		return this._loadInformationsMap(_getGenericQueryString("formation", ClsTypeCompetence.FORMATION, ClsNomenclature.FORMATION));
+	}
+
 	private String _getBeginQuery()
 	{
-		String queryString = "select competenceinfo.codeinfo1 as codeinfo1,competenceinfo.typeinfo as typeinfo,competenceinfo.codeinfo2 as codeinfo2, "
+		String queryString = "select competenceinfo.id as identifiant, competenceinfo.codeinfo1 as codeinfo1,competenceinfo.typeinfo as typeinfo,competenceinfo.codeinfo2 as codeinfo2, "
 				+ "competenceinfo.codeinfo3 as codeinfo3, competenceinfo.valminfo1 as valminfo1, competenceinfo.coeff as coef ";
 
 		return queryString;
@@ -320,7 +340,7 @@ public class ComputeCompetencePosteVO implements Serializable
 
 		CompetencePosteVO _o_Data = null;
 
-		Session _o_Session = comp.service.getSession();
+		//Session _o_Session = comp.service.getSession();
 		String typeinfo = null;
 		Connection oConnexion = null;
 		Statement oStatement = null;
@@ -329,7 +349,7 @@ public class ComputeCompetencePosteVO implements Serializable
 		try
 		{
 
-			_o_Session = comp.service.getSession();
+			//_o_Session = comp.service.getSession();
 			oConnexion = comp.service.getConnection();
 			oStatement = oConnexion.createStatement();
 			_o_Result = oStatement.executeQuery(queryString);
@@ -340,6 +360,7 @@ public class ComputeCompetencePosteVO implements Serializable
 				{
 
 					_o_Data = new CompetencePosteVO();
+					_o_Data.setId(_o_Result.getBigDecimal("identifiant").intValue());
 					typeinfo = _o_Result.getString("typeinfo");
 
 					if (typeinfo.equalsIgnoreCase(ClsTypeCompetence.FORMATION))
@@ -470,10 +491,10 @@ public class ComputeCompetencePosteVO implements Serializable
 					_o_Result.close();
 				if (oStatement != null)
 					oStatement.close();
-				if (oConnexion != null)
-					oConnexion.close();
-				if (_o_Session != null)
-					_o_Session.close();
+				//if (oConnexion != null)
+					//oConnexion.close();
+				//if (_o_Session != null)
+					//_o_Session.close();
 			}
 			catch (Exception e)
 			{

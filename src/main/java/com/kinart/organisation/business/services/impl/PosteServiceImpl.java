@@ -234,8 +234,8 @@ public class PosteServiceImpl implements PosteService {
         query += "Left join ParamData niv1 on (dossier.identreprise=niv1.identreprise and niv1.nume=1 and niv1.cacc='" + pt.getNiv1() + "' and niv1.ctab=" + ClsNomenclature.NIVEAU1 + ") ";
         query += "Left join ParamData niv2 on (dossier.identreprise=niv2.identreprise and niv2.nume=1 and niv2.cacc='" + pt.getNiv2() + "' and niv2.ctab=" + ClsNomenclature.NIVEAU2 + ") ";
         query += "Left join ParamData niv3 on (dossier.identreprise=niv3.identreprise and niv3.nume=1 and niv3.cacc='" + pt.getNiv3() + "' and niv3.ctab=" + ClsNomenclature.NIVEAU3 + ") ";
-        query += "Left join Rhtorganigramme org on (dossier.identreprise=org.identreprise and org.codeposte='" + pt.getCodeposte() + "' ) ";
-        query += "Left join Rhtposte emptyp on (dossier.identreprise=emptyp.identreprise and emptyp.fonc is null and emptyp.codeposte='" + StringUtil.nvl(pt.getFonc(),"null") + "' ) ";
+        query += "Left join Organigramme org on (dossier.identreprise=org.identreprise and org.codeposte='" + pt.getCodeposte() + "' ) ";
+        query += "Left join Orgposte emptyp on (dossier.identreprise=emptyp.identreprise and emptyp.fonc is null and emptyp.codeposte='" + StringUtil.nvl(pt.getFonc(),"null") + "' ) ";
         query += "Where dossier.identreprise='" + pt.getIdEntreprise() + "' ";
 
         List<Object[]> liste = null;
@@ -306,10 +306,10 @@ public class PosteServiceImpl implements PosteService {
 
     private void loadHierarchie(PosteDto pt)
     {
-        String query = "select org1.libelle lib1, org2.libelle lib2, org3.libelle lib3 from rhtorganigramme org1 ";
+        String query = "select org1.libelle lib1, org2.libelle lib2, org3.libelle lib3 from Organigramme org1 ";
         query += "left join Organigramme org2 on (org1.identreprise=org2.identreprise and org1.codepere=org2.codeorganigramme) ";
         query += "left join Organigramme org3 on (org2.identreprise=org3.identreprise and org2.codepere=org3.codeorganigramme)";
-        query += "where org1.identreprise='"+pt.getIdEntreprise()+"' and org1.codeposte='"+pt.getCodeposte()+"'";
+        query += " where org1.identreprise='"+pt.getIdEntreprise()+"' and org1.codeposte='"+pt.getCodeposte()+"'";
 
         try
         {

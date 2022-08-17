@@ -44,7 +44,7 @@ public interface PosteinfoApi {
     })
     ResponseEntity<List<PosteinfoDto>> findAll(@RequestParam("codedossier") String codeDossier);
 
-    @GetMapping(value = APP_ROOT_PAIE + "/posteinfo/posteinfobytype", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PostMapping(value = APP_ROOT_PAIE + "/posteinfo/posteinfobytype", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Renvoi la liste des niveaux", notes = "Cette methode permet de chercher et renvoyer la liste des posteinfos qui existent "
             + "dans la BDD", responseContainer = "List<PosteinfoDto>")
     @ApiResponses(value = {
@@ -58,4 +58,12 @@ public interface PosteinfoApi {
             @ApiResponse(code = 200, message = "L'élément a ete supprime")
     })
     void delete(@RequestParam("id") Integer id);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/posteinfo/getnextid", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Renvoi la liste des niveaux", notes = "Cette methode permet de chercher et renvoyer la liste des posteinfos qui existent "
+            + "dans la BDD")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    Integer findNextSkillId(@RequestParam("codedossier") String codeDossier);
 }

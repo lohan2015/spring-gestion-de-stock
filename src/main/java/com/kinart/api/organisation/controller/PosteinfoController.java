@@ -1,6 +1,7 @@
 package com.kinart.api.organisation.controller;
 
 import com.kinart.api.organisation.controller.api.PosteinfoApi;
+import com.kinart.api.organisation.dto.ElementDto;
 import com.kinart.api.organisation.dto.PosteinfoDto;
 import com.kinart.api.organisation.dto.RechercheCompetenceDto;
 import com.kinart.organisation.business.services.PosteinfoService;
@@ -12,12 +13,16 @@ import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,6 +87,30 @@ public class PosteinfoController implements PosteinfoApi {
                 ComputeCompetencePosteVO compute = new ComputeCompetencePosteVO(header);
                 return ResponseEntity.ok(PosteinfoDto.fromCompetence(compute.computeSavoirFaire()));
 
+            } else if(ClsTypeCompetence.FORMATION.equalsIgnoreCase(dto.getTypeinfo())){
+
+                CompetencesPosteVO header = new CompetencesPosteVO(request, generiqueConnexionService, dto.getCodeposte(), dto.getCodedossier(), null);
+                ComputeCompetencePosteVO compute = new ComputeCompetencePosteVO(header);
+                return ResponseEntity.ok(PosteinfoDto.fromCompetence(compute.computeFormation()));
+
+            } else if(ClsTypeCompetence.FONCTION.equalsIgnoreCase(dto.getTypeinfo())){
+
+                CompetencesPosteVO header = new CompetencesPosteVO(request, generiqueConnexionService, dto.getCodeposte(), dto.getCodedossier(), null);
+                ComputeCompetencePosteVO compute = new ComputeCompetencePosteVO(header);
+                return ResponseEntity.ok(PosteinfoDto.fromCompetence(compute.computeFonction()));
+
+            } else if(ClsTypeCompetence.DIPLOME.equalsIgnoreCase(dto.getTypeinfo())){
+
+                CompetencesPosteVO header = new CompetencesPosteVO(request, generiqueConnexionService, dto.getCodeposte(), dto.getCodedossier(), null);
+                ComputeCompetencePosteVO compute = new ComputeCompetencePosteVO(header);
+                return ResponseEntity.ok(PosteinfoDto.fromCompetence(compute.computeDiplome()));
+
+            } else if(ClsTypeCompetence.LANGUE.equalsIgnoreCase(dto.getTypeinfo())){
+
+                CompetencesPosteVO header = new CompetencesPosteVO(request, generiqueConnexionService, dto.getCodeposte(), dto.getCodedossier(), null);
+                ComputeCompetencePosteVO compute = new ComputeCompetencePosteVO(header);
+                return ResponseEntity.ok(PosteinfoDto.fromCompetence(compute.computeLanguage()));
+
             }
         }
 
@@ -91,5 +120,27 @@ public class PosteinfoController implements PosteinfoApi {
     @Override
     public void delete(Integer id) {
         service.delete(id);
+    }
+
+    @Override
+    public Integer findNextSkillId(String codeDossier) {
+        String queryString = "Select max(id)+1 ";
+        queryString+=" From Orgposteinfo ";
+        queryString += " Where identreprise = '"+codeDossier+"'";
+
+        try {
+            Session session = generiqueConnexionService.getSession();
+            Query query  = session.createSQLQuery(queryString);
+
+            List list = query.list();
+            generiqueConnexionService.closeSession(session);
+
+           if(list==null && list.size()>=1) return new Integer(((BigDecimal)list.get(0)).intValue());
+
+        } catch (Exception e){
+            throw e;
+        }
+
+        return new Integer(1);
     }
 }
