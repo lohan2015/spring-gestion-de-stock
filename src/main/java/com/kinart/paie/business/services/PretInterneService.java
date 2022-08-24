@@ -2,7 +2,6 @@ package com.kinart.paie.business.services;
 
 import com.kinart.api.gestiondepaie.dto.ElementSalaireDto;
 import com.kinart.api.gestiondepaie.dto.PretInterneDto;
-import com.kinart.api.gestiondepaie.dto.VirementSalarieDto;
 
 import java.util.List;
 

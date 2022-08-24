@@ -1,7 +1,6 @@
 package com.kinart.api.gestiondepaie.dto;
 
 import com.kinart.paie.business.model.PretExterneEntete;
-import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kinart.paie.business.services.utils.HibernateConnexionService;
 import io.swagger.annotations.ApiModel;

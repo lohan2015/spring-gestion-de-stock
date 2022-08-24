@@ -1,10 +1,8 @@
 package com.kinart.api.organisation.controller;
 
 import com.kinart.api.organisation.controller.api.NiveauETApi;
-import com.kinart.api.organisation.dto.NiveauDto;
 import com.kinart.api.organisation.dto.NiveauemploitypeDto;
 import com.kinart.organisation.business.services.NiveauEmploitypeService;
-import com.kinart.organisation.business.services.NiveauService;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import org.springframework.beans.factory.annotation.Autowired;

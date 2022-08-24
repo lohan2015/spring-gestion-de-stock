@@ -1,17 +1,9 @@
 package com.kinart.api.organisation.dto;
 
-import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
-import com.kinart.api.gestiondestock.dto.AdresseDto;
 import com.kinart.organisation.business.model.Orgposte;
-import com.kinart.paie.business.model.CalculPaie;
-import com.kinart.stock.business.model.AbstractEntity;
-import com.kinart.stock.business.model.Adresse;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.util.ArrayList;

@@ -124,6 +124,11 @@ public class ComputeCompetencePosteVO implements Serializable
 		return this._loadInformationsMap(_getGenericQueryString("formation", ClsTypeCompetence.FORMATION, ClsNomenclature.FORMATION));
 	}
 
+	public List<CompetencePosteVO> computeTache()
+	{
+		return this._loadInformationsMap(_getTacheQueryString());
+	}
+
 	private String _getBeginQuery()
 	{
 		String queryString = "select competenceinfo.id as identifiant, competenceinfo.codeinfo1 as codeinfo1,competenceinfo.typeinfo as typeinfo,competenceinfo.codeinfo2 as codeinfo2, "

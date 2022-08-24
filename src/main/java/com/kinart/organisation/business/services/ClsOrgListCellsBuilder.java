@@ -9,7 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
+import com.kinart.organisation.business.model.Organigramme;
 import com.kinart.organisation.business.vo.ClsParametreOrganigrammeVO;
+import com.kinart.paie.business.model.CalculPaie;
 import com.kinart.paie.business.services.cloture.ClsNomenclature;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.paie.business.services.utils.ParameterUtil;
@@ -17,6 +20,11 @@ import com.kinart.paie.business.services.utils.StringUtil;
 import com.kinart.utils.ClsGenericComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
+import org.hibernate.type.StandardBasicTypes;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.persistence.Query;
 
 public class ClsOrgListCellsBuilder
 {
@@ -111,37 +119,47 @@ public class ClsOrgListCellsBuilder
 
 		strSQLNbFils = strSQLNbFils + " group by rhorg.codeorganigramme,rhorg.codepere";
 		strSQLNbFils = strSQLNbFils + " ORDER BY Rhorg.codepere, Rhorg.codeorganigramme ASC";
-		Session _oSession = null;
-		Connection oConnexion = null;
-		Statement oStatement = null;
-		ResultSet oRsCell = null;
+//		Session _oSession = null;
+//		Connection oConnexion = null;
+//		Statement oStatement = null;
+//		ResultSet oRsCell = null;
 		try
 		{
 			System.out.println("Query for counting = "+strSQLNbFils);
 			ParameterUtil.println("---------- SQLNbFils for FlowChart :" + strSQLNbFils);
-			_oSession = this.getService().getSession();
-			oConnexion = this.getService().getConnection();
-			oStatement = oConnexion.createStatement();
-			oRsCell = oStatement.executeQuery(strSQLNbFils);
 
-			if (oRsCell == null)
-				return null;
-
-			while (oRsCell.next())
+			Session session = service.getSession();
+			org.hibernate.Query q = session.createSQLQuery(strSQLNbFils);
+			List<Object[]> liste = q.list();
+			service.closeSession(session);
+			for (Object[] obj : liste)
 			{
-				try
-				{
-
-					oResultCellCollection.put(oRsCell.getString(ParameterUtil.STR_CODEORGANIGRAMME), oRsCell.getInt(ParameterUtil.STR_NB_FILS_TOTAL));
-
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-					ParameterUtil.println(ex.getMessage());
-					continue;
-				}
+				oResultCellCollection.put((String) obj[1], Integer.parseInt((obj[0].toString())));
 			}
+
+			//_oSession = this.getService().getSession();
+//			oConnexion = this.getService().getConnection();
+//			oStatement = oConnexion.createStatement();
+//			oRsCell = oStatement.executeQuery(strSQLNbFils);
+//
+//			if (oRsCell == null)
+//				return null;
+//
+//			while (oRsCell.next())
+//			{
+//				try
+//				{
+//
+//					oResultCellCollection.put(oRsCell.getString(ParameterUtil.STR_CODEORGANIGRAMME), oRsCell.getInt(ParameterUtil.STR_NB_FILS_TOTAL));
+//
+//				}
+//				catch (Exception ex)
+//				{
+//					ex.printStackTrace();
+//					ParameterUtil.println(ex.getMessage());
+//					continue;
+//				}
+//			}
 
 			// this.getService().closeConnexion(_oSession);
 			return oResultCellCollection;
@@ -156,14 +174,14 @@ public class ClsOrgListCellsBuilder
 			ParameterUtil.__invokeGarbageCollection();
 			try
 			{
-				if (oRsCell != null)
-					oRsCell.close();
-				if (oStatement != null)
-					oStatement.close();
-				if (oConnexion != null)
-					oConnexion.close();
-				if (_oSession != null)
-					_oSession.close();
+//				if (oRsCell != null)
+//					oRsCell.close();
+//				if (oStatement != null)
+//					oStatement.close();
+//				if (oConnexion != null)
+//					oConnexion.close();
+//				if (_oSession != null)
+//					_oSession.close();
 			}
 			catch (Exception e)
 			{
@@ -201,31 +219,44 @@ public class ClsOrgListCellsBuilder
 		{
 
 			ParameterUtil.println("---------- SQLNb Prestataires for FlowChart :" + strSQLNbFils);
-			_oSession = this.getService().getSession();
-			oConnexion = this.getService().getConnection();
-			oStatement = oConnexion.createStatement();
-			oRsCell = oStatement.executeQuery(strSQLNbFils);
+			Session session = service.getSession();
+			org.hibernate.Query q = session.createSQLQuery(strSQLNbFils);
+			List<Object[]> liste = q.list();
+			service.closeSession(session);
 			Integer effectif = 0;
-			if (oRsCell == null)
-				return null;
-
-			while (oRsCell.next())
+			for (Object[] obj : liste)
 			{
-				try
-				{
-					effectif = oRsCell.getInt(ParameterUtil.STR_NB_FILS_TOTAL);
-					if (effectif == null)
-						effectif = 0;
-					oResultCellCollection.put(oRsCell.getString(ParameterUtil.STR_CODEORGANIGRAMME), effectif);
-
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-					ParameterUtil.println(ex.getMessage());
-					continue;
-				}
+				effectif = Integer.parseInt((obj[0].toString()));
+				if (effectif == null)
+					effectif = 0;
+				oResultCellCollection.put((String) obj[1], effectif);
 			}
+
+//			_oSession = this.getService().getSession();
+//			oConnexion = this.getService().getConnection();
+//			oStatement = oConnexion.createStatement();
+//			oRsCell = oStatement.executeQuery(strSQLNbFils);
+//
+//			if (oRsCell == null)
+//				return null;
+//
+//			while (oRsCell.next())
+//			{
+//				try
+//				{
+//					effectif = oRsCell.getInt(ParameterUtil.STR_NB_FILS_TOTAL);
+//					if (effectif == null)
+//						effectif = 0;
+//					oResultCellCollection.put(oRsCell.getString(ParameterUtil.STR_CODEORGANIGRAMME), effectif);
+//
+//				}
+//				catch (Exception ex)
+//				{
+//					ex.printStackTrace();
+//					ParameterUtil.println(ex.getMessage());
+//					continue;
+//				}
+//			}
 
 			// this.getService().closeConnexion(_oSession);
 			return oResultCellCollection;
@@ -240,14 +271,14 @@ public class ClsOrgListCellsBuilder
 			ParameterUtil.__invokeGarbageCollection();
 			try
 			{
-				if (oRsCell != null)
-					oRsCell.close();
-				if (oStatement != null)
-					oStatement.close();
-				if (oConnexion != null)
-					oConnexion.close();
-				if (_oSession != null)
-					_oSession.close();
+//				if (oRsCell != null)
+//					oRsCell.close();
+//				if (oStatement != null)
+//					oStatement.close();
+//				if (oConnexion != null)
+//					oConnexion.close();
+//				if (_oSession != null)
+//					_oSession.close();
 			}
 			catch (Exception e)
 			{
@@ -264,91 +295,91 @@ public class ClsOrgListCellsBuilder
 
 		Map<String, Integer> oResultCellCollection = new HashMap<String, Integer>();
 
-		String strQueryFils = "orgfils.codepere like orgpere.codeorganigramme||'%' and orgfils.bprestataire='O'";
-
-		if (!param.isAfficherTousLesFils())
-			strQueryFils = "orgfils.codepere = orgpere.codeorganigramme and orgfils.bprestataire='O'";
-
-		String strSQLNbFils = "SELECT count(orgfils.codeorganigramme) as nbFilsTotal,orgpere.codeorganigramme, orgpere.codepere "
-				+ "FROM Orgrganigramme orgpere LEFT JOIN Orgniveau rhniv ON (orgpere.codeniveau = rhniv.codeniveau AND orgpere.identreprise = rhniv.identreprise) " + "LEFT JOIN Organigramme orgfils ON ("
-				+ strQueryFils + " AND orgfils.identreprise = orgpere.identreprise) " + "WHERE orgpere.codeniveau = rhniv.codeniveau and orgpere.bcasefictive='N' and orgfils.bcasefictive='N'";
-
-		strSQLNbFils = strSQLNbFils + "AND orgpere.identreprise = " + "'" + param.getDossier() + "'" + " AND Rhniv.identreprise = " + "'" + param.getDossier() + "'";
-
-		if (!ParameterUtil._isStringNull(param.getCelluleDepart()))
-		{
-			strSQLNbFils = strSQLNbFils + " AND orgpere.codeorganigramme LIKE " + "'" + param.getCelluleDepart() + "%'";
-		}
-		else
-		{
-			strSQLNbFils = strSQLNbFils + " AND orgpere.codeorganigramme >= " + "'" + param.getCelluleDepart() + "'";
-		}
-
-		if (!ParameterUtil._isStringNull(param.getNiveauArrive()))
-			strSQLNbFils = strSQLNbFils + " AND Rhniv.codeniveau <= " + "'" + param.getNiveauArrive() + "'";
-
-		strSQLNbFils = strSQLNbFils + " group by orgpere.codeorganigramme,orgpere.codepere";
-		strSQLNbFils = strSQLNbFils + " ORDER BY orgpere.codepere, orgpere.codeorganigramme ASC";
-		Session _oSession = null;
-		Connection oConnexion = null;
-		Statement oStatement = null;
-		ResultSet oRsCell = null;
-		try
-		{
-
-			ParameterUtil.println("---------- SQLNbFils for FlowChart :" + strSQLNbFils);
-			_oSession = this.getService().getSession();
-			oConnexion = this.getService().getConnection();
-			oStatement = oConnexion.createStatement();
-			oRsCell = oStatement.executeQuery(strSQLNbFils);
-
-			if (oRsCell == null)
-				return null;
-
-			while (oRsCell.next())
-			{
-				try
-				{
-
-					oResultCellCollection.put(oRsCell.getString(ParameterUtil.STR_CODEORGANIGRAMME), oRsCell.getInt(ParameterUtil.STR_NB_FILS_TOTAL));
-
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-					ParameterUtil.println(ex.getMessage());
-					continue;
-				}
-			}
+//		String strQueryFils = "orgfils.codepere like orgpere.codeorganigramme||'%' and orgfils.bprestataire='O'";
+//
+//		if (!param.isAfficherTousLesFils())
+//			strQueryFils = "orgfils.codepere = orgpere.codeorganigramme and orgfils.bprestataire='O'";
+//
+//		String strSQLNbFils = "SELECT count(orgfils.codeorganigramme) as nbFilsTotal,orgpere.codeorganigramme, orgpere.codepere "
+//				+ "FROM Orgrganigramme orgpere LEFT JOIN Orgniveau rhniv ON (orgpere.codeniveau = rhniv.codeniveau AND orgpere.identreprise = rhniv.identreprise) " + "LEFT JOIN Organigramme orgfils ON ("
+//				+ strQueryFils + " AND orgfils.identreprise = orgpere.identreprise) " + "WHERE orgpere.codeniveau = rhniv.codeniveau and orgpere.bcasefictive='N' and orgfils.bcasefictive='N'";
+//
+//		strSQLNbFils = strSQLNbFils + "AND orgpere.identreprise = " + "'" + param.getDossier() + "'" + " AND Rhniv.identreprise = " + "'" + param.getDossier() + "'";
+//
+//		if (!ParameterUtil._isStringNull(param.getCelluleDepart()))
+//		{
+//			strSQLNbFils = strSQLNbFils + " AND orgpere.codeorganigramme LIKE " + "'" + param.getCelluleDepart() + "%'";
+//		}
+//		else
+//		{
+//			strSQLNbFils = strSQLNbFils + " AND orgpere.codeorganigramme >= " + "'" + param.getCelluleDepart() + "'";
+//		}
+//
+//		if (!ParameterUtil._isStringNull(param.getNiveauArrive()))
+//			strSQLNbFils = strSQLNbFils + " AND Rhniv.codeniveau <= " + "'" + param.getNiveauArrive() + "'";
+//
+//		strSQLNbFils = strSQLNbFils + " group by orgpere.codeorganigramme,orgpere.codepere";
+//		strSQLNbFils = strSQLNbFils + " ORDER BY orgpere.codepere, orgpere.codeorganigramme ASC";
+//		Session _oSession = null;
+//		Connection oConnexion = null;
+//		Statement oStatement = null;
+//		ResultSet oRsCell = null;
+//		try
+//		{
+//
+//			ParameterUtil.println("---------- SQLNbFils for FlowChart :" + strSQLNbFils);
+//			_oSession = this.getService().getSession();
+//			oConnexion = this.getService().getConnection();
+//			oStatement = oConnexion.createStatement();
+//			oRsCell = oStatement.executeQuery(strSQLNbFils);
+//
+//			if (oRsCell == null)
+//				return null;
+//
+//			while (oRsCell.next())
+//			{
+//				try
+//				{
+//
+//					oResultCellCollection.put(oRsCell.getString(ParameterUtil.STR_CODEORGANIGRAMME), oRsCell.getInt(ParameterUtil.STR_NB_FILS_TOTAL));
+//
+//				}
+//				catch (Exception ex)
+//				{
+//					ex.printStackTrace();
+//					ParameterUtil.println(ex.getMessage());
+//					continue;
+//				}
+//			}
 
 			// this.getService().closeConnexion(_oSession);
 			return oResultCellCollection;
-		}
-		catch (Exception e)
-		{
-			ParameterUtil.println(e.getMessage());
-			return oResultCellCollection;
-		}
-		finally
-		{
-			ParameterUtil.__invokeGarbageCollection();
-			try
-			{
-				if (oRsCell != null)
-					oRsCell.close();
-				if (oStatement != null)
-					oStatement.close();
-				if (oConnexion != null)
-					oConnexion.close();
-				if (_oSession != null)
-					_oSession.close();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-
-		}
+//		}
+//		catch (Exception e)
+//		{
+//			ParameterUtil.println(e.getMessage());
+//			return oResultCellCollection;
+//		}
+//		finally
+//		{
+//			ParameterUtil.__invokeGarbageCollection();
+//			try
+//			{
+//				if (oRsCell != null)
+//					oRsCell.close();
+//				if (oStatement != null)
+//					oStatement.close();
+//				if (oConnexion != null)
+//					oConnexion.close();
+//				if (_oSession != null)
+//					_oSession.close();
+//			}
+//			catch (Exception e)
+//			{
+//				e.printStackTrace();
+//			}
+//
+//		}
 	}
 
 	// compute the number of all prestataires of all cells from rhporganigramme associe table
@@ -358,91 +389,91 @@ public class ClsOrgListCellsBuilder
 
 		Map<String, Integer> oResultCellCollection = new HashMap<String, Integer>();
 
-		String strQueryFils = "orgfils.codeorganigramme like orgpere.codeorganigramme||'%'";
-
-		if (!param.isAfficherTousLesFils())
-			strQueryFils = "orgfils.codeorganigramme = orgpere.codeorganigramme";
-
-		String strSQLNbFils = "SELECT sum(orgfils.effectif) as nbFilsTotal,orgpere.codeorganigramme "
-				+ "FROM Orgrganigramme orgpere LEFT JOIN Orgniveau rhniv ON (orgpere.codeniveau = rhniv.codeniveau AND orgpere.identreprise = rhniv.identreprise) " + "LEFT JOIN Rhporganigrammeassocie orgfils ON ("
-				+ strQueryFils + " AND orgfils.identreprise = orgpere.identreprise) " + "WHERE orgpere.codeniveau = rhniv.codeniveau and orgpere.bcasefictive='N'";
-
-		strSQLNbFils = strSQLNbFils + "AND orgpere.identreprise = " + "'" + param.getDossier() + "'" + " AND Rhniv.identreprise = " + "'" + param.getDossier() + "'";
-
-		if (!ParameterUtil._isStringNull(param.getCelluleDepart()))
-		{
-			strSQLNbFils = strSQLNbFils + " AND orgpere.codeorganigramme LIKE " + "'" + param.getCelluleDepart() + "%'";
-		}
-		else
-		{
-			strSQLNbFils = strSQLNbFils + " AND orgpere.codeorganigramme >= " + "'" + param.getCelluleDepart() + "'";
-		}
-
-		if (!ParameterUtil._isStringNull(param.getNiveauArrive()))
-			strSQLNbFils = strSQLNbFils + " AND Rhniv.codeniveau <= " + "'" + param.getNiveauArrive() + "'";
-
-		strSQLNbFils = strSQLNbFils + " group by orgpere.codeorganigramme,orgpere.codepere";
-		strSQLNbFils = strSQLNbFils + " ORDER BY orgpere.codepere, orgpere.codeorganigramme ASC";
-		Session _oSession = null;
-		Connection oConnexion = null;
-		Statement oStatement = null;
-		ResultSet oRsCell = null;
-		try
-		{
-
-			ParameterUtil.println("---------- SQLNbFils for FlowChart :" + strSQLNbFils);
-			_oSession = this.getService().getSession();
-			oConnexion = this.getService().getConnection();
-			oStatement = oConnexion.createStatement();
-			oRsCell = oStatement.executeQuery(strSQLNbFils);
-
-			if (oRsCell == null)
-				return null;
-
-			while (oRsCell.next())
-			{
-				try
-				{
-
-					oResultCellCollection.put(oRsCell.getString(ParameterUtil.STR_CODEORGANIGRAMME), oRsCell.getInt(ParameterUtil.STR_NB_FILS_TOTAL));
-
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-					ParameterUtil.println(ex.getMessage());
-					continue;
-				}
-			}
+//		String strQueryFils = "orgfils.codeorganigramme like orgpere.codeorganigramme||'%'";
+//
+//		if (!param.isAfficherTousLesFils())
+//			strQueryFils = "orgfils.codeorganigramme = orgpere.codeorganigramme";
+//
+//		String strSQLNbFils = "SELECT sum(orgfils.effectif) as nbFilsTotal,orgpere.codeorganigramme "
+//				+ "FROM Orgrganigramme orgpere LEFT JOIN Orgniveau rhniv ON (orgpere.codeniveau = rhniv.codeniveau AND orgpere.identreprise = rhniv.identreprise) " + "LEFT JOIN Rhporganigrammeassocie orgfils ON ("
+//				+ strQueryFils + " AND orgfils.identreprise = orgpere.identreprise) " + "WHERE orgpere.codeniveau = rhniv.codeniveau and orgpere.bcasefictive='N'";
+//
+//		strSQLNbFils = strSQLNbFils + "AND orgpere.identreprise = " + "'" + param.getDossier() + "'" + " AND Rhniv.identreprise = " + "'" + param.getDossier() + "'";
+//
+//		if (!ParameterUtil._isStringNull(param.getCelluleDepart()))
+//		{
+//			strSQLNbFils = strSQLNbFils + " AND orgpere.codeorganigramme LIKE " + "'" + param.getCelluleDepart() + "%'";
+//		}
+//		else
+//		{
+//			strSQLNbFils = strSQLNbFils + " AND orgpere.codeorganigramme >= " + "'" + param.getCelluleDepart() + "'";
+//		}
+//
+//		if (!ParameterUtil._isStringNull(param.getNiveauArrive()))
+//			strSQLNbFils = strSQLNbFils + " AND Rhniv.codeniveau <= " + "'" + param.getNiveauArrive() + "'";
+//
+//		strSQLNbFils = strSQLNbFils + " group by orgpere.codeorganigramme,orgpere.codepere";
+//		strSQLNbFils = strSQLNbFils + " ORDER BY orgpere.codepere, orgpere.codeorganigramme ASC";
+//		Session _oSession = null;
+//		Connection oConnexion = null;
+//		Statement oStatement = null;
+//		ResultSet oRsCell = null;
+//		try
+//		{
+//
+//			ParameterUtil.println("---------- SQLNbFils for FlowChart :" + strSQLNbFils);
+//			_oSession = this.getService().getSession();
+//			oConnexion = this.getService().getConnection();
+//			oStatement = oConnexion.createStatement();
+//			oRsCell = oStatement.executeQuery(strSQLNbFils);
+//
+//			if (oRsCell == null)
+//				return null;
+//
+//			while (oRsCell.next())
+//			{
+//				try
+//				{
+//
+//					oResultCellCollection.put(oRsCell.getString(ParameterUtil.STR_CODEORGANIGRAMME), oRsCell.getInt(ParameterUtil.STR_NB_FILS_TOTAL));
+//
+//				}
+//				catch (Exception ex)
+//				{
+//					ex.printStackTrace();
+//					ParameterUtil.println(ex.getMessage());
+//					continue;
+//				}
+//			}
 
 			// this.getService().closeConnexion(_oSession);
 			return oResultCellCollection;
-		}
-		catch (Exception e)
-		{
-			ParameterUtil.println(e.getMessage());
-			return oResultCellCollection;
-		}
-		finally
-		{
-			ParameterUtil.__invokeGarbageCollection();
-			try
-			{
-				if (oRsCell != null)
-					oRsCell.close();
-				if (oStatement != null)
-					oStatement.close();
-				if (oConnexion != null)
-					oConnexion.close();
-				if (_oSession != null)
-					_oSession.close();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-
-		}
+//		}
+//		catch (Exception e)
+//		{
+//			ParameterUtil.println(e.getMessage());
+//			return oResultCellCollection;
+//		}
+//		finally
+//		{
+//			ParameterUtil.__invokeGarbageCollection();
+//			try
+//			{
+//				if (oRsCell != null)
+//					oRsCell.close();
+//				if (oStatement != null)
+//					oStatement.close();
+//				if (oConnexion != null)
+//					oConnexion.close();
+//				if (_oSession != null)
+//					_oSession.close();
+//			}
+//			catch (Exception e)
+//			{
+//				e.printStackTrace();
+//			}
+//
+//		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -451,77 +482,77 @@ public class ClsOrgListCellsBuilder
 
 		Map<String, List<ClsNomenclature>> oResultCellCollection = new HashMap<String, List<ClsNomenclature>>();
 
-		String strQuery = "SELECT associe.codeorganigramme, associe.codeexterne, associe.effectif, prestataire.vall as nomexterne, prestataire.vall as libelleexterne " + "FROM Rhporganigrammeassocie associe "
-				+ "LEFT JOIN Rhfnom prestataire ON (prestataire.cacc=associe.codeexterne and prestataire.nume=1 and prestataire.ctab=201 AND associe.identreprise = prestataire.identreprise) "
-				+ "WHERE associe.identreprise = " + "'" + param.getDossier() + "'";
-
-		Session _oSession = null;
-		Connection oConnexion = null;
-		Statement oStatement = null;
-		ResultSet oRsCell = null;
-
-		String strCodeOrganigramme = null;
-
-		String strLibelleExterne = null;
-		try
-		{
-			_oSession = this.getService().getSession();
-			oConnexion = this.getService().getConnection();
-			oStatement = oConnexion.createStatement();
-			oRsCell = oStatement.executeQuery(strQuery);
-
-			if (oRsCell == null)
-				return null;
-
-			while (oRsCell.next())
-			{
-				try
-				{
-					strCodeOrganigramme = oRsCell.getString("codeorganigramme");
-					strLibelleExterne = oRsCell.getString("libelleexterne");
-					if (StringUtils.isBlank(strLibelleExterne))
-						strLibelleExterne = oRsCell.getString("nomexterne");
-					if (!oResultCellCollection.containsKey(strCodeOrganigramme))
-						oResultCellCollection.put(strCodeOrganigramme, new ArrayList<ClsNomenclature>());
-
-					oResultCellCollection.get(strCodeOrganigramme).add(new ClsNomenclature(strLibelleExterne, oRsCell.getInt("effectif")+""));
-
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-					ParameterUtil.println(ex.getMessage());
-					continue;
-				}
-			}
+//		String strQuery = "SELECT associe.codeorganigramme, associe.codeexterne, associe.effectif, prestataire.vall as nomexterne, prestataire.vall as libelleexterne " + "FROM Organigrammeassocie associe "
+//				+ "LEFT JOIN ParamData prestataire ON (prestataire.cacc=associe.codeexterne and prestataire.nume=1 and prestataire.ctab=201 AND associe.identreprise = prestataire.identreprise) "
+//				+ "WHERE associe.identreprise = " + "'" + param.getDossier() + "'";
+//
+//		Session _oSession = null;
+//		Connection oConnexion = null;
+//		Statement oStatement = null;
+//		ResultSet oRsCell = null;
+//
+//		String strCodeOrganigramme = null;
+//
+//		String strLibelleExterne = null;
+//		try
+//		{
+//			_oSession = this.getService().getSession();
+//			oConnexion = this.getService().getConnection();
+//			oStatement = oConnexion.createStatement();
+//			oRsCell = oStatement.executeQuery(strQuery);
+//
+//			if (oRsCell == null)
+//				return null;
+//
+//			while (oRsCell.next())
+//			{
+//				try
+//				{
+//					strCodeOrganigramme = oRsCell.getString("codeorganigramme");
+//					strLibelleExterne = oRsCell.getString("libelleexterne");
+//					if (StringUtils.isBlank(strLibelleExterne))
+//						strLibelleExterne = oRsCell.getString("nomexterne");
+//					if (!oResultCellCollection.containsKey(strCodeOrganigramme))
+//						oResultCellCollection.put(strCodeOrganigramme, new ArrayList<ClsNomenclature>());
+//
+//					oResultCellCollection.get(strCodeOrganigramme).add(new ClsNomenclature(strLibelleExterne, oRsCell.getInt("effectif")+""));
+//
+//				}
+//				catch (Exception ex)
+//				{
+//					ex.printStackTrace();
+//					ParameterUtil.println(ex.getMessage());
+//					continue;
+//				}
+//			}
 
 			return oResultCellCollection;
-		}
-		catch (Exception e)
-		{
-			ParameterUtil.println(e.getMessage());
-			return oResultCellCollection;
-		}
-		finally
-		{
-			ParameterUtil.__invokeGarbageCollection();
-			try
-			{
-				if (oRsCell != null)
-					oRsCell.close();
-				if (oStatement != null)
-					oStatement.close();
-				if (oConnexion != null)
-					oConnexion.close();
-				if (_oSession != null)
-					_oSession.close();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-
-		}
+//		}
+//		catch (Exception e)
+//		{
+//			ParameterUtil.println(e.getMessage());
+//			return oResultCellCollection;
+//		}
+//		finally
+//		{
+//			ParameterUtil.__invokeGarbageCollection();
+//			try
+//			{
+//				if (oRsCell != null)
+//					oRsCell.close();
+//				if (oStatement != null)
+//					oStatement.close();
+//				if (oConnexion != null)
+//					oConnexion.close();
+//				if (_oSession != null)
+//					_oSession.close();
+//			}
+//			catch (Exception e)
+//			{
+//				e.printStackTrace();
+//			}
+//
+//		}
 	}
 	
 	private String site;
@@ -602,150 +633,200 @@ public class ClsOrgListCellsBuilder
 
 		strSQL += " order by rhorg.codepere,rhorg.codeorganigramme ASC";
 
-		ParameterUtil.println("Query = " + strSQL);
-		System.out.println(strSQL);
+		//ParameterUtil.println("Query = " + strSQL);
+		//System.out.println(strSQL);
 
-		Session _o_Session = this.getService().getSession();
-		Connection oConnexion = null;
-		Statement oStatement = null;
-		ResultSet _o_Result = null;
+		Session _o_Session = service.getSession();
+		Query query  = _o_Session.createSQLQuery(strSQL)
+				.addEntity("rhorg", Organigramme.class)
+				.addScalar("couleur", StandardBasicTypes.STRING)
+				.addScalar("nmat", StandardBasicTypes.STRING)
+				.addScalar("nomagent", StandardBasicTypes.STRING)
+				.addScalar("pren", StandardBasicTypes.STRING)
+				.addScalar("categorieposte", StandardBasicTypes.STRING)
+				.addScalar("categorieagent", StandardBasicTypes.STRING)
+				.addScalar("echelonposte", StandardBasicTypes.STRING)
+				.addScalar("echelonagent", StandardBasicTypes.STRING);
+
+		List<Object[]> lst = query.getResultList();
+		service.closeSession(_o_Session);
 
 		List<ClsOrgCellule> _o_Cellules_Collection = new ArrayList<ClsOrgCellule>();
-
 		ClsOrgCellule cellule = null;
 
-		try
+		for (Object[] o : lst)
 		{
+			Organigramme evDB = (Organigramme)o[0];
+			cellule = new ClsOrgCellule();
+			BeanUtils.copyProperties(evDB, cellule);
+			if(o[1]!=null) cellule.setCouleur(o[1].toString());
+			if(o[2]!=null) cellule.setMatricule(o[2].toString());
+			if(o[3]!=null) cellule.setNomagent(o[3].toString());
+			if(o[4]!=null) cellule.setNomagent(cellule.getNomagent()+" "+o[4].toString());
+			if(o[5]!=null) cellule.setCategorieposte(o[5].toString());
+			if(o[6]!=null) cellule.setCategorieagent(o[6].toString());
+			if(o[7]!=null) cellule.setEchelonposte(o[7].toString());
+			if(o[8]!=null) cellule.setEchelonagent(o[8].toString());
 
-			oConnexion = this.getService().getConnection();
-			oStatement = oConnexion.createStatement();
-			_o_Result = oStatement.executeQuery(strSQL);
-
-			String strNom = null;
-
-			String strPrenom = null;
-
-			while (_o_Result.next())
+			if(! param.isIceface())
 			{
-				try
+				if (cellule.getLibelle() != null)
 				{
-
-					cellule = new ClsOrgCellule();
-
-					cellule.setIdEntreprise(new Integer(param.getDossier()));
-					cellule.setCodeorganigramme(_o_Result.getString("codeorganigramme"));
-					cellule.setLibelle(_o_Result.getString("libelle"));
-
-					cellule.setCodeposte(_o_Result.getString("codeposte"));
-
-					cellule.setCouleur(_o_Result.getString("couleur"));
-
-					if (ParameterUtil._isStringNull(cellule.getCouleur()))
-						cellule.setCouleur("blue");
-
-					cellule.setMatricule(_o_Result.getString("nmat"));
-
-					strNom = _o_Result.getString("nomagent");
-
-					strPrenom = _o_Result.getString("pren");
-
-					if (ParameterUtil._isStringNull(strNom))
-						strNom = ParameterUtil.CHAINE_VIDE;
-
-					if (ParameterUtil._isStringNull(strPrenom))
-						strPrenom = ParameterUtil.CHAINE_VIDE;
-
-					cellule.setNomagent(strNom + " " + strPrenom);
-
-					cellule.setCategorieagent(_o_Result.getString("categorieagent"));
-					
-					cellule.setEchelonagent(_o_Result.getString("echelonagent"));
-
-					cellule.setCodepere(_o_Result.getString("codepere"));
-
-					cellule.setCodesite(_o_Result.getString("codesite"));
-
-					cellule.setNivfonction(_o_Result.getString("nivfonction"));
-
-					cellule.setLibellecourt(_o_Result.getString("libellecourt"));
-
-					cellule.setBprestataire(_o_Result.getString("bprestataire"));
-
-					cellule.setBcasefictive(_o_Result.getString("bcasefictive"));
-
-					if (StringUtils.equals("O", cellule.getBcasefictive()))
-						existFictiveCell = true;
-
-					cellule.setCodeposte(_o_Result.getString("codeposte"));
-
-					cellule.setCategorieposte(_o_Result.getString("categorieposte"));
-					
-					cellule.setEchelonposte(_o_Result.getString("echelonposte"));
-
-					cellule.setCodeniveau(_o_Result.getString("codeniveau"));
-					if(! param.isIceface())
-					{
-						if (cellule.getLibelle() != null)
-						{
-							cellule.setLibelle(cellule.getLibelle().replaceAll("�", "apostrphe123"));
-							cellule.setLibelle(cellule.getLibelle().replaceAll("'", "apostrphe123"));
-							cellule.setLibelle(cellule.getLibelle().replaceAll("''", "apostrphe123"));
-	
-						}
-	
-						if (cellule.getNomagent() != null)
-						{
-							cellule.setNomagent(cellule.getNomagent().replaceAll("�", "apostrphe123"));
-							cellule.setNomagent(cellule.getNomagent().replaceAll("'", "apostrphe123"));
-							cellule.setNomagent(cellule.getNomagent().replaceAll("''", "apostrphe123"));
-	
-						}
-					}
-
-					cellule.setTaillebordure(param.getTailleBordure());
-
-					_o_Cellules_Collection.add(cellule);
+					cellule.setLibelle(cellule.getLibelle().replaceAll("�", "apostrphe123"));
+					cellule.setLibelle(cellule.getLibelle().replaceAll("'", "apostrphe123"));
+					cellule.setLibelle(cellule.getLibelle().replaceAll("''", "apostrphe123"));
 
 				}
-				catch (Exception e)
+
+				if (cellule.getNomagent() != null)
 				{
-					// TODO: handle exception
-					e.printStackTrace();
-					if (cellule != null)
-						_o_Cellules_Collection.add(cellule);
-					continue;
-				}
-				finally
-				{
-					cellule = null;
+					cellule.setNomagent(cellule.getNomagent().replaceAll("�", "apostrphe123"));
+					cellule.setNomagent(cellule.getNomagent().replaceAll("'", "apostrphe123"));
+					cellule.setNomagent(cellule.getNomagent().replaceAll("''", "apostrphe123"));
+
 				}
 			}
 
+			_o_Cellules_Collection.add(cellule);
 		}
-		catch (Exception e)
-		{
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
-				if (_o_Result != null)
-					_o_Result.close();
-				if (oStatement != null)
-					oStatement.close();
-				if (oConnexion != null)
-					oConnexion.close();
-				if (_o_Session != null)
-					_o_Session.close();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
 
-		}
+//		Connection oConnexion = null;
+//		Statement oStatement = null;
+//		ResultSet _o_Result = null;
+//
+//
+//
+//		try
+//		{
+//
+//			oConnexion = service.getConnection();
+//			oStatement = oConnexion.createStatement();
+//			_o_Result = oStatement.executeQuery(strSQL);
+//
+//			String strNom = null;
+//
+//			String strPrenom = null;
+//
+//			while (_o_Result.next())
+//			{
+//				try
+//				{
+//
+//					cellule = new ClsOrgCellule();
+//
+//					cellule.setIdEntreprise(new Integer(param.getDossier()));
+//					cellule.setCodeorganigramme(_o_Result.getString("codeorganigramme"));
+//					cellule.setLibelle(_o_Result.getString("libelle"));
+//
+//					cellule.setCodeposte(_o_Result.getString("codeposte"));
+//
+//					cellule.setCouleur(_o_Result.getString("couleur"));
+//
+//					if (ParameterUtil._isStringNull(cellule.getCouleur()))
+//						cellule.setCouleur("blue");
+//
+//					cellule.setMatricule(_o_Result.getString("nmat"));
+//
+//					strNom = _o_Result.getString("nomagent");
+//
+//					strPrenom = _o_Result.getString("pren");
+//
+//					if (ParameterUtil._isStringNull(strNom))
+//						strNom = ParameterUtil.CHAINE_VIDE;
+//
+//					if (ParameterUtil._isStringNull(strPrenom))
+//						strPrenom = ParameterUtil.CHAINE_VIDE;
+//
+//					cellule.setNomagent(strNom + " " + strPrenom);
+//
+//					cellule.setCategorieagent(_o_Result.getString("categorieagent"));
+//
+//					cellule.setEchelonagent(_o_Result.getString("echelonagent"));
+//
+//					cellule.setCodepere(_o_Result.getString("codepere"));
+//
+//					cellule.setCodesite(_o_Result.getString("codesite"));
+//
+//					cellule.setNivfonction(_o_Result.getString("nivfonction"));
+//
+//					cellule.setLibellecourt(_o_Result.getString("libellecourt"));
+//
+//					cellule.setBprestataire(_o_Result.getString("bprestataire"));
+//
+//					cellule.setBcasefictive(_o_Result.getString("bcasefictive"));
+//
+//					if (StringUtils.equals("O", cellule.getBcasefictive()))
+//						existFictiveCell = true;
+//
+//					cellule.setCodeposte(_o_Result.getString("codeposte"));
+//
+//					cellule.setCategorieposte(_o_Result.getString("categorieposte"));
+//
+//					cellule.setEchelonposte(_o_Result.getString("echelonposte"));
+//
+//					cellule.setCodeniveau(_o_Result.getString("codeniveau"));
+//					if(! param.isIceface())
+//					{
+//						if (cellule.getLibelle() != null)
+//						{
+//							cellule.setLibelle(cellule.getLibelle().replaceAll("�", "apostrphe123"));
+//							cellule.setLibelle(cellule.getLibelle().replaceAll("'", "apostrphe123"));
+//							cellule.setLibelle(cellule.getLibelle().replaceAll("''", "apostrphe123"));
+//
+//						}
+//
+//						if (cellule.getNomagent() != null)
+//						{
+//							cellule.setNomagent(cellule.getNomagent().replaceAll("�", "apostrphe123"));
+//							cellule.setNomagent(cellule.getNomagent().replaceAll("'", "apostrphe123"));
+//							cellule.setNomagent(cellule.getNomagent().replaceAll("''", "apostrphe123"));
+//
+//						}
+//					}
+//
+//					cellule.setTaillebordure(param.getTailleBordure());
+//
+//					_o_Cellules_Collection.add(cellule);
+//
+//				}
+//				catch (Exception e)
+//				{
+//					// TODO: handle exception
+//					e.printStackTrace();
+//					if (cellule != null)
+//						_o_Cellules_Collection.add(cellule);
+//					continue;
+//				}
+//				finally
+//				{
+//					cellule = null;
+//				}
+//			}
+//
+//		}
+//		catch (Exception e)
+//		{
+//			// TODO: handle exception
+//			e.printStackTrace();
+//		}
+//		finally
+//		{
+//			try
+//			{
+//				if (_o_Result != null)
+//					_o_Result.close();
+//				if (oStatement != null)
+//					oStatement.close();
+//				if (oConnexion != null)
+//					oConnexion.close();
+//				service.closeSession(_o_Session);
+//			}
+//			catch (Exception e)
+//			{
+//				e.printStackTrace();
+//			}
+//
+//		}
 
 		List<ClsOrgCellule> allcell = new ArrayList<ClsOrgCellule>();
 

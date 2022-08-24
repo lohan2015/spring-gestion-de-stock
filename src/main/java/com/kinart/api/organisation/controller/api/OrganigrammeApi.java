@@ -1,9 +1,6 @@
 package com.kinart.api.organisation.controller.api;
 
-import com.kinart.api.organisation.dto.OrganigrammeDto;
-import com.kinart.api.organisation.dto.ParametreOrganigrammeDto;
-import com.kinart.api.organisation.dto.RechercheListeOrganigrammeDto;
-import com.kinart.api.organisation.dto.ResultatDessinOrganigrammeDto;
+import com.kinart.api.organisation.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -61,6 +58,15 @@ public interface OrganigrammeApi {
     })
     ResponseEntity<ResultatDessinOrganigrammeDto> dessinerOrganigramme(@RequestBody ParametreOrganigrammeDto dto, HttpServletRequest request, HttpServletResponse response);
 
+    @PostMapping(value = APP_ROOT_PAIE + "/organigramme/extract", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Renvoi la liste des organigrammex", notes = "Cette methode permet de chercher et renvoyer la liste des organigrammes qui existent "
+            + "dans la BDD")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    ResponseEntity<Object> extractionOrganigramme(@RequestBody ParametreOrganigrammeDto dto, HttpServletRequest request, HttpServletResponse response);
+
+
     @GetMapping(value = APP_ROOT_PAIE + "/organigramme/existcellule", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Vérifier l'existence d'une cellule", notes = "Cette methode permet de chercher et renvoyer la liste des organigrammes qui existent "
             + "dans la BDD")
@@ -76,5 +82,45 @@ public interface OrganigrammeApi {
             @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
     })
     String getPossibilites(@RequestParam("codepere")  String codepere);
+
+    @PostMapping(value = APP_ROOT_PAIE + "/organigramme/ctrlaffectposte", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Contrôel affectation un poste à la cellule de l'organigramme", notes = "Cette methode permet de chercher et renvoyer la liste des organigrammes qui existent "
+            + "dans la BDD", responseContainer = "List<String>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    List<String> controleAffectationPoste(@RequestBody OperationOrganigrammeDto dto);
+
+    @PostMapping(value = APP_ROOT_PAIE + "/organigramme/affectposte", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Affecter un poste à la cellule de l'organigramme", notes = "Cette methode permet de chercher et renvoyer la liste des organigrammes qui existent "
+            + "dans la BDD", responseContainer = "List<String>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    List<String> affectationPosteOrganigramme(@RequestBody OperationOrganigrammeDto dto);
+
+    @PostMapping(value = APP_ROOT_PAIE + "/organigramme/ctrlaffectsalarie", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Contrôler affectation salarié au poste", notes = "Cette methode permet de chercher et renvoyer la liste des organigrammes qui existent "
+            + "dans la BDD", responseContainer = "List<String>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    List<String> controleAffectationSalarie(@RequestBody OperationOrganigrammeDto dto);
+
+    @PostMapping(value = APP_ROOT_PAIE + "/organigramme/affectsalarie", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Affecter salarié au poste", notes = "Cette methode permet de chercher et renvoyer la liste des organigrammes qui existent "
+            + "dans la BDD", responseContainer = "List<String>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    List<String> affectationSalariePoste(@RequestBody OperationOrganigrammeDto dto);
+
+    @PostMapping(value = APP_ROOT_PAIE + "/organigramme/rattachcellule", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Rattacher une cellule à une autre", notes = "Cette methode permet de chercher et renvoyer la liste des organigrammes qui existent "
+            + "dans la BDD", responseContainer = "List<String>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des dossiers de paie / Une liste vide")
+    })
+    List<String> rattacherCellules(@RequestBody OperationOrganigrammeDto dto);
 
 }

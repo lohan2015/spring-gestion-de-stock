@@ -1,13 +1,20 @@
 package com.kinart.organisation.business.services.impl;
 
+import com.kinart.api.organisation.dto.OperationOrganigrammeDto;
 import com.kinart.api.organisation.dto.OrganigrammeDto;
 import com.kinart.organisation.business.model.Organigramme;
+import com.kinart.organisation.business.model.Orgniveau;
+import com.kinart.organisation.business.repository.NiveauRepository;
 import com.kinart.organisation.business.repository.OrganigrammeRepository;
 import com.kinart.organisation.business.services.OrganigrammeService;
 import com.kinart.api.organisation.dto.RechercheListeOrganigrammeDto;
+import com.kinart.organisation.business.vo.ClsTemplate;
 import com.kinart.paie.business.model.ParamData;
+import com.kinart.paie.business.model.Salarie;
+import com.kinart.paie.business.repository.SalarieRepository;
 import com.kinart.paie.business.services.cloture.ClsNomenclature;
 import com.kinart.paie.business.services.utils.ClsStringUtil;
+import com.kinart.paie.business.services.utils.ClsTreater;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.paie.business.services.utils.TypeBDUtil;
 import com.kinart.stock.business.exception.EntityNotFoundException;
@@ -22,6 +29,7 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,11 +43,15 @@ public class OrganigrammeImpl implements OrganigrammeService {
 
     private OrganigrammeRepository repository;
     private GeneriqueConnexionService service;
+    private NiveauRepository niveauRepository;
+    private SalarieRepository salarieRepository;
 
     @Autowired
-    public OrganigrammeImpl(GeneriqueConnexionService service, OrganigrammeRepository repository){
+    public OrganigrammeImpl(GeneriqueConnexionService service, SalarieRepository salarieRepository, OrganigrammeRepository repository, NiveauRepository niveauRepository){
         this.service = service;
         this.repository = repository;
+        this.niveauRepository = niveauRepository;
+        this.salarieRepository = salarieRepository;
     }
 
     @Override
@@ -392,4 +404,316 @@ public class OrganigrammeImpl implements OrganigrammeService {
         return map;
     }
 
+    public String getLegende(String codeDOssier){
+        String strLegend = null;
+        try
+        {
+            List<Orgniveau> oLevelCollection = niveauRepository.findLevelForLegende(codeDOssier); // service.find("FROM Orgniveau WHERE priseencomptecouleur = 'O' AND identreprise = " + "'" + codeDOssier + "'");
+            if (oLevelCollection != null && oLevelCollection.size() > 0)
+            {
+
+                String strLegende = ClsTreater._getResultat("Legende", "INF-80161", false).getLibelle();
+
+                strLegend = "<table style='border-bottom-width: 2px; border-right-width: 2px; border-left-width: 2px; border-top-width: 2px' width='100%'  bgcolor='#D9FFFF'>";
+                strLegend += "<tr><td nowrap='nowrap'><span style='color: #6e6e6e; font-family: Verdana; font-weight:bold; font-size: 9px;'>"
+                        + strLegende
+                        + "----------------------------------------------------------------------------------------------------------------------------------------------------------</span></td></tr></table>";
+
+                strLegend += ClsTemplate.STR_FLOWCHART_LEG_HEAD_START;
+
+                for (Orgniveau oLevel : oLevelCollection)
+                {
+                    strLegend += ClsTemplate._getFlowChartLegElement(oLevel.getCodecouleur(), oLevel.getLibelle());
+                }
+
+                strLegend += ClsTemplate._getFlowChartLegElement("#0033FF", "Par défaut");
+
+                strLegend += ClsTemplate.STR_FLOWCHART_LEG_HEAD_CLOSE;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return strLegend;
+    }
+
+    public List<String> controleAffectationPoste(OperationOrganigrammeDto dto){
+        List<String> result = new ArrayList<String>();
+        if(StringUtils.isNotEmpty(dto.getCodeposte())){
+            List<Organigramme> org = repository.findCelluleByCodePoste(dto.getCodeposte());
+            if (org != null && org.size()>=1)
+            {
+                Organigramme entity = org.get(0);
+                if(StringUtils.isNotEmpty(entity.getCodeorganigramme())){
+                    if(!dto.getCodeorganigramme().equalsIgnoreCase(entity.getCodeorganigramme()))
+                        result.add("Ce poste est déja affecté à la cellule "+entity.getCodeorganigramme()+"-"+entity.getLibelle());
+                    else result.add("Affectation déjà effectuée");
+                }
+            }
+        }
+        if(StringUtils.isNotEmpty(dto.getCodeorganigramme())){
+            List<Organigramme> org = repository.findCelluleByCode(dto.getCodeorganigramme());
+            if (org != null && org.size()>=1)
+            {
+                Organigramme entity = org.get(0);
+                if(StringUtils.isNotEmpty(entity.getCodeposte())){
+                    if(!dto.getCodeposte().equalsIgnoreCase(entity.getCodeposte()))
+                        result.add("Cet organigramme est déja affecté au poste "+entity.getCodeposte());
+                    else result.add("Affectation déjà effectuée");
+                }
+            }
+        }
+        if(result.size()==0) result.add("Aucune affectation");
+        return result;
+    }
+
+    public List<String> affectationPosteOrganigramme(OperationOrganigrammeDto dto){
+        List<String> result = controleAffectationPoste(dto);
+//        if (result != null && result.size()>=1) {
+//            return result;
+//        }
+
+        result = new ArrayList<String>();
+
+                Session sess = this.service.getSession();
+        Transaction tx = null;
+        try
+        {
+            tx = sess.beginTransaction();
+            List<Organigramme> org = repository.findCelluleByCode(dto.getCodeorganigramme());
+            if (org != null)
+            {
+                Organigramme entity = org.get(0);
+                entity.setCodeposte(dto.getCodeposte());
+                sess.update(entity);
+
+                String strSQL = "Update Organigramme set codeposte = null where identreprise='" + dto.getIdentreprise() + "' and codeorganigramme != '" + dto.getCodeorganigramme() + "'  and codeposte = '" + dto.getCodeposte() + "'";
+                sess.createSQLQuery(strSQL).executeUpdate();
+            }
+            tx.commit();
+
+            result.add("Mise à jour éffectuée avec succès");
+        }
+        catch (Exception ex)
+        {
+            if (tx != null)
+                tx.rollback();
+            ex.printStackTrace();
+        }
+        finally
+        {
+            this.service.closeSession(sess);
+        }
+
+        return result;
+    }
+
+    public List<String> controleAffectationSalarie(OperationOrganigrammeDto dto){
+        List<String> result = new ArrayList<String>();
+        if(StringUtils.isNotEmpty(dto.getCodeposte())){
+            Salarie sal = salarieRepository.findByCodeposteExactly(dto.getCodeposte());
+            if (sal != null)
+            {
+                if(StringUtils.isNotEmpty(sal.getNmat())){
+                    if(!dto.getMatricule().equalsIgnoreCase(sal.getNmat()))
+                        result.add("Ce poste est déja affecté au salarié "+sal.getNmat()+"-"+sal.getNom());
+                    else result.add("Affectation déjà effectuée");
+                }
+            }
+        }
+        if(StringUtils.isNotEmpty(dto.getMatricule())){
+            Salarie sal = salarieRepository.findByMatriculeExactly(dto.getMatricule());
+            if (sal != null)
+            {
+                if(StringUtils.isNotEmpty(sal.getCodeposte())){
+                    if(!dto.getCodeposte().equalsIgnoreCase(sal.getCodeposte()))
+                        result.add("Cet agent est déja affecté au poste "+sal.getCodeposte());
+                    else result.add("Affectation déjà effectuée");
+                }
+            }
+        }
+        if(result.size()==0) result.add("Aucune affectation");
+        return result;
+    }
+
+    public List<String> affectationSalariePoste(OperationOrganigrammeDto dto){
+        List<String> result = controleAffectationSalarie(dto);
+//        if (result != null && result.size()>=1) {
+//            return result;
+//        }
+
+        result = new ArrayList<String>();
+
+        Session sess = this.service.getSession();
+        Transaction tx = null;
+        try
+        {
+            tx = sess.beginTransaction();
+            Salarie sal = salarieRepository.findByCodeposteExactly(dto.getCodeposte());
+            if (sal != null)
+            {
+                if(StringUtils.isEmpty(dto.getMatricule()))
+                    sal.setCodeposte("");
+                else sal.setCodeposte(dto.getCodeposte());
+                sess.update(sal);
+
+                String strSQL = "Update Salarie set codeposte = null where identreprise='" + dto.getIdentreprise() + "' and nmat != '" + dto.getMatricule() + "'  and codeposte = '" + dto.getCodeposte() + "'";
+                sess.createSQLQuery(strSQL).executeUpdate();
+            }
+            tx.commit();
+
+            result.add("Mise à jour éffectuée avec succès");
+        }
+        catch (Exception ex)
+        {
+            if (tx != null)
+                tx.rollback();
+            ex.printStackTrace();
+        }
+        finally
+        {
+            this.service.closeSession(sess);
+        }
+
+        return result;
+    }
+
+    public List<String> rattacherCellules(OperationOrganigrammeDto dto){
+        List<String> result = new ArrayList<String>();
+        String org1 = dto.getCodeorganigramme();
+        String org2 = dto.getCodeorganigramme2();
+
+        String cdos = dto.getIdentreprise().intValue()+"";
+
+        Session session = this.service.getSession();
+        Transaction tx = null;
+
+        String newCode = null;
+        try
+        {
+            tx = session.beginTransaction();
+
+            int maxFils = _getMaxFils(cdos, org2) + 1;
+            if (maxFils < 10)
+                newCode = org2 + "0" + maxFils;
+            else {
+                newCode = org2 + maxFils;
+            }
+            updateOneCell(cdos, org1, newCode, true, org2, session);
+
+            tx.commit();
+
+            result.add("Mise à jour éffectuée avec succès");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            if (tx != null)
+                tx.rollback();
+        }
+        finally
+        {
+            this.service.closeSession(session);
+        }
+
+        return null;
+    }
+
+    private int _getMaxFils(String cdos, String codeorganigramme)
+    {
+        String query = "Select max(codeorganigramme) from Organigramme where identreprise='" + cdos + "' and codepere='" + codeorganigramme + "'";
+        List lst = this.service.find(query);
+        if ((!lst.isEmpty()) && (lst.get(0) != null))
+        {
+            String maxOrg = lst.get(0).toString();
+            maxOrg = StringUtils.substring(maxOrg, codeorganigramme.length(), maxOrg.length());
+            return Integer.parseInt(maxOrg);
+        }
+
+        return 0;
+    }
+
+    private List<Organigramme> updateOneCell(String cdos, String oldCodeOrganigramme, String newCodeOrganigramme, boolean updatePereFirsCell, String firstCellCodepere, Session session)
+            throws Exception
+    {
+        try
+        {
+            String updateString = "Update Organigramme set codeorganigramme = '" + newCodeOrganigramme + "'";
+            if (updatePereFirsCell) {
+                updateString = updateString + " , codepere='" + firstCellCodepere + "'";
+            }
+            updateString = updateString + " where identreprise='" + cdos + "' and codeorganigramme ='" + oldCodeOrganigramme + "'";
+
+            session.createSQLQuery(updateString).executeUpdate();
+
+//      List<Rhtorganigramme> filss = session.createQuery("Select a From Rhtorganigramme a where comp_id.cdos='" + cdos + "' and codepere like '" + oldCodeOrganigramme + "%'").list();
+            List<Organigramme> filsss = new ArrayList();
+
+            String sql = "select codepere, codeorganigramme "+
+                    "from Organigramme "+
+                    "where identreprise='" + cdos + "' and codepere like '" + oldCodeOrganigramme + "%'";
+
+            Query query = session.createSQLQuery(sql);
+            List<Object[]> objs = query.list();
+            if(objs == null || objs.size() == 0) return filsss;
+
+            String codeOrgFils = null;
+
+            String subCodeOrgFils = null;
+
+            String codePereFils = null;
+
+            String subCodePereFils = null;
+            int i = 0;
+
+//      for (Rhtorganigramme fils:filss)
+            for (Object[] obj:objs)
+            {
+                i++;
+
+                codePereFils = (obj[0]!=null)?(String)obj[0]:null;
+                codeOrgFils = (obj[1]!=null)?(String)obj[1]:null;
+//		System.out.println("TRaitement :"+codePereFils);
+//		Rhtorganigramme fils = (Rhtorganigramme)service.get(Rhtorganigramme.class, new RhtorganigrammePK(cdos, codeOrgFils));
+//		if(fils==null) continue;
+
+//        codeOrgFils = fils.getComp_id().getCodeorganigramme();
+
+                subCodeOrgFils = codeOrgFils.substring(oldCodeOrganigramme.length(), codeOrgFils.length());
+
+//        codePereFils = fils.getCodepere();
+
+                subCodePereFils = codePereFils.substring(oldCodeOrganigramme.length(), codePereFils.length());
+
+                updateString = "Update Organigramme set codeorganigramme = '" + newCodeOrganigramme + subCodeOrgFils + "', codepere = '" + newCodeOrganigramme + subCodePereFils + "' where identreprise='" + cdos +
+                        "' and codeorganigramme ='" + codeOrgFils + "'";
+
+                session.createSQLQuery(updateString).executeUpdate();
+
+                if (i % 20 == 0)
+                {
+                    session.flush();
+                    session.clear();
+                }
+
+//        fils.getComp_id().setCodeorganigramme(newCodeOrganigramme + subCodeOrgFils);
+//
+//        fils.setCodepere(newCodeOrganigramme + subCodePereFils);
+//
+//        filsss.add(fils);
+            }
+            return filsss;
+        }
+        catch (HibernateException e)
+        {
+            e.printStackTrace();
+            throw e;
+        }
+        catch (DataAccessException e)
+        {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

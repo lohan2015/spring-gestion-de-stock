@@ -1,38 +1,14 @@
 package com.kinart.paie.business.services.impl;
 
-import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
-import com.kinart.api.gestiondepaie.dto.DossierPaieDto;
-import com.kinart.api.gestiondepaie.dto.RechercheDto;
-import com.kinart.api.gestiondepaie.dto.SalarieDto;
-import com.kinart.paie.business.model.CalculPaie;
 import com.kinart.paie.business.model.CongeFictif;
-import com.kinart.paie.business.model.DossierPaie;
-import com.kinart.paie.business.model.Salarie;
-import com.kinart.paie.business.repository.CalculPaieRepository;
 import com.kinart.paie.business.repository.CongeFictifRepository;
-import com.kinart.paie.business.repository.ParamDataRepository;
-import com.kinart.paie.business.services.CalculPaieService;
 import com.kinart.paie.business.services.CongeFictifService;
-import com.kinart.paie.business.services.DossierPaieService;
-import com.kinart.paie.business.services.calcul.*;
-import com.kinart.paie.business.services.utils.ClsDate;
-import com.kinart.paie.business.services.utils.ClsTreater;
-import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
-import com.kinart.paie.business.services.utils.NumberUtils;
-import com.kinart.paie.business.validator.CalculPaieValidator;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.ErrorCodes;
-import com.kinart.stock.business.exception.InvalidEntityException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Session;
-import org.hibernate.type.StandardBasicTypes;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.Query;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

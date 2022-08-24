@@ -1,7 +1,6 @@
 package com.kinart.organisation.business.services;
 
 import com.kinart.api.organisation.dto.NiveauDto;
-import com.kinart.api.organisation.dto.PosteDto;
 
 import java.util.List;
 

@@ -1,16 +1,11 @@
 package com.kinart.api.gestiondepaie.dto;
 
-import com.kinart.paie.business.model.CalculPaie;
 import com.kinart.paie.business.model.CumulPaie;
 import com.kinart.paie.business.model.HistoCalculPaie;
-import com.kinart.stock.business.model.AbstractEntity;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 
 

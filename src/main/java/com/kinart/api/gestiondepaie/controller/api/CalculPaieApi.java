@@ -4,7 +4,6 @@ import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
 import com.kinart.api.gestiondepaie.dto.CumulPaieDto;
 import com.kinart.api.gestiondepaie.dto.RechercheDto;
 import com.kinart.api.gestiondepaie.dto.SalarieDto;
-import com.kinart.api.gestiondestock.dto.CommandeClientDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

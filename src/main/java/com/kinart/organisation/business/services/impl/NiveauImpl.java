@@ -1,13 +1,8 @@
 package com.kinart.organisation.business.services.impl;
 
-import com.kinart.api.gestiondepaie.dto.DossierPaieDto;
 import com.kinart.api.organisation.dto.NiveauDto;
-import com.kinart.api.organisation.dto.PosteDto;
 import com.kinart.organisation.business.repository.NiveauRepository;
-import com.kinart.organisation.business.repository.PosteRepository;
-import com.kinart.organisation.business.repository.PosteinfoRepository;
 import com.kinart.organisation.business.services.NiveauService;
-import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.ErrorCodes;
 import lombok.extern.slf4j.Slf4j;

@@ -1,10 +1,8 @@
 package com.kinart.api.gestiondepaie.controller;
 
-import com.kinart.api.gestiondepaie.controller.api.ElementBaremeApi;
 import com.kinart.api.gestiondepaie.dto.ElementSalaireBaremeDto;
-import com.kinart.api.gestiondepaie.dto.ElementSalaireBaseDto;
+import com.kinart.api.gestiondepaie.controller.api.ElementBaremeApi;
 import com.kinart.paie.business.services.ElementBaremeService;
-import com.kinart.paie.business.services.ElementBaseCalculService;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import org.springframework.beans.factory.annotation.Autowired;

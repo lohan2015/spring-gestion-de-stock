@@ -1,7 +1,6 @@
 package com.kinart.organisation.business.services.impl;
 
 import com.kinart.api.organisation.dto.PosteDto;
-import com.kinart.api.organisation.dto.PosteinfoDto;
 import com.kinart.organisation.business.model.Orgposte;
 import com.kinart.organisation.business.repository.PosteRepository;
 import com.kinart.organisation.business.repository.PosteinfoRepository;
@@ -47,16 +46,16 @@ public class PosteServiceImpl implements PosteService {
         }
 
         //Sauvegarde des informations des compétences
-        infoRepository.deleteInfoByCodeposte(dto.getCodeposte());
-        for(PosteinfoDto info : dto.getSavoirs()){
-            infoRepository.save(PosteinfoDto.toEntity(info));
-        }
-        for(PosteinfoDto info : dto.getSavoirsEtres()){
-            infoRepository.save(PosteinfoDto.toEntity(info));
-        }
-        for(PosteinfoDto info : dto.getSavoirsFaires()){
-            infoRepository.save(PosteinfoDto.toEntity(info));
-        }
+//        infoRepository.deleteInfoByCodeposte(dto.getCodeposte());
+//        for(PosteinfoDto info : dto.getSavoirs()){
+//            infoRepository.save(PosteinfoDto.toEntity(info));
+//        }
+//        for(PosteinfoDto info : dto.getSavoirsEtres()){
+//            infoRepository.save(PosteinfoDto.toEntity(info));
+//        }
+//        for(PosteinfoDto info : dto.getSavoirsFaires()){
+//            infoRepository.save(PosteinfoDto.toEntity(info));
+//        }
 
         //Sauvegarde des informations principales
         return PosteDto.fromEntity(

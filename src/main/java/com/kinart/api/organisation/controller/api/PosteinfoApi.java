@@ -1,6 +1,5 @@
 package com.kinart.api.organisation.controller.api;
 
-import com.kinart.api.organisation.dto.NiveauemploitypeDto;
 import com.kinart.api.organisation.dto.PosteinfoDto;
 import com.kinart.api.organisation.dto.RechercheCompetenceDto;
 import io.swagger.annotations.Api;

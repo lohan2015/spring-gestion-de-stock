@@ -2,10 +2,7 @@ package com.kinart.api.gestiondepaie.controller;
 
 import com.kinart.api.gestiondepaie.controller.api.PretInterneApi;
 import com.kinart.api.gestiondepaie.dto.ElementSalaireDto;
-import com.kinart.api.gestiondepaie.dto.PretExterneEnteteDto;
 import com.kinart.api.gestiondepaie.dto.PretInterneDto;
-import com.kinart.api.gestiondepaie.dto.VirementSalarieDto;
-import com.kinart.paie.business.services.PretExterneService;
 import com.kinart.paie.business.services.PretInterneService;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;

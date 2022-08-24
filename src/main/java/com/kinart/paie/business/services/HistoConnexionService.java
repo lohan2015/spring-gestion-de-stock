@@ -1,9 +1,6 @@
 package com.kinart.paie.business.services;
 
 import com.kinart.api.gestiondepaie.dto.HistoConnexionDto;
-import com.kinart.api.gestiondepaie.dto.LogMessageDto;
-import com.kinart.paie.business.model.HistoConnexion;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 

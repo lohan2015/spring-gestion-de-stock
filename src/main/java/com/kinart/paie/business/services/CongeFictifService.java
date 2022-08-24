@@ -1,8 +1,5 @@
 package com.kinart.paie.business.services;
 
-import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
-import com.kinart.api.gestiondepaie.dto.RechercheDto;
-import com.kinart.api.gestiondepaie.dto.SalarieDto;
 import com.kinart.paie.business.model.CongeFictif;
 
 import java.util.List;

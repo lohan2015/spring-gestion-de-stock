@@ -1,10 +1,7 @@
 package com.kinart.paie.business.services.impl;
 
-import com.kinart.api.gestiondepaie.dto.*;
-import com.kinart.paie.business.model.CumulPaie;
 import com.kinart.paie.business.model.ParamData;
 import com.kinart.paie.business.model.ParamTable;
-import com.kinart.paie.business.model.Salarie;
 import com.kinart.paie.business.repository.ParamColumnRepository;
 import com.kinart.paie.business.repository.ParamDataRepository;
 import com.kinart.paie.business.repository.ParamTableRepository;
@@ -13,6 +10,9 @@ import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.paie.business.validator.ParamColumnValidator;
 import com.kinart.paie.business.validator.ParamDataValidator;
 import com.kinart.paie.business.validator.ParamTableValidator;
+import com.kinart.api.gestiondepaie.dto.ParamColumnDto;
+import com.kinart.api.gestiondepaie.dto.ParamDataDto;
+import com.kinart.api.gestiondepaie.dto.ParamTableDto;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.ErrorCodes;
 import com.kinart.stock.business.exception.InvalidEntityException;

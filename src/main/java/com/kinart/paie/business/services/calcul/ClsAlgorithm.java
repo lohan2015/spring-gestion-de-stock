@@ -1417,7 +1417,8 @@ public class ClsAlgorithm implements IAlgorithm
 				if (_l_Result.size() > 0)
 					obj = _l_Result.get(0);
 
-				pk1 = (ElementSalaireBareme)_l_Result.get(0);
+				//if (_l_Result.size() > 0)
+				    pk1 = (ElementSalaireBareme)_l_Result.get(0);
 				// new ElementSalaireBaremePK(cdos, rubrique.getRubrique().getComp_id().getCrub(), 1);
 				// obj = salary.getService().get(ElementSalaireBareme.class, pk1);
 				if (obj != null)

@@ -2,9 +2,6 @@ package com.kinart.api.gestiondepaie.controller;
 
 import com.kinart.api.gestiondepaie.controller.api.GenerateCalendierPaieApi;
 import com.kinart.api.gestiondepaie.dto.ParamCalendarDto;
-import com.kinart.api.mail.service.EmailService;
-import com.kinart.paie.business.services.CalculPaieService;
-import com.kinart.paie.business.services.VirementSalaireService;
 import com.kinart.paie.business.services.calendrier.ClsCalendar;
 import com.kinart.paie.business.services.utils.ClsDateRhpcalendrier;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;

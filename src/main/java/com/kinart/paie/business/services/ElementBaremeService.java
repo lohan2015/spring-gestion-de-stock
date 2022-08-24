@@ -1,7 +1,6 @@
 package com.kinart.paie.business.services;
 
 import com.kinart.api.gestiondepaie.dto.ElementSalaireBaremeDto;
-import com.kinart.api.gestiondepaie.dto.ElementSalaireBaseDto;
 
 import java.util.List;
 

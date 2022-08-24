@@ -1,7 +1,6 @@
 package com.kinart.api.gestiondepaie.controller.api;
 
 import com.kinart.api.gestiondepaie.dto.LogMessageDto;
-import com.kinart.api.gestiondepaie.dto.VirementSalarieDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

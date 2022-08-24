@@ -1,7 +1,7 @@
 package com.kinart.api.mail.controller;
 
-import com.kinart.api.mail.EmailDetails;
 import com.kinart.api.mail.controller.api.EmailApi;
+import com.kinart.api.mail.EmailDetails;
 import com.kinart.api.mail.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;

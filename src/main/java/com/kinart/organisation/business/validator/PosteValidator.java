@@ -30,42 +30,42 @@ public class PosteValidator {
     if (!StringUtils.hasLength(adresseDto.getCodeposte())) {
       errors.add("Veuillez renseigner le code poste");
     }
-    if (!StringUtils.hasLength(adresseDto.getFonc())) {
-      errors.add("Veuillez renseigner l'emploi type");
-    }
+//    if (!StringUtils.hasLength(adresseDto.getFonc())) {
+//      errors.add("Veuillez renseigner l'emploi type");
+//    }
     if (!StringUtils.hasLength(adresseDto.getLibelle())) {
       errors.add("Veuillez renseigner le libellé");
     }
-    if (!StringUtils.hasLength(adresseDto.getNiv1())) {
-      errors.add("Veuillez renseigner la direction");
-    }
-    if (!StringUtils.hasLength(adresseDto.getNiv2())) {
-      errors.add("Veuillez renseigner le département");
-    }
-    if (!StringUtils.hasLength(adresseDto.getNiv1())) {
-      errors.add("Veuillez renseigner le service");
-    }
-    if (!StringUtils.hasLength(adresseDto.getNiv1())) {
+//    if (!StringUtils.hasLength(adresseDto.getNiv1())) {
+//      errors.add("Veuillez renseigner la direction");
+//    }
+//    if (!StringUtils.hasLength(adresseDto.getNiv2())) {
+//      errors.add("Veuillez renseigner le département");
+//    }
+//    if (!StringUtils.hasLength(adresseDto.getNiv1())) {
+//      errors.add("Veuillez renseigner le service");
+//    }
+    if (!StringUtils.hasLength(adresseDto.getClas())) {
       errors.add("Veuillez renseigner la classe");
     }
-    if (!StringUtils.hasLength(adresseDto.getNiv1())) {
+    if (!StringUtils.hasLength(adresseDto.getCdfi())) {
       errors.add("Veuillez renseigner la filière");
     }
-    if (!StringUtils.hasLength(adresseDto.getNiv1())) {
+    if (!StringUtils.hasLength(adresseDto.getCdsp())) {
       errors.add("Veuillez renseigner la spécialité");
     }
-    if (!StringUtils.hasLength(adresseDto.getNiv1())) {
+    if (!StringUtils.hasLength(adresseDto.getTyfo())) {
       errors.add("Veuillez renseigner le type de formation");
     }
-    if (!StringUtils.hasLength(adresseDto.getNiv1())) {
+    if (!StringUtils.hasLength(adresseDto.getNifo())) {
       errors.add("Veuillez renseigner le niveau de formation");
     }
-    if (!StringUtils.hasLength(adresseDto.getNiv1())) {
+    if (!StringUtils.hasLength(adresseDto.getCat())) {
       errors.add("Veuillez renseigner la catégorie");
     }
-    if (!StringUtils.hasLength(adresseDto.getNiv1())) {
-      errors.add("Veuillez renseigner l'échelon");
-    }
+//    if (!StringUtils.hasLength(adresseDto.getNiv1())) {
+//      errors.add("Veuillez renseigner l'échelon");
+//    }
     return errors;
   }
 

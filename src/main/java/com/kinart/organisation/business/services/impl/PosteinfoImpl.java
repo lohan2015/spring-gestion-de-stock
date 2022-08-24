@@ -1,8 +1,6 @@
 package com.kinart.organisation.business.services.impl;
 
-import com.kinart.api.organisation.dto.NiveauDto;
 import com.kinart.api.organisation.dto.PosteinfoDto;
-import com.kinart.organisation.business.repository.NiveauRepository;
 import com.kinart.organisation.business.repository.PosteinfoRepository;
 import com.kinart.organisation.business.services.PosteinfoService;
 import com.kinart.stock.business.exception.EntityNotFoundException;

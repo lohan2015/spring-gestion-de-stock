@@ -1,11 +1,9 @@
 package com.kinart.api.gestiondepaie.controller;
 
-import com.kinart.api.gestiondepaie.controller.api.HistoConnexionApi;
 import com.kinart.api.gestiondepaie.dto.HistoConnexionDto;
-import com.kinart.api.gestiondepaie.dto.LogMessageDto;
 import com.kinart.api.gestiondepaie.dto.RechercheTraceDto;
+import com.kinart.api.gestiondepaie.controller.api.HistoConnexionApi;
 import com.kinart.paie.business.services.HistoConnexionService;
-import com.kinart.paie.business.services.LogMessageService;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import org.springframework.beans.factory.annotation.Autowired;

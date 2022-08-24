@@ -13,9 +13,11 @@ import com.kinart.paie.business.services.utils.ClsTreater;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.paie.business.services.utils.ParameterUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Session;
 
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 // TODO: Auto-generated Javadoc
@@ -84,7 +86,7 @@ public class ClsParametreOrganigrammeVO
 
 	public static String COULEUR_CONTENU_CELLULE = "#CCECFF";
 
-	public static String COULEUR_TRAIT = "0000FF";
+	public static String COULEUR_TRAIT = "#0000FF";
 	
 	private boolean visible = false;
 	private boolean traitementencours = false;
@@ -395,7 +397,7 @@ public class ClsParametreOrganigrammeVO
 
 	/**
 	 *            : la langue de connexion
-	 * @return le code niveau par d�faut, soit celui en table 266 avec pour cl� DEFT_LV , soit la premi�re valeur tir�e de Rhpniveau
+	 * @return le code niveau par défaut, soit celui en table 266 avec pour clé DEFT_LV , soit la premiére valeur tirée de Rhpniveau
 	 */
 	@SuppressWarnings("unchecked")
 	public static String __getDefaultLevel(GeneriqueConnexionService service, String dossier, String langue)
@@ -440,7 +442,7 @@ public class ClsParametreOrganigrammeVO
 	/**
 	 * @param dossier
 	 *            : le code du dossier
-	 * @return le code de la cellule par d�faut, premi�re cellule dont le code du p�re vaut 00
+	 * @return le code de la cellule par défaut, premiére cellule dont le code du pére vaut 00
 	 */
 	@SuppressWarnings("unchecked")
 	public static String __getDefaultCell(GeneriqueConnexionService service, String dossier)
@@ -462,7 +464,13 @@ public class ClsParametreOrganigrammeVO
 		String strLegend = null;
 		try
 		{
-			List<Orgniveau> oLevelCollection = service.find("FROM Orgniveau WHERE priseencomptecouleur = 'O' AND identreprise = " + "'" + dossier + "'");
+			//List<Orgniveau> oLevelCollection = service.find("FROM Orgniveau WHERE priseencomptecouleur = 'O' AND identreprise = " + "'" + dossier + "'");
+			Session _o_Session = service.getSession();
+			String queryString = "Select a.* FROM Orgniveau a WHERE priseencomptecouleur = 'O' AND identreprise = " + "'" + dossier + "'";
+			Query query  = _o_Session.createSQLQuery(queryString).addEntity("a", Orgniveau.class);
+			List<Orgniveau> oLevelCollection = query.getResultList();
+			service.closeSession(_o_Session);
+
 			if (oLevelCollection != null && oLevelCollection.size() > 0)
 			{
 
@@ -480,7 +488,7 @@ public class ClsParametreOrganigrammeVO
 					strLegend += ClsTemplate._getFlowChartLegElement(oLevel.getCodecouleur(), oLevel.getLibelle());
 				}
 
-				strLegend += ClsTemplate._getFlowChartLegElement("#0033FF", "Par d�faut");
+				strLegend += ClsTemplate._getFlowChartLegElement("#0033FF", "Par défaut");
 
 				strLegend += ClsTemplate.STR_FLOWCHART_LEG_HEAD_CLOSE;
 			}

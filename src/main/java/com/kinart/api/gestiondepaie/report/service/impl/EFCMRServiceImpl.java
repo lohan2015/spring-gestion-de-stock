@@ -5,7 +5,6 @@ import com.kinart.api.gestiondepaie.report.LigneDeclarationVersement;
 import com.kinart.api.gestiondepaie.report.service.EFCMRService;
 import com.kinart.paie.business.model.ParamData;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
-import com.kinart.paie.business.services.utils.NumberUtils;
 import com.kinart.paie.business.services.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

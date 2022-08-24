@@ -1,7 +1,6 @@
 package com.kinart.paie.business.services.impl;
 
 import com.kinart.api.gestiondepaie.dto.VirementSalarieDto;
-import com.kinart.paie.business.model.ElementVariableDetailMois;
 import com.kinart.paie.business.model.VirementSalarie;
 import com.kinart.paie.business.repository.VirementSalaireRepository;
 import com.kinart.paie.business.services.VirementSalaireService;

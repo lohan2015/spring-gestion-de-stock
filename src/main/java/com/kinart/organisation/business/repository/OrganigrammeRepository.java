@@ -14,4 +14,7 @@ public interface OrganigrammeRepository extends JpaRepository<Organigramme, Inte
 
     @Query("select a from Organigramme a where codepere = :codepere")
     List<Organigramme> findCellulePereByCode(@Param("codepere") String codepere);
+
+    @Query("select a from Organigramme a where codeposte = :codeposte")
+    List<Organigramme> findCelluleByCodePoste(@Param("codeposte") String codeposte);
 }

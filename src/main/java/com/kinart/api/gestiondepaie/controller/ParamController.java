@@ -1,9 +1,9 @@
 package com.kinart.api.gestiondepaie.controller;
 
-import com.kinart.api.gestiondepaie.controller.api.ParamApi;
 import com.kinart.api.gestiondepaie.dto.ParamColumnDto;
-import com.kinart.api.gestiondepaie.dto.ParamDataDto;
 import com.kinart.api.gestiondepaie.dto.ParamTableDto;
+import com.kinart.api.gestiondepaie.controller.api.ParamApi;
+import com.kinart.api.gestiondepaie.dto.ParamDataDto;
 import com.kinart.paie.business.services.ParamService;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;

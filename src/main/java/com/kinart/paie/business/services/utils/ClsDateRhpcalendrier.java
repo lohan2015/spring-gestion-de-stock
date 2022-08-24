@@ -8,7 +8,6 @@ import java.util.List;
 import com.kinart.api.gestiondepaie.dto.ParamCalendarDto;
 import com.kinart.paie.business.repository.ParamDataRepository;
 import com.kinart.paie.business.services.calendrier.ClsCalendar;
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;

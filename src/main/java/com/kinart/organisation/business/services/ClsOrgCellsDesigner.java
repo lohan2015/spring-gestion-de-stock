@@ -242,7 +242,7 @@ public class ClsOrgCellsDesigner implements ICellsDesigner
 			nomImagePrestataire = "prestatairesuse.gif";
 
 		if (ParameterUtil._isStringNull(cellule.getCouleur()))
-			cellule.setCouleur("0000FF");
+			cellule.setCouleur("#0000FF");
 
 		if (ClsParametreOrganigrammeVO.VUE_FONCTIONS_UNIQUEMENT.equalsIgnoreCase(param.getAffichage()))
 			return _getFunctionTemplate(cellule.getLibelle(), cellule.getCouleur(), cellule.getTaillebordure());
@@ -278,7 +278,7 @@ public class ClsOrgCellsDesigner implements ICellsDesigner
 				if (ClsParametreOrganigrammeVO.LIENHAUT.equalsIgnoreCase(strPositionLien))
 					strCell += strLienHaut;
 				strCell += "<table width=\"10\" height=\"10\" align=\"center\">" + "<tr>" + "<td  align=\"center\"><img width=\"70\" height=\"70\" src=\"" + param.racineImage
-						+ "images/application/photoorg.gif\" border=\"0\" align=\"middle\"></td>" + "</tr>" + "</table></td>"
+						+ "assets/photoorg.gif\" border=\"0\" align=\"middle\"></td>" + "</tr>" + "</table></td>"
 						+ "<td  rowspan=\"1\" valign=\"top\"><table width=\"30\" height=\"28\" border=\"0\" align=\"left\" cellspacing=\"5\" bordercolor=\"#000000\">" + "<tr>"
 						+ "<td align=\"center\" valign=\"middle\">"
 						+"<img width=\"16\" height=\"16\" src=\"" + param.racineImage
@@ -320,7 +320,7 @@ public class ClsOrgCellsDesigner implements ICellsDesigner
 			if (cellule.getCodeposte() == null || cellule.getCodeposte().trim().length() == 0)
 			{
 				affectionAgent="<br><img src=\"" + param.racineImage
-				+ "images/application/agents.png\" width=\"16\" height=\"16\" border=\"0\" title=\""+message.getAffecterAgent()+"\">";
+				+ "assets/agents.png\" width=\"16\" height=\"16\" border=\"0\" title=\""+message.getAffecterAgent()+"\">";
 				strCell += "<td align=\"center\" valign=\"middle\">"
 						+lien.getLienAffecterPoste(message.getAffecterPoste(), codelibelle)
 						+affectionAgent+"</td>" + "</tr>"
@@ -409,7 +409,7 @@ public class ClsOrgCellsDesigner implements ICellsDesigner
 			if (matriculeagent == null || matriculeagent.trim().length() == 0)
 				strCell = "<table width=\"100%\" height=\"100%\" style=\"border: " + color + " " + strBorderSize + "px solid;\" cellspacing=\"0\" cellpading=\"0\">" + "<tr>"
 						+ "<td align=\"center\"><table width=\"100%\" height=\"100%\" align=\"center\">" + "<tr>" + "<td  align=\"center\"><img width=\"70\" height=\"70\" src=\"" + param.racineImage
-						+ "images/application/photoorg.gif\" border=\"0\" align=\"middle\"></td>" + "</tr>" + "</table></td>" + "</tr>" + "<tr>" + "<td align=\"center\" " + cellHeigthString
+						+ "assets/photoorg.gif\" border=\"0\" align=\"middle\"></td>" + "</tr>" + "</table></td>" + "</tr>" + "<tr>" + "<td align=\"center\" " + cellHeigthString
 						+ " valign=\"middle\"><b class=\"titre\" title=\"" + saveLibelle + "\">" + strLibelle + "</b></td>" + "</tr>" + "</table>";
 			else
 			{
@@ -489,11 +489,11 @@ public class ClsOrgCellsDesigner implements ICellsDesigner
 				strNomAgent = "";
 			else
 			{
-				if (!param.isIceface())
-				{
+				//if (!param.isIceface())
+				//{
 					strNomAgent = strNomAgent.replaceAll("apostrphe123", "'");
 					strNomAgent = strNomAgent.replaceAll("APOSTRPHE123", "'");
-				}
+				//}
 				strNomAgent = __getFlowChartName(strNomAgent, param.getLongueurLibelle());
 				if (!param.isIceface())
 				{

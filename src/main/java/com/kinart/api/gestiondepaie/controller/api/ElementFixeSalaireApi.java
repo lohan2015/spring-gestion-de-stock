@@ -1,6 +1,5 @@
 package com.kinart.api.gestiondepaie.controller.api;
 
-import com.kinart.api.gestiondepaie.dto.DossierPaieDto;
 import com.kinart.api.gestiondepaie.dto.ElementFixeSalaireDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

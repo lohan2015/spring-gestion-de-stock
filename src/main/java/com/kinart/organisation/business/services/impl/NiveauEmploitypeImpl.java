@@ -1,6 +1,5 @@
 package com.kinart.organisation.business.services.impl;
 
-import com.kinart.api.organisation.dto.NiveauDto;
 import com.kinart.api.organisation.dto.NiveauemploitypeDto;
 import com.kinart.organisation.business.repository.NiveauOrganigrammeRepository;
 import com.kinart.organisation.business.services.NiveauEmploitypeService;

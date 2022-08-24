@@ -1,12 +1,5 @@
 package com.kinart.paie.system;
 
-import com.kinart.api.gestiondepaie.dto.ParameterOfDipeDto;
-import com.kinart.stock.business.utils.Constants;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-
 public class EfCmrSystemTest {
 
 //    @Test

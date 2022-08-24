@@ -1,9 +1,7 @@
 package com.kinart.api.gestiondepaie.controller;
 
 import com.kinart.api.gestiondepaie.controller.api.SuspensionPaieApi;
-import com.kinart.api.gestiondepaie.dto.ElementFixeSalaireDto;
 import com.kinart.api.gestiondepaie.dto.SuspensionPaieDto;
-import com.kinart.paie.business.services.ElementFixeSalaireService;
 import com.kinart.paie.business.services.SuspensionPaieService;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;

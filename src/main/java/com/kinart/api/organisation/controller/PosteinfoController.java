@@ -1,12 +1,10 @@
 package com.kinart.api.organisation.controller;
 
 import com.kinart.api.organisation.controller.api.PosteinfoApi;
-import com.kinart.api.organisation.dto.ElementDto;
 import com.kinart.api.organisation.dto.PosteinfoDto;
 import com.kinart.api.organisation.dto.RechercheCompetenceDto;
 import com.kinart.organisation.business.services.PosteinfoService;
 import com.kinart.organisation.business.services.competence.ClsTypeCompetence;
-import com.kinart.organisation.business.services.competence.CompetencePosteVO;
 import com.kinart.organisation.business.services.competence.CompetencesPosteVO;
 import com.kinart.organisation.business.services.competence.ComputeCompetencePosteVO;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
@@ -22,9 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class PosteinfoController implements PosteinfoApi {
@@ -110,6 +106,12 @@ public class PosteinfoController implements PosteinfoApi {
                 CompetencesPosteVO header = new CompetencesPosteVO(request, generiqueConnexionService, dto.getCodeposte(), dto.getCodedossier(), null);
                 ComputeCompetencePosteVO compute = new ComputeCompetencePosteVO(header);
                 return ResponseEntity.ok(PosteinfoDto.fromCompetence(compute.computeLanguage()));
+
+            } else if(ClsTypeCompetence.TACHE.equalsIgnoreCase(dto.getTypeinfo())){
+
+                CompetencesPosteVO header = new CompetencesPosteVO(request, generiqueConnexionService, dto.getCodeposte(), dto.getCodedossier(), null);
+                ComputeCompetencePosteVO compute = new ComputeCompetencePosteVO(header);
+                return ResponseEntity.ok(PosteinfoDto.fromCompetence(compute.computeTache()));
 
             }
         }

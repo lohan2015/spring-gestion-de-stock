@@ -17,6 +17,9 @@ public interface SalarieRepository extends JpaRepository<Salarie, Integer> {
    @Query("select a from Salarie a where nmat = :nmat")
    Salarie findByMatriculeExactly(@Param("nmat") String nmat);
 
+   @Query("select a from Salarie a where codeposte = :codeposte")
+   Salarie findByCodeposteExactly(@Param("codeposte") String codeposte);
+
     @Query("select a from Salarie a where (upper(nom) like upper(:nom) or upper(pren) like upper(:nom))")
     List<Salarie> findByName(@Param("nom") String nom);
 

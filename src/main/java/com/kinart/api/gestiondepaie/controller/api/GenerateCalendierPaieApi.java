@@ -1,20 +1,12 @@
 package com.kinart.api.gestiondepaie.controller.api;
 
-import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
 import com.kinart.api.gestiondepaie.dto.ParamCalendarDto;
-import com.kinart.api.gestiondepaie.dto.ParamEFCMRDto;
-import com.kinart.api.gestiondepaie.dto.ParameterOfDipeDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import static com.kinart.stock.business.utils.Constants.APP_ROOT;
 

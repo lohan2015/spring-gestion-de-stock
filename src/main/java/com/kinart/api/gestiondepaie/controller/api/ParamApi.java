@@ -1,6 +1,5 @@
 package com.kinart.api.gestiondepaie.controller.api;
 
-import com.kinart.api.gestiondepaie.dto.ElementSalaireDto;
 import com.kinart.api.gestiondepaie.dto.ParamColumnDto;
 import com.kinart.api.gestiondepaie.dto.ParamDataDto;
 import com.kinart.api.gestiondepaie.dto.ParamTableDto;

@@ -1,14 +1,9 @@
 package com.kinart.api.gestiondepaie.dto;
 
 import com.kinart.paie.business.model.LogMessage;
-import com.kinart.paie.business.model.ParamData;
-import com.kinart.stock.business.model.AbstractEntity;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.Date;
 
 

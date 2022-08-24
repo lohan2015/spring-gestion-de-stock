@@ -1,18 +1,14 @@
 package com.kinart.paie.business.services.impl;
 
 import com.kinart.api.gestiondepaie.dto.ElementSalaireBaremeDto;
-import com.kinart.api.gestiondepaie.dto.ElementSalaireBaseDto;
 import com.kinart.paie.business.model.ElementSalaireBareme;
-import com.kinart.paie.business.model.ElementSalaireBase;
 import com.kinart.paie.business.repository.ElementSalaireBaremeRepository;
-import com.kinart.paie.business.repository.ElementSalaireBaseRepository;
 import com.kinart.paie.business.services.ElementBaremeService;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.ErrorCodes;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
-import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

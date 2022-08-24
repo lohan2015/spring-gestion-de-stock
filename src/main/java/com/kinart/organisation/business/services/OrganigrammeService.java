@@ -1,5 +1,6 @@
 package com.kinart.organisation.business.services;
 
+import com.kinart.api.organisation.dto.OperationOrganigrammeDto;
 import com.kinart.api.organisation.dto.OrganigrammeDto;
 import com.kinart.api.organisation.dto.RechercheListeOrganigrammeDto;
 
@@ -18,4 +19,16 @@ public interface OrganigrammeService {
     boolean isCelluleExist(String codeOrganigramme);
 
     String getPossibilites(String codePere);
+
+    public String getLegende(String codeDOssier);
+
+    List<String> controleAffectationPoste(OperationOrganigrammeDto dto);
+
+    List<String> affectationPosteOrganigramme(OperationOrganigrammeDto dto);
+
+    List<String> controleAffectationSalarie(OperationOrganigrammeDto dto);
+
+    List<String> affectationSalariePoste(OperationOrganigrammeDto dto);
+
+    List<String> rattacherCellules(OperationOrganigrammeDto dto);
 }

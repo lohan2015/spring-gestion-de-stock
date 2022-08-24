@@ -1,6 +1,5 @@
 package com.kinart.api.gestiondestock.controller.api;
 
-import com.kinart.api.gestiondestock.dto.CommandeClientDto;
 import com.kinart.api.gestiondestock.dto.CommandeFournisseurDto;
 import com.kinart.api.gestiondestock.dto.LigneCommandeFournisseurDto;
 import com.kinart.stock.business.model.EtatCommande;
@@ -9,7 +8,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import io.swagger.annotations.ApiOperation;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

@@ -1,9 +1,7 @@
 package com.kinart.api.gestiondestock.controller;
 
 import com.kinart.api.gestiondestock.controller.api.CommandeFournisseurApi;
-import com.kinart.api.gestiondestock.dto.CommandeClientDto;
 import com.kinart.api.gestiondestock.dto.CommandeFournisseurDto;
-import com.kinart.api.gestiondestock.dto.LigneCommandeClientDto;
 import com.kinart.api.gestiondestock.dto.LigneCommandeFournisseurDto;
 import com.kinart.api.gestiondestock.report.LigneCommandeReport;
 import com.kinart.paie.business.services.utils.ClsDate;
@@ -11,7 +9,6 @@ import com.kinart.stock.business.exception.InvalidEntityException;
 import com.kinart.stock.business.model.EtatCommande;
 import com.kinart.stock.business.services.CommandeFournisseurService;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
@@ -27,12 +24,9 @@ import java.util.Map;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;

@@ -2,22 +2,15 @@ package com.kinart.api.gestiondestock.controller.api;
 
 import static com.kinart.stock.business.utils.Constants.APP_ROOT;
 
-import com.kinart.api.gestiondestock.dto.ArticleDto;
 import com.kinart.api.gestiondestock.dto.CommandeClientDto;
 import com.kinart.api.gestiondestock.dto.LigneCommandeClientDto;
 import com.kinart.stock.business.model.EtatCommande;
 import io.swagger.annotations.Api;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
 
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

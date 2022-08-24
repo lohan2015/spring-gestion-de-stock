@@ -1,7 +1,6 @@
 package com.kinart.api.gestiondepaie.report.parameter;
 
 import com.kinart.api.gestiondepaie.report.LigneDeclarationVersement;
-import com.kinart.paie.business.services.utils.ClsDate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

@@ -1,7 +1,6 @@
 package com.kinart.api.gestiondepaie.dto;
 
 import com.kinart.paie.business.model.HistoConnexion;
-import com.kinart.paie.business.model.LogMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

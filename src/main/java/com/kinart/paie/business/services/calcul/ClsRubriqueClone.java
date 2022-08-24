@@ -14,10 +14,8 @@ import com.kinart.paie.business.model.CaisseMutuelleSalarie;
 import com.kinart.paie.business.model.CalculPaie;
 import com.kinart.paie.business.model.CumulPaie;
 import com.kinart.paie.business.model.ElementSalaireBareme;
-import com.kinart.paie.business.services.CalculPaieService;
 import com.kinart.paie.business.services.utils.*;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Cette classe permet d'impl�menter un wrapper d'une rubrique et d'encapsuler les donn�es d'une rubrique: les �l�ments variables de la rubrique, l'exc�ution de

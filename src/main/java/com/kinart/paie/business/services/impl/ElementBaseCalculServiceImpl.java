@@ -1,11 +1,8 @@
 package com.kinart.paie.business.services.impl;
 
 import com.kinart.api.gestiondepaie.dto.ElementSalaireBaseDto;
-import com.kinart.api.gestiondepaie.dto.PretInterneDto;
 import com.kinart.paie.business.model.ElementSalaireBase;
-import com.kinart.paie.business.model.PretInterne;
 import com.kinart.paie.business.repository.ElementSalaireBaseRepository;
-import com.kinart.paie.business.repository.PretInterneRepository;
 import com.kinart.paie.business.services.ElementBaseCalculService;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.stock.business.exception.EntityNotFoundException;

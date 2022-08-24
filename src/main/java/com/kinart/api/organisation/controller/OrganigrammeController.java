@@ -10,6 +10,7 @@ import com.kinart.paie.business.services.utils.ClsResultat;
 import com.kinart.paie.business.services.utils.ClsTreater;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import com.kinart.paie.business.services.utils.ParameterUtil;
+import com.kinart.api.organisation.dto.*;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import org.apache.commons.lang3.StringUtils;
@@ -77,6 +78,7 @@ public class OrganigrammeController implements OrganigrammeApi {
         ResultatDessinOrganigrammeDto result = new ResultatDessinOrganigrammeDto();
         ClsParametreOrganigrammeVO param = new ClsParametreOrganigrammeVO();
         BeanUtils.copyProperties(dto, param);
+        result.setLegende(ClsParametreOrganigrammeVO.__getLegendeOrganigramme(request, service, param.getDossier()));
         ICellsDesigner paintre = null;
         if (StringUtils.equalsIgnoreCase(param.getTypeDiagramme(), ClsParametreOrganigrammeVO.DIAGRAMME_LISTE)){
             List l = service.find("from ParamData " + " where identreprise =" + param.getDossier() + " and ctab=266 and nume=2 and cacc='NFILSTOTAL'");
@@ -96,45 +98,45 @@ public class OrganigrammeController implements OrganigrammeApi {
             paintre = new ClsOrgCellsDesigner(service, param, message);
         else if(StringUtils.equals(ClsParametreOrganigrammeVO.DIAGRAMME_LISTE, param.getTypeDiagramme()))
             paintre = new ClsOrgListCellsDesigner(service, param, message);
-        else if(StringUtils.equals(ClsParametreOrganigrammeVO.DIAGRAMME_EXTRACTION, param.getTypeDiagramme())){
-            ClsOrgCellsExtract extract = new ClsOrgCellsExtract(service, param, message);
-            try {
-//                result.setUrlPathExtract(extract._extractData(request));
-//                result.setShowLienExtract(true);
-                String fileGenere = extract._extractData(request);
-                //TODO envoi du fichier
-                File file = new File(fileGenere);
-                FileInputStream is = new FileInputStream(file);
-                String fileName = "EXTRAIT_ORGANIGRAMME_" + param.getCelluleDepart() + "_" + param.getNiveauArrive() + "_"
-                        + new Date().getTime() + ".XLS";
-
-                response.setContentType("application/blob");
-
-                // Response header
-                response.setHeader("Pragma", "public");
-                response.setHeader("responseType", "blob");
-                response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-
-                // Read from the file and write into the response
-                OutputStream os = response.getOutputStream();
-                //System.out.println(os);
-                byte[] buffer = new byte[(int) file.length()];
-
-                int len;
-                while ((len = is.read(buffer)) != -1) {
-                    os.write(buffer, 0, len);
-                }
-
-                os.flush();
-                os.close();
-                is.close();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return ResponseEntity.ok(result);
-        }
+//        else if(StringUtils.equals(ClsParametreOrganigrammeVO.DIAGRAMME_EXTRACTION, param.getTypeDiagramme())){
+//            ClsOrgCellsExtract extract = new ClsOrgCellsExtract(service, param, message);
+//            try {
+////                result.setUrlPathExtract(extract._extractData(request));
+////                result.setShowLienExtract(true);
+//                String fileGenere = extract._extractData(request);
+//                //TODO envoi du fichier
+//                File file = new File(fileGenere);
+//                FileInputStream is = new FileInputStream(file);
+//                String fileName = "EXTRAIT_ORGANIGRAMME_" + param.getCelluleDepart() + "_" + param.getNiveauArrive() + "_"
+//                        + new Date().getTime() + ".XLS";
+//
+//                response.setContentType("application/blob");
+//
+//                // Response header
+//                response.setHeader("Pragma", "public");
+//                response.setHeader("responseType", "blob");
+//                response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+//
+//                // Read from the file and write into the response
+//                OutputStream os = response.getOutputStream();
+//                //System.out.println(os);
+//                byte[] buffer = new byte[(int) file.length()];
+//
+//                int len;
+//                while ((len = is.read(buffer)) != -1) {
+//                    os.write(buffer, 0, len);
+//                }
+//
+//                os.flush();
+//                os.close();
+//                is.close();
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            return ResponseEntity.ok(result);
+//        }
 
         String organigramme = paintre._getFlowChart();
         result.setShowLienExtract(false);
@@ -146,18 +148,65 @@ public class OrganigrammeController implements OrganigrammeApi {
         if (paintre.getAllCellules().size() > 0)
         {
             ClsOrgCellule cellPere = paintre.getAllCellules().get(0);
-            strOrgName = cellPere.getLibelle();//.replaceAll("apostrphe123", "'");
+            strOrgName = cellPere.getLibelle().replaceAll("apostrphe123", "'");
         }
 
         ClsResultat result2 = ClsTreater._getResultat("Organigramme à partir de %", "INF-80160", false, new String[] { strOrgName
                 + " ------------------------------------------------------------------------------------------------" });
         result.setNomOrganigramme(ParameterUtil.__getConfirmationMsg2(result2.getLibelle()));
 
-        result.setLegende(ClsParametreOrganigrammeVO.__getLegendeOrganigramme(request, service, param.getDossier()));
+        //result.setLegende(ClsParametreOrganigrammeVO.__getLegendeOrganigramme(request, service, param.getDossier()));
+        //result.setLegende(organigrammeService.getLegende(param.getDossier()));
 
         genererOrganigramme();
 
         return ResponseEntity.ok(result);
+    }
+
+    @Override
+    public ResponseEntity<Object> extractionOrganigramme(ParametreOrganigrammeDto dto, HttpServletRequest request, HttpServletResponse response) {
+        ResultatDessinOrganigrammeDto result = new ResultatDessinOrganigrammeDto();
+        ClsParametreOrganigrammeVO param = new ClsParametreOrganigrammeVO();
+        BeanUtils.copyProperties(dto, param);
+
+        ClsMessageCelluleVO message = new ClsMessageCelluleVO(request);
+        ClsOrgCellsExtract extract = new ClsOrgCellsExtract(service, param, message);
+        try {
+//                result.setUrlPathExtract(extract._extractData(request));
+//                result.setShowLienExtract(true);
+            String fileGenere = extract._extractData(request);
+            //TODO envoi du fichier
+            File file = new File(fileGenere);
+            FileInputStream is = new FileInputStream(file);
+            String fileName = "EXTRAIT_ORGANIGRAMME_" + param.getCelluleDepart() + "_" + param.getNiveauArrive() + "_"
+                    + new Date().getTime() + ".XLS";
+
+            response.setContentType("application/blob");
+
+            // Response header
+            response.setHeader("Pragma", "public");
+            response.setHeader("responseType", "blob");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+            // Read from the file and write into the response
+            OutputStream os = response.getOutputStream();
+            //System.out.println(os);
+            byte[] buffer = new byte[(int) file.length()];
+
+            int len;
+            while ((len = is.read(buffer)) != -1) {
+                os.write(buffer, 0, len);
+            }
+
+            os.flush();
+            os.close();
+            is.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     @Override
@@ -168,6 +217,31 @@ public class OrganigrammeController implements OrganigrammeApi {
     @Override
     public String getPossibilites(String codepere) {
         return organigrammeService.getPossibilites(codepere);
+    }
+
+    @Override
+    public List<String> controleAffectationPoste(OperationOrganigrammeDto dto) {
+        return organigrammeService.controleAffectationPoste(dto);
+    }
+
+    @Override
+    public List<String> affectationPosteOrganigramme(OperationOrganigrammeDto dto) {
+        return organigrammeService.affectationPosteOrganigramme(dto);
+    }
+
+    @Override
+    public List<String> controleAffectationSalarie(OperationOrganigrammeDto dto) {
+        return organigrammeService.controleAffectationSalarie(dto);
+    }
+
+    @Override
+    public List<String> affectationSalariePoste(OperationOrganigrammeDto dto) {
+        return organigrammeService.affectationSalariePoste(dto);
+    }
+
+    @Override
+    public List<String> rattacherCellules(OperationOrganigrammeDto dto) {
+        return null;
     }
 
     private void genererOrganigramme(){

@@ -85,7 +85,7 @@ public class ClsOrgCellsStyle {
 	 */
 	public String getContenucellule ( ) {
 		
-		//+"BORDER-TOP: blue 1px solid; BORDER-BOTTOM: blue 1px solid; BORDER-LEFT: blue 1px solid; BORDER-RIGHT: blue 1px solid; HEIGHT: 100px";
+		//+"BORDER-TOP: blue 1px solid; BORDER-BOTTOM: blue 1px solid; border-left: blue 1px solid; border-right: blue 1px solid; HEIGHT: 100px";
 		
 		contenucellule = "BACKGROUND-COLOR: "+couleurContenu+"; TEXT-ALIGN: Center; VERTICAL-ALIGN: Text-Top; FONT-FAMILY: Verdana; FONT-SIZE: 10px;"; 
 		
@@ -127,7 +127,7 @@ public class ClsOrgCellsStyle {
 	 */
 	public String getLigneGaucheHaute ( ) {
 		
-		ligneGaucheHaute="BORDER-TOP:    "+couleur+" "+taille+"px solid; BORDER-LEFT: "+couleur+" "+taille2+"px solid";
+		ligneGaucheHaute="BORDER-TOP:    "+couleur+" "+taille+"px solid; border-left: "+couleur+" "+taille2+"px solid";
 		
 		ligneGaucheHaute="style=\""+ligneGaucheHaute+"\"";
 	
@@ -140,7 +140,7 @@ public class ClsOrgCellsStyle {
 	 */
 	public String getLigneDroiteHaute ( ) {
 		
-		ligneDroiteHaute="BORDER-RIGHT:    "+couleur+" "+taille2+"px solid; BORDER-TOP: "+couleur+" "+taille+"px solid";
+		ligneDroiteHaute="border-right:    "+couleur+" "+taille2+"px solid; BORDER-TOP: "+couleur+" "+taille+"px solid";
 		
 		ligneDroiteHaute="style=\""+ligneDroiteHaute+"\"";
 	
@@ -153,7 +153,7 @@ public class ClsOrgCellsStyle {
 	 */
 	public String getLigneGauche ( ) {
 		
-		ligneGauche="BORDER-LEFT:    "+couleur+" "+taille2+"px solid";
+		ligneGauche="border-left:    "+couleur+" "+taille2+"px solid";
 		
 		ligneGauche="style=\""+ligneGauche+"\"";
 	
@@ -166,7 +166,7 @@ public class ClsOrgCellsStyle {
 	 */
 	public String getTableLigneDroiteFictive ( ) {
 		
-//		tableLigneDroiteFictive="BORDER-RIGHT:    "+couleur+" 3px solid; color: #E9E9E9;";
+//		tableLigneDroiteFictive="border-right:    "+couleur+" 3px solid; color: #E9E9E9;";
 //		
 //		tableLigneDroiteFictive="style=\""+tableLigneDroiteFictive+"\"";
 //	
@@ -185,7 +185,7 @@ public class ClsOrgCellsStyle {
 	 */
 	public String getTdLigneDroiteFictive ( ) {
 		
-		tdLigneDroiteFictive="BORDER-RIGHT:    "+couleur+" 1px solid;";
+		tdLigneDroiteFictive="border-right:    "+couleur+" 1px solid;";
 		
 		tdLigneDroiteFictive="style=\""+tdLigneDroiteFictive+"\"";
 	
@@ -198,7 +198,7 @@ public class ClsOrgCellsStyle {
 	 */
 	public String getLigneDroite ( ) {
 		
-		ligneDroite="BORDER-RIGHT:    "+couleur+" "+taille2+"px solid";
+		ligneDroite="border-right:    "+couleur+" "+taille2+"px solid";
 		
 		ligneDroite="style=\""+ligneDroite+"\"";
 	

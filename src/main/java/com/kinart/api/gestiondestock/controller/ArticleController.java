@@ -1,10 +1,10 @@
 package com.kinart.api.gestiondestock.controller;
 
+import com.kinart.api.gestiondestock.controller.api.ArticleApi;
+import com.kinart.api.gestiondestock.dto.ArticleDto;
 import com.kinart.api.gestiondestock.dto.LigneCommandeClientDto;
 import com.kinart.api.gestiondestock.dto.LigneCommandeFournisseurDto;
 import com.kinart.api.gestiondestock.dto.LigneVenteDto;
-import com.kinart.api.gestiondestock.controller.api.ArticleApi;
-import com.kinart.api.gestiondestock.dto.ArticleDto;
 import com.kinart.stock.business.services.ArticleService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,6 @@
 package com.kinart.api.gestiondepaie.dto;
 
 import com.kinart.paie.business.model.ElementFixeSalaire;
-import com.kinart.paie.business.model.ElementSalaire;
-import com.kinart.paie.business.model.Salarie;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.beans.BeanUtils;

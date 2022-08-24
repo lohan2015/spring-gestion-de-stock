@@ -4,17 +4,9 @@ import com.kinart.api.gestiondepaie.dto.CalculPaieDto;
 import com.kinart.api.gestiondepaie.report.LigneDeclarationVersement;
 import com.kinart.api.gestiondepaie.report.LigneMouvementCptble;
 import com.kinart.api.gestiondepaie.report.parameter.EFCMRParameter;
-import com.kinart.api.gestiondepaie.report.service.impl.EFCMRServiceImpl;
-import com.kinart.api.gestiondestock.dto.LigneCommandeClientDto;
 import com.kinart.api.gestiondestock.report.LigneCommandeReport;
-import com.kinart.paie.business.services.utils.ClsDate;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.springframework.boot.SpringApplication;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 

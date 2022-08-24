@@ -1,6 +1,5 @@
 package com.kinart.api.gestiondepaie.controller.api;
 
-import com.kinart.api.gestiondepaie.dto.DossierPaieDto;
 import com.kinart.api.gestiondepaie.dto.ParamEFCMRDto;
 import com.kinart.api.gestiondepaie.dto.ParameterOfDipeDto;
 import io.swagger.annotations.Api;

@@ -1,15 +1,10 @@
 package com.kinart.api.organisation.dto;
 
-import com.kinart.organisation.business.model.Orgniveauemploitype;
 import com.kinart.organisation.business.model.Orgposteinfo;
 import com.kinart.organisation.business.services.competence.CompetencePosteVO;
-import com.kinart.stock.business.model.AbstractEntity;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

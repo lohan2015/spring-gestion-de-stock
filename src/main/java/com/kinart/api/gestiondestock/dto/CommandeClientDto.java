@@ -1,19 +1,11 @@
 package com.kinart.api.gestiondestock.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.kinart.stock.business.model.CommandeClient;
 import com.kinart.stock.business.model.EtatCommande;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
-import com.kinart.stock.business.utils.NoUTCInstant;
 import lombok.Builder;
 import lombok.Data;
 
