@@ -143,6 +143,7 @@ public class OrganigrammeController implements OrganigrammeApi {
 
         if (StringUtils.equalsIgnoreCase(param.getTypeDiagramme(), ClsParametreOrganigrammeVO.DIAGRAMME_RATEAU))
             result.setOrganigramme(StringUtils.replace(organigramme, ClsParametreOrganigrammeVO.STR_SPECIAL_CHAR, ClsParametreOrganigrammeVO. STR_SPECIAL_CHAR_REPLACEMENT));
+        else result.setOrganigramme(organigramme);
 
         String strOrgName = "";
         if (paintre.getAllCellules().size() > 0)
