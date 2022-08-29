@@ -1,5 +1,6 @@
 package com.kinart.api.evaluation.dto;
 
+import com.kinart.api.organisation.dto.ElementDto;
 import com.kinart.evaluation.business.model.Evalcommentaire1;
 import com.kinart.evaluation.business.model.Evalcritnote;
 import com.kinart.stock.business.model.AbstractEntity;
@@ -11,6 +12,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /** @author cmbassi */
@@ -38,6 +41,12 @@ public class EvalcritnoteDto {
     private BigDecimal notechfevl2;
     private String noteletevl2;
     private String descr;
+
+    String libcritere;
+    String codegrp;
+    int nbreEltGrp = 1;
+    BigDecimal totalGrp = BigDecimal.ZERO;
+    List<ElementDto> listeAppreciations = new ArrayList<ElementDto>();
 
     public static EvalcritnoteDto fromEntity(Evalcritnote value) {
         if (value == null) {
