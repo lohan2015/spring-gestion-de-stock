@@ -4,6 +4,7 @@ import com.kinart.api.evaluation.dto.EvalcritnoteDto;
 import com.kinart.api.evaluation.dto.ParamGenerateEvaluationDto;
 import com.kinart.evaluation.business.model.*;
 import com.kinart.evaluation.business.service.GenererEvaluationService;
+import com.kinart.paie.business.model.Salarie;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -45,21 +46,85 @@ public class GenererEvaluationServiceImpl implements GenererEvaluationService {
         List<Evalmodelchamp> lstModeles = service.find("from Evalmodelchamp where identreprise='" + dto.getIdentreprise() + "' and codechamp='" + dto.getCodeChamp()+ "'");
 
         // Liste des agents concernés
-        List<String> lstAgent = service.find("select nmat from Evalchampagent where identreprise='" + dto.getIdentreprise() + "' and codechamp='" + dto.getCodeChamp() + "'");
+        List<Salarie> lstAgent = service.find("From Salarie WHERE identreprise='" + dto.getIdentreprise() + "' and nmat in (select nmat from Evalchampagent where identreprise='" + dto.getIdentreprise() + "' and codechamp='" + dto.getCodeChamp() + "')");
 
         if(lstModeles != null && lstModeles.size() > 0){
             String strCodeModele = null;
             Integer cmpModele = 0;
+            String strCodeEval = StringUtils.EMPTY;
             for (Evalmodelchamp rhpmodelchamp : lstModeles)
             {
                 if(lstAgent == null || lstAgent.size() == 0){
                     continue;
                 }
 
-                List<Evalcarrmodele> modeles = service.find("from Evalcarrmodele where identreprise='" + dto.getIdentreprise() + "' and codemodele='" + rhpmodelchamp.getCodemodel()+ "'");
+                cmpModele++;
+                strCodeModele = rhpmodelchamp.getCodemodel();
+
+                List<Evalcarrmodele> modeles = service.find("From Evalcarrmodele where identreprise='" + dto.getIdentreprise() + "' and codemodele='" + rhpmodelchamp.getCodemodel()+ "'");
                 if(modeles!=null && modeles.size()>0){
                     Evalcarrmodele modele = modeles.get(0);
-                    for (String nmat : lstAgent){
+                    for (Salarie salarie : lstAgent){
+                        // Suppression des fiches existantes
+                        suprressionEvaluationExistante(dto.getIdentreprise(), salarie.getNmat(), strCodeModele);
+                        strCodeEval = getRangEvalAgent(dto.getIdentreprise(), salarie.getNmat(),dto.getDtFin()) + cmpModele;
+                        // Commentaires
+
+                        // **************************Objectifs*****************************************
+                        // Objectifs affectés au salarié
+                        genererObjectifForSalarie(dto.getIdentreprise(), salarie.getNmat(), strCodeEval);
+                        // Objectifs liés au poste
+                        int ordre = 1;
+                        List<EvalcritnoteDto> lstObjectifs = genererObjectifForFonction(dto.getIdentreprise(), salarie.getNmat(), strCodeEval);
+                        for(EvalcritnoteDto vo : lstObjectifs){
+                            Evalobjectif objectif = new Evalobjectif();
+                            objectif.setIdEntreprise(dto.getIdentreprise());
+                            objectif.setCodeeval(strCodeEval);
+                            objectif.setNmat(salarie.getNmat());
+                            objectif.setOrdre(new Integer(ordre));
+                            objectif.setNature("MIS");
+                            objectif.setDesc(vo.getLibcritere());
+                            objectif.setPoids(BigDecimal.ZERO);
+                            objectif.setCodeobj(vo.getCodecrit());
+                            objectif.setNote(BigDecimal.ZERO);
+                            objectif.setNote(BigDecimal.ZERO);
+                            objectif.setNotep(BigDecimal.ZERO);
+                            objectif.setRt1(BigDecimal.ZERO);
+                            objectif.setRt2(BigDecimal.ZERO);
+                            service.save(objectif);
+                            ordre = ordre + 1;
+                        }
+                        //******************************************************************************
+
+                        // **********************************Compétences****************************************
+                        // Compétences techniques
+                        List<EvalcritnoteDto> lstApprec = getListeCritereStandard(dto.getIdentreprise(), salarie.getNmat(), strCodeEval, salarie.getClas(), 785);
+                        for(EvalcritnoteDto vo : lstApprec){
+                            if(vo.getNotechf()==null) vo.setNotechf(BigDecimal.ZERO);
+                            service.save(EvalcritnoteDto.toEntity(vo));
+                        }
+
+                        // Compétences comportementales
+                        lstApprec = getListeCritereStandard(dto.getIdentreprise(), salarie.getNmat(), strCodeEval, salarie.getClas(), 786);
+                        for(EvalcritnoteDto vo : lstApprec){
+                            if(vo.getNotechf()==null) vo.setNotechf(BigDecimal.ZERO);
+                            service.save(EvalcritnoteDto.toEntity(vo));
+                        }
+
+                        // Compétences managériales
+                        lstApprec = getListeCritereStandard(dto.getIdentreprise(), salarie.getNmat(), strCodeEval, salarie.getClas(), 787);
+                        for(EvalcritnoteDto vo : lstApprec){
+                            if(vo.getNotechf()==null) vo.setNotechf(BigDecimal.ZERO);
+                            service.save(EvalcritnoteDto.toEntity(vo));
+                        }
+
+                        // Motivation
+                        lstApprec = getListeCritereStandard(dto.getIdentreprise(), salarie.getNmat(), strCodeEval, salarie.getClas(), 788);
+                        for(EvalcritnoteDto vo : lstApprec){
+                            if(vo.getNotechf()==null) vo.setNotechf(BigDecimal.ZERO);
+                            service.save(EvalcritnoteDto.toEntity(vo));
+                        }
+                        //****************************************************************************************
 
                     }
                 }
@@ -177,8 +242,8 @@ public class GenererEvaluationServiceImpl implements GenererEvaluationService {
         }
         return StringUtils.EMPTY;
     }
-    
-    public void suprressionEvaluationExistante(int cdos, String matricule, String codemodele)
+
+    private void suprressionEvaluationExistante(int cdos, String matricule, String codemodele)
     {
         String codeeval = getEvaluationExistante(cdos, matricule, codemodele);
         if(StringUtils.isEmpty(codeeval)) return;
@@ -244,20 +309,20 @@ public class GenererEvaluationServiceImpl implements GenererEvaluationService {
                 e.printStackTrace();
             }
 
-            String query = null; //"Delete From Rhtevalobjectif where identreprise='" + cdos + "' and nmat='" + vo.getComp_id().getNmat() + "' and codeeval = '" + vo.getComp_id().getCodeeval() + "'";
+            String query = null; //"Delete From Rhtevalobjectif where identreprise='" + cdos + "' and nmat='" + vo.getNmat() + "' and codeeval = '" + vo.getCodeeval() + "'";
 //					session.createSQLQuery(query).executeUpdate();
             session.createSQLQuery("Delete From Evalobjectif where identreprise='" + cdos + "' and nmat='" + matricule + "' and codeeval = '" + codeeval + "'").executeUpdate();
 
-//					query = "Delete From Rhtevalcritnote where identreprise='" + cdos + "' and nmat='" + vo.getComp_id().getNmat() + "' and codeeval = '" + vo.getComp_id().getCodeeval() + "'";
+//					query = "Delete From Rhtevalcritnote where identreprise='" + cdos + "' and nmat='" + vo.getNmat() + "' and codeeval = '" + vo.getCodeeval() + "'";
 //					session.createSQLQuery(query).executeUpdate();
             session.createSQLQuery("Delete From Evalcritnote where identreprise='" + cdos + "' and nmat='" + matricule + "' and codeeval = '" + codeeval + "'").executeUpdate();
 
             session.createSQLQuery("Delete From Evalanal where identreprise='" + cdos + "' and nmat='" + matricule + "' and codeeval = '" + codeeval + "'").executeUpdate();
 
-//			//					query = "Delete From Rhtevaluation where identreprise='" + cdos + "' and nmat='" + vo.getComp_id().getNmat() + "' and codeeval = '" + vo.getComp_id().getCodeeval() + "'";
+//			//					query = "Delete From Rhtevaluation where identreprise='" + cdos + "' and nmat='" + vo.getNmat() + "' and codeeval = '" + vo.getCodeeval() + "'";
 //					session.createSQLQuery(query).executeUpdate();
 
-//					service.delete(session, "From Rhtevaluation where identreprise='" + cdos + "' and nmat='" + vo.getComp_id().getNmat() + "' and codeeval = '" + vo.getComp_id().getCodeeval() + "'");
+//					service.delete(session, "From Rhtevaluation where identreprise='" + cdos + "' and nmat='" + vo.getNmat() + "' and codeeval = '" + vo.getCodeeval() + "'");
             List listOfEvaluation = session.createQuery("From Evaluation where identreprise='" + cdos + "' and nmat='" + matricule + "' and codeeval = '" + codeeval + "'").list();
             for (Object evaluat : listOfEvaluation) {
                 //suppression du critère
@@ -276,5 +341,137 @@ public class GenererEvaluationServiceImpl implements GenererEvaluationService {
         {
             service.closeSession(session);
         }
+    }
+
+    private void genererObjectifForSalarie(int cdos, String matricule, String strCodeEval){
+        String strQuery = "select a.vall libobj, a.cacc codeobj, d1.vall indicat, d2.vall cible, a.valm coefp, d3.vall natobj "+
+                "from Orgposteinfo g " +
+                "inner join (select nmat, max(codeinfo4) codeinfo4 from Orgposteinfo where identreprise='"+cdos+"' and typeinfo='TASK' group by nmat)h on g.codeinfo4=h.codeinfo4 and g.nmat=h.nmat  "+
+                ",ParamData a "+
+                "left join ParamData d1 on (d1.identreprise=a.identreprise and d1.ctab=a.ctab and d1.cacc=a.cacc and d1.nume=3) "+
+                "left join ParamData d2 on (d2.identreprise=a.identreprise and d2.ctab=a.ctab and d2.cacc=a.cacc and d2.nume=4) "+
+                "left join ParamData d3 on (d3.identreprise=a.identreprise and d3.ctab=a.ctab and d3.cacc=a.cacc and d3.nume=2) "+
+                "where g.identreprise=a.identreprise and g.typeinfo='TASK' and g.codeinfo1=a.cacc and a.ctab=119 and a.nume=1 and a.identreprise='"+cdos+"' and g.nmat='"+matricule+"' order by a.cacc asc";
+
+        Session session = service.getSession();
+        Query query = session.createSQLQuery(strQuery);
+
+        List<Object[]> objs = query.list();
+        service.closeSession(session);
+        int ordre = 1;
+        if(objs != null && objs.size() > 0){
+            for(Object[] obj:objs){
+                String libelleobjectif = (obj[0]!=null)?(String)obj[0]:null;
+                String codeobjectif = (obj[1]!=null)?(String)obj[1]:null;
+                String indicateur = (obj[2]!=null)?(String)obj[2]:null;
+                String cible = (obj[3]!=null)?(String)obj[3]:null;
+                BigDecimal cp = (obj[4]!=null)?(BigDecimal)obj[4]:null;
+                String natureobj = (obj[5]!=null)?(String)obj[5]:null;
+
+                Evalobjectif objectif = new Evalobjectif();
+                objectif.setIdEntreprise(cdos);
+                objectif.setCodeeval(strCodeEval);
+                objectif.setNmat(matricule);
+                objectif.setOrdre(new Integer(ordre));
+                objectif.setNature("OBJ");
+                objectif.setDesc(libelleobjectif);
+                objectif.setPoids(cp);
+                objectif.setCodeobj(codeobjectif);
+                objectif.setMoy(cible);
+                objectif.setNote(BigDecimal.ZERO);
+                objectif.setNotep(BigDecimal.ZERO);
+                objectif.setRt1(BigDecimal.ZERO);
+                objectif.setRt2(BigDecimal.ZERO);
+                service.save(objectif);
+                ordre = ordre + 1;
+            }
+        }
+    }
+
+    private List<EvalcritnoteDto> genererObjectifForFonction(int cdos, String matricule, String strCodeEval){
+        List<EvalcritnoteDto> result = new ArrayList<EvalcritnoteDto>();
+
+        // Lecture des compétences liées à la fonction
+        String sql = "select f.cacc, f.valm, c1.vall comp1, c2.vall comp2, c3.vall comp3, c4.vall comp4 "+
+                "from Salarie a, ParamData f "+
+                "left join rhfnom c1 on c1.identreprise=f.identreprise and c1.ctab=f.ctab and c1.cacc=f.cacc and c1.nume=7 "+
+                "left join rhfnom c2 on c2.identreprise=f.identreprise and c2.ctab=f.ctab and c2.cacc=f.cacc and c2.nume=8 "+
+                "left join rhfnom c3 on c3.identreprise=f.identreprise and c3.ctab=f.ctab and c3.cacc=f.cacc and c3.nume=9 "+
+                "left join rhfnom c4 on c4.identreprise=f.identreprise and c4.ctab=f.ctab and c4.cacc=f.cacc and c4.nume=10 "+
+                "where a.identreprise=f.identreprise and a.fonc=f.cacc and f.ctab=743 and f.nume=1 and a.nmat='"+matricule+"'";
+
+        Session session  = service.getSession();
+        Query query = session.createSQLQuery(sql);
+
+        List<Object[]> objs = query.list();
+        service.closeSession(session);
+        if(objs == null || objs.size() == 0){
+            return result;
+        } else {
+            try {
+                for(Object[] obj:objs){
+                    BigDecimal addCodeFonc = BigDecimal.ONE;
+                    String competence1 = (obj[2]!=null)?(String)obj[2]:null;
+                    String competence2 = (obj[3]!=null)?(String)obj[3]:null;
+                    String competence3 = (obj[4]!=null)?(String)obj[4]:null;
+                    String competence4 = (obj[5]!=null)?(String)obj[5]:null;
+//					if(StringUtils.isNotEmpty(competence1)){
+                    EvalcritnoteDto vo = new EvalcritnoteDto();
+                    String codefonc = (obj[0]!=null)?(String)obj[0]:null;
+                    BigDecimal manager = (obj[1]!=null)?(BigDecimal)obj[1]:BigDecimal.ZERO;
+                    vo.setIdEntreprise(cdos);
+                    vo.setCodecrit(codefonc+""+addCodeFonc.intValue());
+                    vo.setCodeeval(strCodeEval);
+                    vo.setNmat(matricule);
+                    vo.setLibcritere(competence1);
+                    vo.setPoids(manager);
+                    result.add(vo);
+//					}
+
+                    addCodeFonc = addCodeFonc.add(BigDecimal.ONE);
+//					if(StringUtils.isNotEmpty(competence2)){
+                    EvalcritnoteDto vo2 = new EvalcritnoteDto();
+                    vo2.setIdEntreprise(cdos);
+                    vo2.setCodecrit(codefonc+""+addCodeFonc.intValue());
+                    vo2.setCodeeval(strCodeEval);
+                    vo2.setNmat(matricule);
+                    vo2.setLibcritere(competence2);
+                    vo2.setPoids(manager);
+                    result.add(vo2);
+//					}
+
+                    addCodeFonc = addCodeFonc.add(BigDecimal.ONE);
+//					if(StringUtils.isNotEmpty(competence3)){
+                    EvalcritnoteDto vo3 = new EvalcritnoteDto();
+                    vo3.setIdEntreprise(cdos);
+                    vo3.setCodecrit(codefonc+""+addCodeFonc.intValue());
+                    vo3.setCodeeval(strCodeEval);
+                    vo3.setNmat(matricule);
+                    vo3.setLibcritere(competence3);
+                    vo3.setPoids(manager);
+                    result.add(vo3);
+//					}
+
+                    addCodeFonc = addCodeFonc.add(BigDecimal.ONE);
+//					if(StringUtils.isNotEmpty(competence4)){
+                    EvalcritnoteDto vo4 = new EvalcritnoteDto();
+                    vo4.setIdEntreprise(cdos);
+                    vo4.setCodecrit(codefonc+""+addCodeFonc.intValue());
+                    vo4.setCodeeval(strCodeEval);
+                    vo4.setNmat(matricule);
+                    vo4.setLibcritere(competence4);
+                    vo4.setPoids(manager);
+                    result.add(vo4);
+//					}
+                }
+
+            } catch (Exception e) {
+                // TODO: handle exception
+                return new ArrayList<EvalcritnoteDto>();
+            } finally {
+                service.closeSession(session);
+            }
+        }
+        return result;
     }
 }
