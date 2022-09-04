@@ -4,6 +4,7 @@ import com.kinart.api.evaluation.dto.EvalcritnoteDto;
 import com.kinart.api.evaluation.dto.ParamGenerateEvaluationDto;
 import com.kinart.evaluation.business.model.*;
 import com.kinart.evaluation.business.service.GenererEvaluationService;
+import com.kinart.paie.business.model.FreeZone;
 import com.kinart.paie.business.model.Salarie;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
 import lombok.extern.slf4j.Slf4j;
@@ -64,11 +65,113 @@ public class GenererEvaluationServiceImpl implements GenererEvaluationService {
                 List<Evalcarrmodele> modeles = service.find("From Evalcarrmodele where identreprise='" + dto.getIdentreprise() + "' and codemodele='" + rhpmodelchamp.getCodemodel()+ "'");
                 if(modeles!=null && modeles.size()>0){
                     Evalcarrmodele modele = modeles.get(0);
-                    for (Salarie salarie : lstAgent){
+
+                    Evaluation oEval = null;
+
+                      for (Salarie salarie : lstAgent){
+                          Session session = service.getSession();
+                          Transaction tx = null;
+                          tx = session.beginTransaction();
+                          try {
                         // Suppression des fiches existantes
                         suprressionEvaluationExistante(dto.getIdentreprise(), salarie.getNmat(), strCodeModele);
                         strCodeEval = getRangEvalAgent(dto.getIdentreprise(), salarie.getNmat(),dto.getDtFin()) + cmpModele;
-                        // Commentaires
+                           //Evaluation A-1
+                          int tail = strCodeEval.length();
+                          Integer anneea1 = Integer.valueOf(strCodeEval.substring(0,4));
+                          anneea1--;
+                          String newevalcode = anneea1 + strCodeEval.substring(4,tail);
+                          oEval = new Evaluation();
+                          oEval.setIdEntreprise(dto.getIdentreprise());
+                          oEval.setNmat(salarie.getNmat());
+                          oEval.setCodeeval(strCodeEval);
+                          oEval.setCodemodel(strCodeModele);
+                          oEval.setLibelleeval(modele.getLibelle());
+                          oEval.setDatedebut(dto.getDtDebut());
+                          oEval.setDatefin(dto.getDtFin());
+                          oEval.setCodemodel(strCodeModele);
+                          oEval.setEtat("N");
+                          oEval.setStatutsaper("N");
+                          oEval.setStatutworkflow("N");
+                          List<FreeZone> lstFreeZone = service.find("from FreeZone where identreprise='" + dto.getIdentreprise() + "' and nmat='" + salarie.getNmat() + "' and numerozl=4");
+                          if(lstFreeZone!=null && lstFreeZone.size()>0){
+                              FreeZone zEval = lstFreeZone.get(0);
+                              if(zEval!=null && StringUtils.isNotEmpty(zEval.getVallzl())) oEval.setEvaluateur(zEval.getVallzl().trim());
+                          }
+
+                          session.save(oEval);
+                        // Phases, étapes et commentaires
+                          Integer cmpCriteres = 0;
+                          // creation des phases de l'evaluation de l'agent
+                          String strQuery = "select pphase from Evalmodelphase pphase where pphase.identreprise = '" + dto.getIdentreprise() + "'" + " and pphase.codemodel = '"
+                                  + strCodeModele + "'" + " and not exists (select 'X' from Rhtphaseeval phaseeval" + " where phaseeval.identreprise='" + dto.getIdentreprise()
+                                  + "'" + " and phaseeval.nmat='" + salarie.getNmat() + "'" + " and phaseeval.codephase=pphase.codephase"
+                                  + " and phaseeval.codeeval='" + strCodeEval + "')";
+                          List<Evalmodelphase> lstPhaseModel = service.find(strQuery);
+                          Evalphaseeval oPhaseEval = null;
+                          for (Evalmodelphase phase : lstPhaseModel)
+                          {
+                              oPhaseEval = new Evalphaseeval();
+                              oPhaseEval.setIdEntreprise(dto.getIdentreprise());
+                              oPhaseEval.setCodephase(phase.getCodephase());
+                              oPhaseEval.setNmat(salarie.getNmat());
+                              oPhaseEval.setCodeeval(strCodeEval);
+                              // this.getService().save(oPhaseEval);
+                              session.save(oPhaseEval);
+
+                              // creation des etapes des phases de l'evaluation
+                              strQuery = "select petape from Evalmodeletape petape where petape.identreprise = '" + dto.getIdentreprise() + "'"
+                                      + " and petape.codemodel = '" + strCodeModele + "'" + " and petape.codephase = '"
+                                      + phase.getCodephase() + "'" + " and not exists (select 'X' from Rhtetapeeval etapeeval"
+                                      + " where etapeeval.identreprise='" + dto.getIdentreprise() + "'" + " and etapeeval.nmat='" + salarie.getNmat() + "'"
+                                      + " and etapeeval.codephase=petape.codephase" + " and etapeeval.codeetape=petape.codeetape"
+                                      + " and etapeeval.codeeval='" + strCodeEval + "')";
+                              List<Evalmodeletape> lstEtapeModel = service.find(strQuery);
+                              Evaletapeeval oEtapeEval = null;
+                              String strQuery1 = "";
+                              for (Evalmodeletape etape : lstEtapeModel)
+                              {
+                                  Evaletape petape = null;//service.get(Rhpevaletape.class, new RhpevaletapePK(etape.getComp_id().getCodeetape(), etape.getComp_id()
+                                          //.getCodephase(), cdos));
+                                  List<Evaletape> lstEtapes = service.find("from Evaletape where identreprise='" + dto.getIdentreprise() + "' and codeetape='" + etape.getCodeetape() + "' and codephase='"+etape.getCodephase()+"'");
+                                  if(lstEtapes!=null && lstEtapes.size()>0){
+                                      petape = lstEtapes.get(0);
+                                  }
+                                  if (petape != null)
+                                  {
+                                      oEtapeEval.setIdEntreprise(dto.getIdentreprise());
+                                      oEtapeEval.setCodeetape(etape.getCodeetape());
+                                      oEtapeEval.setNmat(salarie.getNmat());
+                                      oEtapeEval.setCodephase(phase.getCodephase());
+                                      oEtapeEval.setCodeeval(strCodeEval);
+
+                                      session.save(oEtapeEval);
+                                  }
+                              }
+
+                              // g�n�rer les commentaires
+                              // contruction de la liste des codenote libelle
+                              List<Evalmodeletapecoment> listofcomment = service.find("from Evalmodeletapecoment" + " where identreprise = '" + dto.getIdentreprise() + "'" +
+                                      " and codephase = '" + phase.getCodephase() + "'" + " and codemodel = '" + strCodeModele + "' order by ordre ASC");
+                              Evalcommentaire1 commenatire = null;
+                              for (Evalmodeletapecoment comment : listofcomment)
+                              {
+                                  commenatire.setIdEntreprise(dto.getIdentreprise());
+                                  commenatire.setNmat(salarie.getNmat());
+                                  commenatire.setCodeeval(strCodeEval);
+                                  commenatire.setCodephase(comment.getCodephase());
+                                  commenatire.setCoeetape(comment.getCodeetape());
+//					System.out.println("-------------->Code Etape = " + comment.getComp_id().getCodeetape());
+                                  commenatire.setCommentid(comment.getCode());
+                                  commenatire.setCodemodele(comment.getCodemodel());
+
+                                  commenatire.setTitre(comment.getLibelle());
+                                  commenatire.setDelais(comment.getOrdre());
+                                  //
+                                  session.save(commenatire);
+                              }
+                          }
+                        tx.commit();
 
                         // **************************Objectifs*****************************************
                         // Objectifs affectés au salarié
@@ -125,6 +228,17 @@ public class GenererEvaluationServiceImpl implements GenererEvaluationService {
                             service.save(EvalcritnoteDto.toEntity(vo));
                         }
                         //****************************************************************************************
+                      }
+                    catch (Exception e)
+                        {
+                            e.printStackTrace();
+                            if(tx != null)
+                                tx.rollback();
+                        }
+                    finally
+                        {
+                            service.closeSession(session);
+                        }
 
                     }
                 }
