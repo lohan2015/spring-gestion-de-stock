@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "Roles")
 @Table(name = "roles")
 public class Roles extends AbstractEntity {
 

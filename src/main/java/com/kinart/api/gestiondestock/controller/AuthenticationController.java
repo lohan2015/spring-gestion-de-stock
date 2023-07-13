@@ -33,20 +33,20 @@ public class AuthenticationController implements AuthenticationApi {
   @CrossOrigin
   @Override
   public ResponseEntity<AuthenticationResponse> authenticate(AuthenticationRequest request) {
-    //System.out.println("AUTHENTIFICATION...................");
+    System.out.println("AUTHENTIFICATION 1...................");
         authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             request.getLogin(),
             request.getPassword()
         )
     );
-
+    System.out.println("END FIXATION PARAM...................");
     try {
-      //System.out.println("LOAD USER...................");
+      System.out.println("LOAD USER...................");
       final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getLogin());
-      //System.out.println("GENERATE TOCKEN...................");
+      System.out.println("GENERATE TOCKEN...................");
       final String jwt = jwtUtil.generateToken((ExtendedUser) userDetails);
-      //System.out.println("NEW TOCKEN="+jwt);
+      System.out.println("NEW TOCKEN="+jwt);
       return ResponseEntity.ok(AuthenticationResponse.builder().accessToken(jwt).build());
     } catch (UsernameNotFoundException e){
       return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);

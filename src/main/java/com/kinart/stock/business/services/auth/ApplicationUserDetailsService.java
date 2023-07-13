@@ -5,6 +5,7 @@ import com.kinart.stock.business.model.auth.ExtendedUser;
 import com.kinart.stock.business.services.UtilisateurService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,14 @@ public class ApplicationUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    UtilisateurDto utilisateur = service.findByEmail(email);
+    System.out.println("CHARGEMENT USER 1..................."+email);
+    UtilisateurDto utilisation = service.findByEmail(email);
 
+    System.out.println("NOMBRE ROLE.................."+utilisation.getRoles().size());
     List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-    utilisateur.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getRoleName())));
+    utilisation.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getRoleName())));
 
-    return new ExtendedUser(utilisateur.getEmail(), utilisateur.getMoteDePasse(), utilisateur.getEntreprise().getId(), authorities);
+    return new ExtendedUser(utilisation.getEmail(), utilisation.getMoteDePasse(), utilisation.getEntreprise().getId()
+            , authorities);
   }
 }

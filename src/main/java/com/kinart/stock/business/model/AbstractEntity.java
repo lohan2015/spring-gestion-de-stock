@@ -19,6 +19,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class AbstractEntity implements Serializable {
 
   @Id
+  //@Column(name = "idEntity")
   @GeneratedValue
   private Integer id;
 

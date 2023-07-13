@@ -34,10 +34,10 @@ public class Evalobjectif extends AbstractEntity {
     @Column(name = "nature", length = 100)
     private String nature;
 
-    @Column(name = "desc", length = 200)
+    @Column(name = "description", length = 200)
     private String desc;
 
-    @Column(name = "comment", length = 500)
+    @Column(name = "commentaire", length = 500)
     private String comment;
 
     @Column(name = "codeniveau", length = 10)

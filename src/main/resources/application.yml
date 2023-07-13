@@ -10,16 +10,19 @@ management:
   server:
     port: 8081
 
-jasypt:
-  encryptor:
-    password: megatimgroupe
+  #jasypt:
+    #encryptor:
+    #password: megatimgroupe
 
 spring:
+  #mvc:
+  #pathmatch:
+  #matching-strategy: ANT_PATH_MATCHER
   datasource:
-    url: jdbc:oracle:thin:@localhost:1521:corisrh
-    username: megatim
-    password: ENC(FsSQiV5g7h53d9FwuaGf+Q==)
-    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@localhost:1521:amplituderh   #jdbc:mysql://localhost:3306/portal_notification
+    username: delta
+    password: delta  #ENC(FsSQiV5g7h53d9FwuaGf+Q==)
+    driver-class-name: oracle.jdbc.OracleDriver    #com.mysql.cj.jdbc.Driver
   mail:
     host: smtp.gmail.com #SMTP server address
     port: 465
@@ -40,7 +43,7 @@ spring:
             enable: true
   ## Specify DBMS
   jpa:
-    database: ORACLE
+    database: ORACLE #MYSQL
     show-sql: true
     properties:
       hibernate:
@@ -51,7 +54,7 @@ spring:
     # Hibernate DDL Auto (create, create-drop, update)
     hibernate:
       ddl-auto: update
-      dialect: org.hibernate.dialect.OracleDialect
+      dialect: org.hibernate.dialect.OracleDialect #org.hibernate.dialect.MySQL8Dialect
 
 server:
   port: 8081

@@ -1,15 +1,22 @@
 package com.kinart.api.gestiondestock.dto;
 
 import com.kinart.stock.business.model.Utilisateur;
+
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-public class UtilisateurDto {
+@AllArgsConstructor
+@NoArgsConstructor
+public class UtilisateurDto implements Serializable {
 
   private Integer id;
 
@@ -27,11 +34,19 @@ public class UtilisateurDto {
 
   private String photo;
 
+  private String valid1;
+
+  private String valid2;
+
+  private String valid3;
+
+  private String valid4;
+
   private EntrepriseDto entreprise;
 
   private List<RolesDto> roles;
 
-  public UtilisateurDto() {
+  /*public UtilisateurDto() {
   }
 
   public UtilisateurDto(Integer id, String nom, String prenom, String email, Instant dateDeNaissance, String moteDePasse, AdresseDto adresse, String photo, EntrepriseDto entreprise, List<RolesDto> roles) {
@@ -45,13 +60,15 @@ public class UtilisateurDto {
     this.photo = photo;
     this.entreprise = entreprise;
     this.roles = roles;
-  }
+  }*/
 
   public static UtilisateurDto fromEntity(Utilisateur utilisateur) {
+    System.out.println("USER..................."+utilisateur);
     if (utilisateur == null) {
       return null;
     }
 
+    //System.out.println("ROLES..................."+utilisateur.getRoles().size());
     return UtilisateurDto.builder()
         .id(utilisateur.getId())
         .nom(utilisateur.getNom())
@@ -63,11 +80,11 @@ public class UtilisateurDto {
         .photo(utilisateur.getPhoto())
         .entreprise(EntrepriseDto.fromEntity(utilisateur.getEntreprise()))
         .roles(
-            utilisateur.getRoles() != null ?
-                utilisateur.getRoles().stream()
-                    .map(RolesDto::fromEntity)
-                    .collect(Collectors.toList()) : null
-        )
+                    utilisateur.getRoles() != null ?
+                            utilisateur.getRoles().stream()
+                                    .map(RolesDto::fromEntity)
+                                    .collect(Collectors.toList()) : null
+            )
         .build();
   }
 

@@ -53,7 +53,7 @@ public class EntrepriseServiceImpl implements EntrepriseService {
     UtilisateurDto savedUser = utilisateurService.save(utilisateur);
 
     RolesDto rolesDto = RolesDto.builder()
-        .roleName("ADMIN")
+        .roleName("USER")
         .utilisateur(savedUser)
         .build();
 

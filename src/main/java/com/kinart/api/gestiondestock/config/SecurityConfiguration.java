@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,9 +24,11 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+  @Lazy
   @Autowired
   private ApplicationUserDetailsService applicationUserDetailsService;
 
+  @Lazy
   @Autowired
   private ApplicationRequestFilter applicationRequestFilter;
 
@@ -45,6 +48,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //         "/**/calcul/**",
 //         "/**/salaries/**",
 //         "/**/cloture/**",
+         "/**/notification/**",
+         "/**/demande/**",
          "/**/entreprises/create",
          "/**/efcmr/dipemagnetique",
          "/**/actuator/**",

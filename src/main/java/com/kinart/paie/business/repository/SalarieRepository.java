@@ -11,6 +11,9 @@ import java.util.List;
 
 public interface SalarieRepository extends JpaRepository<Salarie, Integer> {
 
+  @Query("select a from Salarie a where a.adr4 = :email")
+  List<Salarie> findByAdr4(@Param("email") String email);
+
     @Query("select a from Salarie a where cals='O' and nmat like :nmat")
    List<Salarie> findByMatricule(@Param("nmat") String nmat);
 

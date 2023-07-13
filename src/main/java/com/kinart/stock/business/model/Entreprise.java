@@ -1,15 +1,12 @@
 package com.kinart.stock.business.model;
 
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.*;
 
-@Data
+@Setter
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,7 +39,7 @@ public class Entreprise extends AbstractEntity {
   @Column(name = "siteweb")
   private String steWeb;
 
-  @OneToMany(mappedBy = "entreprise")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "entreprise")
   private List<Utilisateur> utilisateurs;
 
 }
