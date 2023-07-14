@@ -31,6 +31,10 @@ public class NotifmodifinfoDto implements Serializable {
 
     private String message;
 
+    private String senderName;
+
+    private String recipientName;
+
     public static NotifmodifinfoDto fromEntity(NotifModifInfo entity){
         NotifmodifinfoDto dto = new NotifmodifinfoDto();
         BeanUtils.copyProperties(entity, dto);

@@ -1,9 +1,12 @@
 package com.kinart.api.portail.dto;
 
-import com.kinart.portail.business.model.DemandeAbsenceConge;
+import com.kinart.portail.business.model.DemandePret;
 import com.kinart.portail.business.utils.EnumStatusType;
 import com.kinart.stock.business.model.Utilisateur;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -11,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
 
@@ -19,7 +23,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DemandeAbsenceCongeDto implements Serializable {
+public class DemandePretDto implements Serializable {
 
     private Integer id;
     private Instant creationDate;
@@ -28,12 +32,13 @@ public class DemandeAbsenceCongeDto implements Serializable {
     @NotNull(message = "L'id entreprise ne doit pas etre null")
     private Integer idEntreprise;
 
-    private Utilisateur userDemAbsCg;
+    private Utilisateur userDemPret;
+
+    private BigDecimal montantPret;
+
+    private Integer dureePret;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date dteDebut;
-
-     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dteFin;
 
     @NotNull(message = "Le motif ne doit pas etre vide")
@@ -46,16 +51,16 @@ public class DemandeAbsenceCongeDto implements Serializable {
     @NotNull(message = "Le validateur 1 ne doit pas etre vide")
     @NotEmpty(message = "Le validateur 1 ne doit pas etre vide")
     @NotBlank(message = "Le validateur 1 ne doit pas etre vide")
-    private String valid1;
+    private String scePersonnel;
 
     @NotNull(message = "Le validateur 2 ne doit pas etre vide")
     @NotEmpty(message = "Le validateur 2 ne doit pas etre vide")
     @NotBlank(message = "Le validateur 2 ne doit pas etre vide")
-    private String valid2;
+    private String drhl;
 
-    private String valid3;
+    private String dga;
 
-    private String valid4;
+    private String dg;
 
     private EnumStatusType status1;
 
@@ -65,23 +70,23 @@ public class DemandeAbsenceCongeDto implements Serializable {
 
     private EnumStatusType status4;
 
-    public static DemandeAbsenceCongeDto fromEntity(DemandeAbsenceConge absenceConge) {
-        if (absenceConge == null) {
+    public static DemandePretDto fromEntity(DemandePret demandePret) {
+        if (demandePret == null) {
             return null;
         }
 
-        DemandeAbsenceCongeDto dto = new DemandeAbsenceCongeDto();
-        BeanUtils.copyProperties(absenceConge, dto);
+        DemandePretDto dto = new DemandePretDto();
+        BeanUtils.copyProperties(demandePret, dto);
 
         return dto;
     }
 
-    public static DemandeAbsenceConge toEntity(DemandeAbsenceCongeDto dto) {
+    public static DemandePret toEntity(DemandePretDto dto) {
         if (dto == null) {
             return null;
         }
 
-        DemandeAbsenceConge entity = new DemandeAbsenceConge();
+        DemandePret entity = new DemandePret();
         BeanUtils.copyProperties(dto, entity);
 
         return entity;

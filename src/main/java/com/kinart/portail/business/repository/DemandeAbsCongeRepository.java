@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -31,4 +32,30 @@ public interface DemandeAbsCongeRepository extends JpaRepository<DemandeAbsenceC
                    "inner join utilisateur u on d.user_id = u.id and d.identreprise = u.identreprise "+
                    "where u.email=:email ORDER BY d.creation_date DESC", nativeQuery = true)  // SQL natif
     List<DemandeAbsenceConge> searchByUserEmail(@Param("email") String email);
+
+    @Query(value = "select * from demandeabsenceconge d "+
+            "inner join utilisateur u on d.user_id = u.id and d.identreprise = u.identreprise "+
+            "where u.email=:email and d.creation_date between :start and :end ORDER BY d.creation_date DESC", nativeQuery = true)  // SQL natif
+    List<DemandeAbsenceConge> searchByUserEmailAndPeriode(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("email") String email);
+
+    @Query(value = "select * from demandeabsenceconge d "+
+            "where d.valid1=:email and d.creation_date between :start and :end and d.status1=:status "+
+            "ORDER BY d.creation_date DESC", nativeQuery = true)  // SQL natif
+    List<DemandeAbsenceConge> searchByUserEmailAndPeriodeStatus1(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("email") String email, @Param("status") String status);
+
+    @Query(value = "select * from demandeabsenceconge d "+
+            "where d.valid2=:email and d.creation_date between :start and :end and d.status2=:status "+
+            "ORDER BY d.creation_date DESC", nativeQuery = true)  // SQL natif
+    List<DemandeAbsenceConge> searchByUserEmailAndPeriodeStatus2(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("email") String email, @Param("status") String status);
+
+    @Query(value = "select * from demandeabsenceconge d "+
+            "where d.valid3=:email and d.creation_date between :start and :end and d.status3=:status "+
+            "ORDER BY d.creation_date DESC", nativeQuery = true)  // SQL natif
+    List<DemandeAbsenceConge> searchByUserEmailAndPeriodeStatus3(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("email") String email, @Param("status") String status);
+
+    @Query(value = "select * from demandeabsenceconge d "+
+            "where d.valid4=:email and d.creation_date between :start and :end and d.status4=:status "+
+            "ORDER BY d.creation_date DESC", nativeQuery = true)  // SQL natif
+    List<DemandeAbsenceConge> searchByUserEmailAndPeriodeStatus4(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("email") String email, @Param("status") String status);
+
 }

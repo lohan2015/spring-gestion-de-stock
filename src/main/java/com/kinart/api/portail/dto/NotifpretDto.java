@@ -31,6 +31,10 @@ public class NotifpretDto implements Serializable {
 
     private String message;
 
+    private String senderName;
+
+    private String recipientName;
+
     public static NotifpretDto fromEntity(NotifPret entity){
         NotifpretDto dto = new NotifpretDto();
         BeanUtils.copyProperties(entity, dto);

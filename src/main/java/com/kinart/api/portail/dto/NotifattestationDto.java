@@ -31,6 +31,10 @@ public class NotifattestationDto implements Serializable {
 
     private String message;
 
+    private String senderName;
+
+    private String recipientName;
+
     public static NotifattestationDto fromEntity(NotifAttestation entity){
         NotifattestationDto dto = new NotifattestationDto();
         BeanUtils.copyProperties(entity, dto);

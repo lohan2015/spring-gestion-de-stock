@@ -50,15 +50,19 @@ public class DemandeAbsenceConge  extends AbstractEntity {
     private String valid4;
 
     @Column(name = "status1", length = 20)
-    private EnumStatusType status1;
+    @Enumerated(EnumType.STRING)
+    private EnumStatusType status1 = EnumStatusType.EATTENTE_VALIDATION;
 
     @Column(name = "status2", length = 20)
-    private EnumStatusType status2;
+    @Enumerated(EnumType.STRING)
+    private EnumStatusType status2 = EnumStatusType.NONE;
 
     @Column(name = "status3", length = 20)
-    private EnumStatusType status3;
+    @Enumerated(EnumType.STRING)
+    private EnumStatusType status3 = EnumStatusType.NONE;
 
     @Column(name = "status4", length = 20)
-    private EnumStatusType status4;
+    @Enumerated(EnumType.STRING)
+    private EnumStatusType status4 = EnumStatusType.NONE;
 
 }

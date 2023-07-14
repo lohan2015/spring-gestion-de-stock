@@ -31,6 +31,10 @@ public class NotifhabilitationDto implements Serializable {
 
     private String message;
 
+    private String senderName;
+
+    private String recipientName;
+
     public static NotifhabilitationDto fromEntity(NotifHabilitation entity){
         NotifhabilitationDto dto = new NotifhabilitationDto();
         BeanUtils.copyProperties(entity, dto);

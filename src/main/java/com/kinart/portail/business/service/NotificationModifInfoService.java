@@ -1,15 +1,15 @@
 package com.kinart.portail.business.service;
 
-import com.kinart.api.portail.dto.DemandeAbsenceCongeDto;
+import com.kinart.api.portail.dto.DemandeModifInfoDto;
 
-public interface NotificationAbsenceCongeService {
+public interface NotificationModifInfoService {
 
     /**
      *
      * @param dto
      * @throws Exception
      */
-    public void sendAbsenceCongeNotification(DemandeAbsenceCongeDto dto, String recipient) throws Exception;
+    public void sendModifInfoNotification(DemandeModifInfoDto dto, String recipient) throws Exception;
 
     /**
      *
@@ -17,14 +17,14 @@ public interface NotificationAbsenceCongeService {
      * @param validator
      * @throws Exception
      */
-    public void sendAbsCongeNotificationSender(DemandeAbsenceCongeDto dto, String validator) throws Exception;
+    public void sendModifInfoNotificationSender(DemandeModifInfoDto dto, String validator) throws Exception;
 
     /**
      *
      * @param dto
      * @throws Exception
      */
-    public void sendAbsCongeNotificationRejet(DemandeAbsenceCongeDto dto) throws Exception;
+    public void sendModifInfoNotificationRejet(DemandeModifInfoDto dto) throws Exception;
 
     /**
      *
@@ -32,6 +32,6 @@ public interface NotificationAbsenceCongeService {
      * @param recipient
      * @throws Exception
      */
-    public void sendAnnulationAbsCgeNotification(DemandeAbsenceCongeDto dto, String recipient) throws Exception;
+    public void sendAnnulationModifInfoNotification(DemandeModifInfoDto dto, String recipient) throws Exception;
 
 }

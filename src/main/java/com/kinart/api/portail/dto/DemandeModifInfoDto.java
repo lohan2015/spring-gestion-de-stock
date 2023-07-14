@@ -1,8 +1,7 @@
 package com.kinart.api.portail.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.kinart.portail.business.model.DemandeHabilitation;
+import com.kinart.portail.business.model.DemandeModifInfo;
 import com.kinart.portail.business.utils.EnumStatusType;
 import com.kinart.stock.business.model.Utilisateur;
 import lombok.AllArgsConstructor;
@@ -23,7 +22,7 @@ import java.time.Instant;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DemandeHabilitationDto implements Serializable {
+public class DemandeModifInfoDto implements Serializable {
 
     private Integer id;
     private Instant creationDate;
@@ -32,11 +31,21 @@ public class DemandeHabilitationDto implements Serializable {
     @NotNull(message = "L'id entreprise ne doit pas etre null")
     private Integer idEntreprise;
 
-    private Utilisateur userDemHabil;
+    private Utilisateur userDemModInfo;
+
+    @NotNull(message = "Le champ concerné ne doit pas etre vide")
+    @NotEmpty(message = "Le champ concerné ne doit pas etre vide")
+    @NotBlank(message = "Le champ concerné ne doit pas etre vide")
+    private String champConcerne;
+
+    @NotNull(message = "La valeur concernée ne doit pas etre vide")
+    @NotEmpty(message = "La valeur concernée ne doit pas etre vide")
+    @NotBlank(message = "La valeur concernée ne doit pas etre vide")
+    private String valeurSouhaitee;
 
     @NotNull(message = "Le nom du fichier ne doit pas etre vide")
     @NotEmpty(message = "Le nom du fichier ne doit pas etre vide")
-    @NotBlank(message = "Le tnom du fichier ne doit pas etre vide")
+    @NotBlank(message = "Le nom du fichier ne doit pas etre vide")
     private String fileName;
 
     @NotNull(message = "Le type du fichier ne doit pas etre vide")
@@ -58,23 +67,23 @@ public class DemandeHabilitationDto implements Serializable {
 
     MultipartFile file;
 
-    public static DemandeHabilitationDto fromEntity(DemandeHabilitation habilitation) {
-        if (habilitation == null) {
+    public static DemandeModifInfoDto fromEntity(DemandeModifInfo modifInfo) {
+        if (modifInfo == null) {
             return null;
         }
 
-        DemandeHabilitationDto dto = new DemandeHabilitationDto();
-        BeanUtils.copyProperties(habilitation, dto);
+        DemandeModifInfoDto dto = new DemandeModifInfoDto();
+        BeanUtils.copyProperties(modifInfo, dto);
 
         return dto;
     }
 
-    public static DemandeHabilitation toEntity(DemandeHabilitationDto dto) {
+    public static DemandeModifInfo toEntity(DemandeModifInfoDto dto) {
         if (dto == null) {
             return null;
         }
 
-        DemandeHabilitation entity = new DemandeHabilitation();
+        DemandeModifInfo entity = new DemandeModifInfo();
         BeanUtils.copyProperties(dto, entity);
 
         return entity;

@@ -1,15 +1,15 @@
 package com.kinart.portail.business.service;
 
-import com.kinart.api.portail.dto.DemandeHabilitationDto;
+import com.kinart.api.portail.dto.DemandeAttestationDto;
 
-public interface NotificationHabilitationService {
+public interface NotificationAttestationService {
 
    /**
      *
      * @param dto
      * @throws Exception
      */
-    public void sendHabilitationNotification(DemandeHabilitationDto dto, String recipient) throws Exception;
+    public void sendAttestationNotification(DemandeAttestationDto dto, String recipient) throws Exception;
 
     /**
      *
@@ -17,14 +17,14 @@ public interface NotificationHabilitationService {
      * @param validator
      * @throws Exception
      */
-    public void sendHabilitationNotificationSender(DemandeHabilitationDto dto, String validator) throws Exception;
+    public void sendAttestationNotificationSender(DemandeAttestationDto dto, String validator) throws Exception;
 
     /**
      *
      * @param dto
      * @throws Exception
      */
-    public void sendHabilitationNotificationRejet(DemandeHabilitationDto dto) throws Exception;
+    public void sendAttestationNotificationRejet(DemandeAttestationDto dto) throws Exception;
 
     /**
      *
@@ -32,6 +32,6 @@ public interface NotificationHabilitationService {
      * @param recipient
      * @throws Exception
      */
-    public void sendAnnulationHabilitationNotification(DemandeHabilitationDto dto, String recipient) throws Exception;
+    public void sendAnnulationAttestationNotification(DemandeAttestationDto dto, String recipient) throws Exception;
 
 }

@@ -1,15 +1,15 @@
 package com.kinart.portail.business.service;
 
-import com.kinart.api.portail.dto.DemandeModifInfoDto;
+import com.kinart.api.portail.dto.DemandePretDto;
 
-public interface NotificationModifInfoService {
+public interface NotificationPretService {
 
     /**
      *
      * @param dto
      * @throws Exception
      */
-    public void sendModifInfoNotification(DemandeModifInfoDto dto, String recipient) throws Exception;
+    public void sendPretNotification(DemandePretDto dto, String recipient) throws Exception;
 
     /**
      *
@@ -17,14 +17,14 @@ public interface NotificationModifInfoService {
      * @param validator
      * @throws Exception
      */
-    public void sendModifInfoNotificationSender(DemandeModifInfoDto dto, String validator) throws Exception;
+    public void sendPretNotificationSender(DemandePretDto dto, String validator) throws Exception;
 
     /**
      *
      * @param dto
      * @throws Exception
      */
-    public void sendModifInfoNotificationRejet(DemandeModifInfoDto dto) throws Exception;
+    public void sendPretNotificationRejet(DemandePretDto dto) throws Exception;
 
     /**
      *
@@ -32,6 +32,6 @@ public interface NotificationModifInfoService {
      * @param recipient
      * @throws Exception
      */
-    public void sendAnnulationModifInfoNotification(DemandeModifInfoDto dto, String recipient) throws Exception;
+    public void sendAnnulationPretNotification(DemandePretDto dto, String recipient) throws Exception;
 
 }

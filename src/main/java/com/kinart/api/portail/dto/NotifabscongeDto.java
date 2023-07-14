@@ -38,6 +38,10 @@ public class NotifabscongeDto implements Serializable {
     @Email(message = "L'email du recipient n'est conforme")
     private String recipient;
 
+    private String senderName;
+
+    private String recipientName;
+
     @NotNull(message = "Le message ne doit pas etre vide")
     @NotEmpty(message = "Le message ne doit pas etre vide")
     @NotBlank(message = "Le message ne doit pas etre vide")

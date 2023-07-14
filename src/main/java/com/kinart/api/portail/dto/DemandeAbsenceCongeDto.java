@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Date;
 
 /** @author c.mbassi */
@@ -21,6 +22,8 @@ import java.util.Date;
 public class DemandeAbsenceCongeDto implements Serializable {
 
     private Integer id;
+    private Instant creationDate;
+    private Instant lastModifiedDate;
 
     @NotNull(message = "L'id entreprise ne doit pas etre null")
     private Integer idEntreprise;

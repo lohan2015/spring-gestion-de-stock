@@ -1,7 +1,8 @@
 package com.kinart.api.portail.dto;
 
-import com.kinart.portail.business.model.DemandeAbsenceConge;
-import com.kinart.portail.business.model.DemandeAttestation;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.kinart.portail.business.model.DemandeHabilitation;
 import com.kinart.portail.business.utils.EnumStatusType;
 import com.kinart.stock.business.model.Utilisateur;
 import lombok.AllArgsConstructor;
@@ -9,21 +10,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Date;
 
 /** @author c.mbassi */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DemandeAttestationDto implements Serializable {
+public class DemandeHabilitationDto implements Serializable {
 
     private Integer id;
     private Instant creationDate;
@@ -32,37 +32,49 @@ public class DemandeAttestationDto implements Serializable {
     @NotNull(message = "L'id entreprise ne doit pas etre null")
     private Integer idEntreprise;
 
-    private Utilisateur userDemAttest;
+    private Utilisateur userDemHabil;
 
-    @NotNull(message = "Le type de document ne doit pas etre vide")
-    @NotEmpty(message = "Le type de document ne doit pas etre vide")
-    @NotBlank(message = "Le type de document ne doit pas etre vide")
-    private String typeDoc;
+    @NotNull(message = "Le nom du fichier ne doit pas etre vide")
+    @NotEmpty(message = "Le nom du fichier ne doit pas etre vide")
+    @NotBlank(message = "Le tnom du fichier ne doit pas etre vide")
+    private String fileName;
 
-    @NotNull(message = "Le validateur 1 ne doit pas etre vide")
-    @NotEmpty(message = "Le validateur 1 ne doit pas etre vide")
-    @NotBlank(message = "Le validateur 1 ne doit pas etre vide")
-    private String scePersonnel;
+    @NotNull(message = "Le type du fichier ne doit pas etre vide")
+    @NotEmpty(message = "Le type du fichier ne doit pas etre vide")
+    @NotBlank(message = "Le type du fichier ne doit pas etre vide")
+    private String fileType;
+
+    private long fileSize;
+
+    @JsonIgnore
+    private byte[] data;
+
+    @NotNull(message = "Le validateur ne doit pas etre vide")
+    @NotEmpty(message = "Le validateur ne doit pas etre vide")
+    @NotBlank(message = "Le validateur ne doit pas etre vide")
+    private String valid;
 
     private EnumStatusType status;
 
-    public static DemandeAttestationDto fromEntity(DemandeAttestation attestation) {
-        if (attestation == null) {
+    MultipartFile file;
+
+    public static DemandeHabilitationDto fromEntity(DemandeHabilitation habilitation) {
+        if (habilitation == null) {
             return null;
         }
 
-        DemandeAttestationDto dto = new DemandeAttestationDto();
-        BeanUtils.copyProperties(attestation, dto);
+        DemandeHabilitationDto dto = new DemandeHabilitationDto();
+        BeanUtils.copyProperties(habilitation, dto);
 
         return dto;
     }
 
-    public static DemandeAttestation toEntity(DemandeAttestationDto dto) {
+    public static DemandeHabilitation toEntity(DemandeHabilitationDto dto) {
         if (dto == null) {
             return null;
         }
 
-        DemandeAttestation entity = new DemandeAttestation();
+        DemandeHabilitation entity = new DemandeHabilitation();
         BeanUtils.copyProperties(dto, entity);
 
         return entity;

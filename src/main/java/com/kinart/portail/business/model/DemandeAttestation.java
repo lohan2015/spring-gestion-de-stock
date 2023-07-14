@@ -24,12 +24,13 @@ public class DemandeAttestation extends AbstractEntity {
     @JoinColumn(name="user_id", nullable=false)
     private Utilisateur userDemAttest;
 
-    @Column(name = "typedoc", length = 10)
+    @Column(name = "typedoc", length = 200)
     private String typeDoc;
 
     @Column(name = "scepersonnel", length = 100)
     private String scePersonnel;
 
     @Column(name = "status", length = 20)
-    private EnumStatusType status;
+    @Enumerated(EnumType.STRING)
+    private EnumStatusType status = EnumStatusType.EATTENTE_VALIDATION;
 }

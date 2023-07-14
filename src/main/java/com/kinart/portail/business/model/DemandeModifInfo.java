@@ -23,9 +23,12 @@ public class DemandeModifInfo  extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
-    private Utilisateur userDemAttest;
+    private Utilisateur userDemModInfo;
 
-    @Column(name = "valeursouhaitee", length = 10)
+    @Column(name = "champconcerne", length = 200)
+    private String champConcerne;
+
+    @Column(name = "valeursouhaitee", length = 1000)
     private String valeurSouhaitee;
 
     @Column(name = "file_name")
@@ -46,5 +49,6 @@ public class DemandeModifInfo  extends AbstractEntity {
     private String valid;
 
     @Column(name = "status", length = 20)
-    private EnumStatusType status;
+    @Enumerated(EnumType.STRING)
+    private EnumStatusType status = EnumStatusType.EATTENTE_VALIDATION;
 }

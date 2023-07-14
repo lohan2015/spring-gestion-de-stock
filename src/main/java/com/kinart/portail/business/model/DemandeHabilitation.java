@@ -43,5 +43,6 @@ public class DemandeHabilitation   extends AbstractEntity {
     private String valid;
 
     @Column(name = "status", length = 20)
-    private EnumStatusType status;
+    @Enumerated(EnumType.STRING)
+    private EnumStatusType status = EnumStatusType.EATTENTE_VALIDATION;
 }

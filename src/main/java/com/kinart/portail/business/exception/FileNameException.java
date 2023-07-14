@@ -1,4 +1,4 @@
-package com.coderkan.imageserver.exceptions;
+package com.kinart.portail.business.exception;
 
 public class FileNameException extends RuntimeException {
 	public FileNameException(String message) {
