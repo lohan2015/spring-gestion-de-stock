@@ -5,23 +5,26 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.stream.Stream;
 
-public enum EnumNotificationType {
-    NONE("NONE"),
-    ABSENCE_CONGE("ABSENCE_CONGE"),
-    HABILITATION("HABILITATION"),
-    PRET("PRET"),
-    MODIF_INFO("MODIF_INFO"),
-    ATTESTATION("ATTESTATION");
+public enum EnumRole {
+    USER("USER"),
+    VALIDABS1("VALIDABS1"),
+    VALIDABS2("VALIDABS2"),
+    VALIDABS3("VALIDABS3"),
+    VALIDABS4("VALIDABS4"),
+    SCE_PERSONNEL("SCE_PERSONNEL"),
+    DRHL("DRHL"),
+    DGA("DGA"),
+    DG("DG");
 
     private String code;
 
-    private EnumNotificationType(String code) {
+    private EnumRole(String code) {
         this.code=code;
     }
 
     @JsonCreator
-    public static EnumNotificationType decode(final String code) {
-        return Stream.of(EnumNotificationType.values()).filter(targetEnum -> targetEnum.code.equals(code)).findFirst().orElse(null);
+    public static EnumRole decode(final String code) {
+        return Stream.of(EnumRole.values()).filter(targetEnum -> targetEnum.code.equals(code)).findFirst().orElse(null);
     }
 
     @JsonValue

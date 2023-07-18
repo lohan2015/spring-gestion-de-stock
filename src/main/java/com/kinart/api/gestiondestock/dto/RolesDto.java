@@ -1,5 +1,6 @@
 package com.kinart.api.gestiondestock.dto;
 
+import com.kinart.portail.business.utils.EnumRole;
 import com.kinart.stock.business.model.Roles;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
@@ -19,7 +20,7 @@ public class RolesDto {
 
   private Integer id;
 
-  private String roleName;
+  private EnumRole roleName;
 
   private String module;
 

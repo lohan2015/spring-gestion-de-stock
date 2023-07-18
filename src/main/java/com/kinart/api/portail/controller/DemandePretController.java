@@ -110,7 +110,7 @@ public class DemandePretController {
             } else throw new EntityNotFoundException("Utilisateur inexistant");
 
 
-            dto.setStatus1(EnumStatusType.EATTENTE_VALIDATION);
+            dto.setStatus1(EnumStatusType.ATTENTE_VALIDATION);
             dto.setStatus2(EnumStatusType.NONE);
             dto.setStatus3(EnumStatusType.NONE);
             dto.setStatus4(EnumStatusType.NONE);
@@ -141,7 +141,7 @@ public class DemandePretController {
             if(dbDemande.isPresent()){
                 DemandePret entite = dbDemande.get();
                 entite.setStatus1(dto.getStatus1());
-                if(dto.getStatus1().equals(EnumStatusType.VALIDEE)) entite.setStatus2(EnumStatusType.EATTENTE_VALIDATION);
+                if(dto.getStatus1().equals(EnumStatusType.VALIDEE)) entite.setStatus2(EnumStatusType.ATTENTE_VALIDATION);
                 repository.save(entite);
 
                 // Gestion des notifications
@@ -181,7 +181,7 @@ public class DemandePretController {
             if(dbDemande.isPresent()){
                 DemandePret entite = dbDemande.get();
                 entite.setStatus2(dto.getStatus2());
-                if(dto.getStatus2().equals(EnumStatusType.VALIDEE)) entite.setStatus3(EnumStatusType.EATTENTE_VALIDATION);
+                if(dto.getStatus2().equals(EnumStatusType.VALIDEE)) entite.setStatus3(EnumStatusType.ATTENTE_VALIDATION);
                 repository.save(entite);
 
                 // Gestion des notifications
@@ -192,7 +192,7 @@ public class DemandePretController {
                     dto.getUserDemPret().setPrenom(user.get().getPrenom());
                 } else throw new EntityNotFoundException("Utilisateur inexistant");
                 // Si validé envoi mail a sender et validateur suivant
-                if(dto.getStatus1().equals(EnumStatusType.VALIDEE)){
+                if(dto.getStatus2().equals(EnumStatusType.VALIDEE)){
                     if(validator.isPresent())
                         notificationService.sendPretNotificationSender(dto, validator.get().getPrenom()+ " "+validator.get().getNom());
                     notificationService.sendPretNotification(dto, entite.getDga());
@@ -221,7 +221,7 @@ public class DemandePretController {
             if(dbDemande.isPresent()){
                 DemandePret entite = dbDemande.get();
                 entite.setStatus3(dto.getStatus3());
-                if(dto.getStatus3().equals(EnumStatusType.VALIDEE)) entite.setStatus4(EnumStatusType.EATTENTE_VALIDATION);
+                if(dto.getStatus3().equals(EnumStatusType.VALIDEE)) entite.setStatus4(EnumStatusType.ATTENTE_VALIDATION);
                 repository.save(entite);
 
                 // Gestion des notifications
@@ -232,7 +232,7 @@ public class DemandePretController {
                     dto.getUserDemPret().setPrenom(user.get().getPrenom());
                 } else throw new EntityNotFoundException("Utilisateur inexistant");
                 // Si validé envoi mail a sender et validateur suivant
-                if(dto.getStatus1().equals(EnumStatusType.VALIDEE)){
+                if(dto.getStatus3().equals(EnumStatusType.VALIDEE)){
                     if(validator.isPresent())
                         notificationService.sendPretNotificationSender(dto, validator.get().getPrenom()+ " "+validator.get().getNom());
                     notificationService.sendPretNotification(dto, entite.getDg());
@@ -271,7 +271,7 @@ public class DemandePretController {
                     dto.getUserDemPret().setPrenom(user.get().getPrenom());
                 } else throw new EntityNotFoundException("Utilisateur inexistant");
                 // Si validé envoi mail a sender et validateur suivant
-                if(dto.getStatus1().equals(EnumStatusType.VALIDEE)){
+                if(dto.getStatus4().equals(EnumStatusType.VALIDEE)){
                     if(validator.isPresent())
                         notificationService.sendPretNotificationSender(dto, validator.get().getPrenom()+ " "+validator.get().getNom());
                 } else if(dto.getStatus1().equals(EnumStatusType.REJETEE))// Sinon notification du sender du rejet
@@ -314,7 +314,7 @@ public class DemandePretController {
             @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
     })
     ResponseEntity<List<DemandePretDto>> findByUserAttente(@PathVariable("email") String email){
-        List<DemandePretDto> demandeAbsenceConges = repository.searchByEmailAndStatus(email, EnumStatusType.EATTENTE_VALIDATION.getCode()).stream()
+        List<DemandePretDto> demandeAbsenceConges = repository.searchByEmailAndStatus(email, EnumStatusType.ATTENTE_VALIDATION.getCode()).stream()
                                                                         .map(DemandePretDto::fromEntity)
                                                                         .collect(Collectors.toList());
         if(demandeAbsenceConges!=null) {

@@ -9,6 +9,8 @@ import com.kinart.portail.business.model.DemandeAbsenceConge;
 import com.kinart.portail.business.model.DemandeAttestation;
 import com.kinart.portail.business.model.DemandeHabilitation;
 import com.kinart.portail.business.model.DemandePret;
+import com.kinart.portail.business.utils.EnumOuiNon;
+import com.kinart.portail.business.utils.EnumStatusType;
 import lombok.*;
 
 @Setter
@@ -56,6 +58,22 @@ public class Utilisateur extends AbstractEntity {
 
   @Column(name = "valid4", length = 100)
   private String valid4;
+
+  @Column(name = "scepersonnel", length = 5)
+  @Enumerated(EnumType.STRING)
+  private EnumOuiNon scepersonnel = EnumOuiNon.NON;
+
+  @Column(name = "drhl", length = 5)
+  @Enumerated(EnumType.STRING)
+  private EnumOuiNon drhl = EnumOuiNon.NON;
+
+  @Column(name = "dga", length = 5)
+  @Enumerated(EnumType.STRING)
+  private EnumOuiNon dga = EnumOuiNon.NON;
+
+  @Column(name = "dg", length = 5)
+  @Enumerated(EnumType.STRING)
+  private EnumOuiNon dg = EnumOuiNon.NON;
 
   @ManyToOne
   @JoinColumn(name = "identreprise")

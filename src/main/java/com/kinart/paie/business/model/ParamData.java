@@ -24,7 +24,7 @@ public class ParamData extends AbstractEntity {
     @Column(name = "ctab")
     private Integer ctab;
 
-    @Column(name = "cacc", length = 10)
+    @Column(name = "cacc", length = 20)
     private String cacc;
 
     @Column(name = "nume")

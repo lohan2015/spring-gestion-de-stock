@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 public enum EnumStatusType implements Serializable {
     NONE("NONE"),
-    EATTENTE_VALIDATION("ATTENTE_VALIDATION"),
+    ATTENTE_VALIDATION("ATTENTE_VALIDATION"),
     REJETEE("REJETEE"),
     VALIDEE("VALIDEE");
 

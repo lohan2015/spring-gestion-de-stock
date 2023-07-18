@@ -1,12 +1,14 @@
 package com.kinart.stock.business.services.impl;
 
 import com.kinart.api.gestiondestock.dto.ChangerMotDePasseUtilisateurDto;
+import com.kinart.api.gestiondestock.dto.RolesDto;
 import com.kinart.api.gestiondestock.dto.UtilisateurDto;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.ErrorCodes;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import com.kinart.stock.business.exception.InvalidOperationException;
 import com.kinart.stock.business.model.Utilisateur;
+import com.kinart.stock.business.repository.RolesRepository;
 import com.kinart.stock.business.repository.UtilisateurRepository;
 import com.kinart.stock.business.services.UtilisateurService;
 import com.kinart.stock.business.validator.UtilisateurValidator;
@@ -28,12 +30,14 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
   private UtilisateurRepository utilisateurRepository;
   private PasswordEncoder passwordEncoder;
+  private RolesRepository rolesRepository;
 
   @Autowired
   public UtilisateurServiceImpl(UtilisateurRepository utilisateurRepository,
-      PasswordEncoder passwordEncoder) {
+      PasswordEncoder passwordEncoder, RolesRepository rolesRepository) {
     this.utilisateurRepository = utilisateurRepository;
     this.passwordEncoder = passwordEncoder;
+    this.rolesRepository = rolesRepository;
   }
 
   @Override
@@ -52,11 +56,17 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     dto.setMoteDePasse(passwordEncoder.encode(dto.getMoteDePasse()));
 
-    return UtilisateurDto.fromEntity(
-        utilisateurRepository.save(
-            UtilisateurDto.toEntity(dto)
-        )
-    );
+    UtilisateurDto userDbDto = UtilisateurDto.fromEntity(utilisateurRepository.save(UtilisateurDto.toEntity(dto)));
+
+    // Save rôles
+    // Delete all role existant
+    rolesRepository.deleteByUtilisateurId(userDbDto.getId());
+    for(RolesDto roleDto : dto.getRoles()){
+      roleDto.setUtilisateur(userDbDto);
+      rolesRepository.save(RolesDto.toEntity(roleDto));
+    }
+
+    return userDbDto;
   }
 
   private boolean userAlreadyExists(String email) {

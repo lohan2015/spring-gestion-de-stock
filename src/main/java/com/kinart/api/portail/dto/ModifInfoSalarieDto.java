@@ -1,4 +1,4 @@
-package com.mcsoftware.amplituderh.dto;
+package com.kinart.api.portail.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

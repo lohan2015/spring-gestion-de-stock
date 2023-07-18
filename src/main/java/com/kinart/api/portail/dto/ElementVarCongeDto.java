@@ -1,11 +1,8 @@
-package com.mcsoftware.amplituderh.dto;
+package com.kinart.api.portail.dto;
 
-import com.mcsoftware.amplituderh.entity.Rhteltvarconge;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.BeanUtils;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -59,26 +56,12 @@ public class ElementVarCongeDto {
     @NotBlank(message = "Le code utilisateur ne doit pas etre vide")
     private String cuti;
 
-    public static ElementVarCongeDto fromEntity(Rhteltvarconge absenceConge) {
-        if (absenceConge == null) {
-            return null;
-        }
-
-        ElementVarCongeDto dto = new ElementVarCongeDto();
-        BeanUtils.copyProperties(absenceConge, dto);
-
-        return dto;
-    }
-
-    public static Rhteltvarconge toEntity(ElementVarCongeDto dto) {
-        if (dto == null) {
-            return null;
-        }
-
-        Rhteltvarconge entity = new Rhteltvarconge();
-        BeanUtils.copyProperties(dto, entity);
-
-        return entity;
-    }
+    private String estUnCOnge = "N";
+    private BigDecimal nbjcTotal;
+    private BigDecimal nbjaTotal;
+    private Date minDeb;
+    private Date maxFin;
+    private Date firstDay;
+    private Date lastDay;
 
 }

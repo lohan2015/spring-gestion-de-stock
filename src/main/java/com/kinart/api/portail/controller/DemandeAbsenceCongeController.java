@@ -1,7 +1,11 @@
 package com.kinart.api.portail.controller;
 
-import com.kinart.api.gestiondepaie.dto.CalendrierPaieDto;
 import com.kinart.api.portail.dto.DemandeAbsenceCongeDto;
+import com.kinart.api.portail.dto.ElementVarCongeDto;
+import com.kinart.paie.business.model.Salarie;
+import com.kinart.paie.business.repository.ParamDataRepository;
+import com.kinart.paie.business.repository.SalarieRepository;
+import com.kinart.paie.business.services.utils.*;
 import com.kinart.portail.business.model.DemandeAbsenceConge;
 import com.kinart.portail.business.repository.DemandeAbsCongeRepository;
 import com.kinart.portail.business.service.NotificationAbsenceCongeService;
@@ -17,14 +21,15 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +45,10 @@ public class DemandeAbsenceCongeController {
     private final UtilisateurRepository utilisateurRepository;
     private final DemandeAbsCongeRepository repository;
     private final NotificationAbsenceCongeService notificationService;
+    private final RestTemplate restTemplate;
+    private final SalarieRepository salarieRepository;
+    private final GeneriqueConnexionService service;
+    private final ParamDataRepository paramDataRepository;
 
     @PostMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/user", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Sauvegarte demande absence congé", notes = "Cette methode permet d'enregistrer des demandes absence congé")
@@ -61,7 +70,7 @@ public class DemandeAbsenceCongeController {
                 dto.setValid4(user.get().getValid4());
             } else throw new EntityNotFoundException("Utilisateur inexistant");
 
-            dto.setStatus1(EnumStatusType.EATTENTE_VALIDATION);
+            dto.setStatus1(EnumStatusType.ATTENTE_VALIDATION);
             dto.setStatus2(EnumStatusType.NONE);
             dto.setStatus3(EnumStatusType.NONE);
             dto.setStatus4(EnumStatusType.NONE);
@@ -92,7 +101,7 @@ public class DemandeAbsenceCongeController {
             if(dbDemande.isPresent()){
                 DemandeAbsenceConge entite = dbDemande.get();
                 entite.setStatus1(dto.getStatus1());
-                if(dto.getStatus1().equals(EnumStatusType.VALIDEE)) entite.setStatus2(EnumStatusType.EATTENTE_VALIDATION);
+                if(dto.getStatus1().equals(EnumStatusType.VALIDEE)) entite.setStatus2(EnumStatusType.ATTENTE_VALIDATION);
                 repository.save(entite);
 
                 // Gestion des notifications
@@ -107,6 +116,11 @@ public class DemandeAbsenceCongeController {
                     if(validator.isPresent())
                         notificationService.sendAbsCongeNotificationSender(dto, validator.get().getPrenom()+ " "+validator.get().getNom());
                     notificationService.sendAbsenceCongeNotification(dto, entite.getValid2());
+                    if(StringUtil.isNoneEmpty(entite.getValid3()))
+                        notificationService.sendAbsenceCongeNotification(dto, entite.getValid2());
+                    else { // Pas de validateur de niveau 4
+                        insertEV(dto);
+                    }
                 } else if(dto.getStatus1().equals(EnumStatusType.REJETEE))// Sinon notification du sender du rejet
                     notificationService.sendAbsCongeNotificationRejet(dto);
             }
@@ -132,7 +146,7 @@ public class DemandeAbsenceCongeController {
             if(dbDemande.isPresent()){
                 DemandeAbsenceConge entite = dbDemande.get();
                 entite.setStatus2(dto.getStatus2());
-                if(dto.getStatus2().equals(EnumStatusType.VALIDEE)) entite.setStatus3(EnumStatusType.EATTENTE_VALIDATION);
+                if(dto.getStatus2().equals(EnumStatusType.VALIDEE)) entite.setStatus3(EnumStatusType.ATTENTE_VALIDATION);
                 repository.save(entite);
 
                 // Gestion des notifications
@@ -143,10 +157,14 @@ public class DemandeAbsenceCongeController {
                     dto.getUserDemAbsCg().setPrenom(user.get().getPrenom());
                 } else throw new EntityNotFoundException("Utilisateur inexistant");
                 // Si validé envoi mail a sender et validateur suivant
-                if(dto.getStatus1().equals(EnumStatusType.VALIDEE)){
+                if(dto.getStatus2().equals(EnumStatusType.VALIDEE)){
                     if(validator.isPresent())
                         notificationService.sendAbsCongeNotificationSender(dto, validator.get().getPrenom()+ " "+validator.get().getNom());
-                    notificationService.sendAbsenceCongeNotification(dto, entite.getValid3());
+                    if(StringUtil.isNoneEmpty(entite.getValid3()))
+                        notificationService.sendAbsenceCongeNotification(dto, entite.getValid3());
+                    else { // Pas de validateur de niveau 4
+                        insertEV(dto);
+                    }
                 } else if(dto.getStatus1().equals(EnumStatusType.REJETEE))// Sinon notification du sender du rejet
                     notificationService.sendAbsCongeNotificationRejet(dto);
             }
@@ -172,7 +190,7 @@ public class DemandeAbsenceCongeController {
             if(dbDemande.isPresent()){
                 DemandeAbsenceConge entite = dbDemande.get();
                 entite.setStatus3(dto.getStatus3());
-                if(dto.getStatus3().equals(EnumStatusType.VALIDEE)) entite.setStatus4(EnumStatusType.EATTENTE_VALIDATION);
+                if(dto.getStatus3().equals(EnumStatusType.VALIDEE)) entite.setStatus4(EnumStatusType.ATTENTE_VALIDATION);
                 repository.save(entite);
 
                 // Gestion des notifications
@@ -183,10 +201,14 @@ public class DemandeAbsenceCongeController {
                     dto.getUserDemAbsCg().setPrenom(user.get().getPrenom());
                 } else throw new EntityNotFoundException("Utilisateur inexistant");
                 // Si validé envoi mail a sender et validateur suivant
-                if(dto.getStatus1().equals(EnumStatusType.VALIDEE)){
+                if(dto.getStatus3().equals(EnumStatusType.VALIDEE)){
                     if(validator.isPresent())
                         notificationService.sendAbsCongeNotificationSender(dto, validator.get().getPrenom()+ " "+validator.get().getNom());
-                    notificationService.sendAbsenceCongeNotification(dto, entite.getValid4());
+                    if(StringUtil.isNotEmpty(entite.getValid4()))
+                        notificationService.sendAbsenceCongeNotification(dto, entite.getValid4());
+                    else { // Pas de validateur de niveau 4
+                        insertEV(dto);
+                    }
                 } else if(dto.getStatus1().equals(EnumStatusType.REJETEE))// Sinon notification du sender du rejet
                     notificationService.sendAbsCongeNotificationRejet(dto);
             }
@@ -197,6 +219,51 @@ public class DemandeAbsenceCongeController {
         }
 
         return new ResponseEntity(dto, HttpStatus.CREATED);
+    }
+
+    /**
+     *
+     * @param dto
+     */
+    private void insertEV(DemandeAbsenceCongeDto dto) {
+        // MAJ dans Amplitude RH
+        Optional<Salarie> salDB =   salarieRepository.findByAdr4(dto.getUserDemAbsCg().getEmail());
+
+        if(salDB.isPresent()){
+            System.out.println("SALARIE CONCERNE="+salDB.get().getNmat());
+            String host = "http://localhost:8082";
+            String urlPost = host+"/amplituderh/v1/evabsenceconge";
+            ElementVarCongeDto elementVarCongeDto = new ElementVarCongeDto();
+            elementVarCongeDto.setCdos("1");
+            elementVarCongeDto.setCuti("DELT");
+            elementVarCongeDto.setNbul(9);
+            elementVarCongeDto.setMotf(dto.getMotif());
+            elementVarCongeDto.setNmat(salDB.get().getNmat());
+            elementVarCongeDto.setAamm(new ClsDate(dto.getDteDebut()).getYearAndMonth());
+            elementVarCongeDto.setDdeb(dto.getDteDebut());
+            elementVarCongeDto.setDfin(dto.getDteFin());
+            // Calcul des nombres de jour de congé et absence
+            ClsDateRhpcalendrier rhp = new ClsDateRhpcalendrier(service, paramDataRepository, "1", "dd/MM/yyyy");
+            int nbJrAbs = rhp.getNombreDeJoursAbsences(dto.getDteDebut(), dto.getDteFin(), TypeBDUtil.OR);
+            int nbJrCgs = rhp.getNombreDeJoursConges(dto.getDteDebut(), dto.getDteFin(), TypeBDUtil.OR);
+            elementVarCongeDto.setNbjc(new BigDecimal(nbJrCgs));
+            elementVarCongeDto.setNbja(new BigDecimal(nbJrAbs));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+            List<ElementVarCongeDto> listeElementsAbsConge = ClsDateRhpcalendrier.getAllElementAbsenceConge(service, paramDataRepository, elementVarCongeDto);
+            System.out.println("NOMBRE EV="+listeElementsAbsConge.size());
+            for(ElementVarCongeDto evDto : listeElementsAbsConge){
+                evDto.setCdos("02");
+                evDto.setFirstDay((new ClsDate(elementVarCongeDto.getAamm(), "yyyyMM")).getFirstDayOfMonth());
+                evDto.setLastDay((new ClsDate(elementVarCongeDto.getAamm(), "yyyyMM")).getLastDayOfMonth());
+                HttpEntity<ElementVarCongeDto> entity = new  HttpEntity<ElementVarCongeDto>(evDto,headers);
+                restTemplate.exchange(urlPost, HttpMethod.POST, entity, ElementVarCongeDto.class);
+            }
+
+        } else throw new EntityNotFoundException("Aucun salarié correspondant a l'adresse mail de l'utilisateur");
     }
 
     @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/valid4", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -222,9 +289,12 @@ public class DemandeAbsenceCongeController {
                     dto.getUserDemAbsCg().setPrenom(user.get().getPrenom());
                 } else throw new EntityNotFoundException("Utilisateur inexistant");
                 // Si validé envoi mail a sender et validateur suivant
-                if(dto.getStatus1().equals(EnumStatusType.VALIDEE)){
+                if(dto.getStatus4().equals(EnumStatusType.VALIDEE)){
                     if(validator.isPresent())
                         notificationService.sendAbsCongeNotificationSender(dto, validator.get().getPrenom()+ " "+validator.get().getNom());
+                    // MAJ dans Amplitude RH
+                    insertEV(dto);
+
                 } else if(dto.getStatus1().equals(EnumStatusType.REJETEE))// Sinon notification du sender du rejet
                     notificationService.sendAbsCongeNotificationRejet(dto);
             }
@@ -265,7 +335,7 @@ public class DemandeAbsenceCongeController {
             @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
     })
     ResponseEntity<List<DemandeAbsenceCongeDto>> findByUserAttente(@PathVariable("email") String email){
-        List<DemandeAbsenceCongeDto> demandeAbsenceConges = repository.searchByEmailAndStatus(email, EnumStatusType.EATTENTE_VALIDATION.getCode()).stream()
+        List<DemandeAbsenceCongeDto> demandeAbsenceConges = repository.searchByEmailAndStatus(email, EnumStatusType.ATTENTE_VALIDATION.getCode()).stream()
                                                                         .map(DemandeAbsenceCongeDto::fromEntity)
                                                                         .collect(Collectors.toList());
         if(demandeAbsenceConges!=null) {

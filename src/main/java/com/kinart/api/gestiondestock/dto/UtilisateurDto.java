@@ -1,5 +1,6 @@
 package com.kinart.api.gestiondestock.dto;
 
+import com.kinart.portail.business.utils.EnumOuiNon;
 import com.kinart.stock.business.model.Utilisateur;
 
 import java.io.Serializable;
@@ -41,6 +42,11 @@ public class UtilisateurDto implements Serializable {
   private String valid3;
 
   private String valid4;
+
+  private EnumOuiNon scepersonnel = EnumOuiNon.NON;
+  private EnumOuiNon drhl = EnumOuiNon.NON;
+  private EnumOuiNon dga = EnumOuiNon.NON;
+  private EnumOuiNon dg = EnumOuiNon.NON;
 
   private EntrepriseDto entreprise;
 

@@ -87,7 +87,7 @@ public class DemandeHabilitationController {
                 throw new EntityNotFoundException("Aucune donnée avec l'ID = "+"VAL_DH"+" n'a pas été trouvée dans la table 99", ErrorCodes.ARTICLE_NOT_FOUND);
             else emailValidator = fnom.getVall();
             dto.setValid(emailValidator);
-            dto.setStatus(EnumStatusType.EATTENTE_VALIDATION);
+            dto.setStatus(EnumStatusType.ATTENTE_VALIDATION);
             repository.save(DemandeHabilitationDto.toEntity(dto));
 
             // Gestion des notifications

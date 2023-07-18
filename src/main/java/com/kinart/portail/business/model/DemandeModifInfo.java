@@ -50,5 +50,5 @@ public class DemandeModifInfo  extends AbstractEntity {
 
     @Column(name = "status", length = 20)
     @Enumerated(EnumType.STRING)
-    private EnumStatusType status = EnumStatusType.EATTENTE_VALIDATION;
+    private EnumStatusType status = EnumStatusType.ATTENTE_VALIDATION;
 }

@@ -1,11 +1,9 @@
 package com.kinart.stock.business.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.kinart.portail.business.utils.EnumOuiNon;
+import com.kinart.portail.business.utils.EnumRole;
 import lombok.*;
 
 import java.util.Date;
@@ -19,8 +17,9 @@ import java.util.Date;
 @Table(name = "roles")
 public class Roles extends AbstractEntity {
 
-  @Column(name = "rolename")
-  private String roleName;
+  @Column(name = "rolename", length = 20)
+  @Enumerated(EnumType.STRING)
+  private EnumRole roleName = EnumRole.USER;
 
   @Column(name = "module", length = 20)
   private String module;

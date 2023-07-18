@@ -3,6 +3,7 @@ package com.kinart.stock.business.services.impl;
 import com.kinart.api.gestiondestock.dto.EntrepriseDto;
 import com.kinart.api.gestiondestock.dto.RolesDto;
 import com.kinart.api.gestiondestock.dto.UtilisateurDto;
+import com.kinart.portail.business.utils.EnumRole;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.ErrorCodes;
 import com.kinart.stock.business.exception.InvalidEntityException;
@@ -53,7 +54,7 @@ public class EntrepriseServiceImpl implements EntrepriseService {
     UtilisateurDto savedUser = utilisateurService.save(utilisateur);
 
     RolesDto rolesDto = RolesDto.builder()
-        .roleName("USER")
+        .roleName(EnumRole.USER)
         .utilisateur(savedUser)
         .build();
 

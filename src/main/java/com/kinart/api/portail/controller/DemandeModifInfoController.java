@@ -2,7 +2,11 @@ package com.kinart.api.portail.controller;
 
 import com.kinart.api.gestiondepaie.dto.ParamDataDto;
 import com.kinart.api.portail.dto.DemandeModifInfoDto;
+import com.kinart.api.portail.dto.ElementVarCongeDto;
+import com.kinart.api.portail.dto.ModifInfoSalarieDto;
+import com.kinart.paie.business.model.Salarie;
 import com.kinart.paie.business.repository.ParamDataRepository;
+import com.kinart.paie.business.repository.SalarieRepository;
 import com.kinart.portail.business.helper.FileNameHelper;
 import com.kinart.portail.business.model.DemandeHabilitation;
 import com.kinart.portail.business.model.DemandeModifInfo;
@@ -21,10 +25,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +35,7 @@ import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,6 +52,8 @@ public class DemandeModifInfoController {
     private final NotificationModifInfoService notificationService;
     private final ParamDataRepository paramDataRepository;
     private final UtilisateurRepository utilisateurRepository;
+    private final RestTemplate restTemplate;
+    private final SalarieRepository salarieRepository;
 
     private FileNameHelper fileHelper = new FileNameHelper();
 
@@ -88,7 +94,7 @@ public class DemandeModifInfoController {
                 throw new EntityNotFoundException("Aucune donnée avec l'ID = "+"VAL_DH"+" n'a pas été trouvée dans la table 99", ErrorCodes.ARTICLE_NOT_FOUND);
             else emailValidator = fnom.getVall();
             dto.setValid(emailValidator);
-            dto.setStatus(EnumStatusType.EATTENTE_VALIDATION);
+            dto.setStatus(EnumStatusType.ATTENTE_VALIDATION);
             repository.save(DemandeModifInfoDto.toEntity(dto));
 
             // Gestion des notifications
@@ -129,6 +135,24 @@ public class DemandeModifInfoController {
                 if(dto.getStatus().equals(EnumStatusType.VALIDEE)){
                     if(validator.isPresent())
                         notificationService.sendModifInfoNotificationSender(dto, validator.get().getPrenom()+ " "+validator.get().getNom());
+                    // MAJ dans Amplitude RH
+                    Optional<Salarie> salDB =   salarieRepository.findByAdr4(dto.getUserDemModInfo().getEmail());
+                    if(salDB.isPresent()){
+                        String host = "http://localhost:8082";
+                        String urlPost = host+"/amplituderh/v1/modifinfosalarie";
+                        ModifInfoSalarieDto modifInfoSalarieDto = new ModifInfoSalarieDto();
+                        modifInfoSalarieDto.setCdos("02");
+                        modifInfoSalarieDto.setMatricule(salDB.get().getNmat());
+                        modifInfoSalarieDto.setKey(dto.getChampConcerne());
+                        modifInfoSalarieDto.setValue(dto.getValeurSouhaitee());
+
+                        HttpHeaders headers = new HttpHeaders();
+                        headers.setContentType(MediaType.APPLICATION_JSON);
+                        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+                        HttpEntity<ModifInfoSalarieDto> entity = new  HttpEntity<ModifInfoSalarieDto>(modifInfoSalarieDto,headers);
+                        restTemplate.exchange(urlPost, HttpMethod.POST, entity, ModifInfoSalarieDto.class);
+                    } else throw new EntityNotFoundException("Aucun salarié correspondant a l'adresse mail de l'utilisateur");
+
                 } else if(dto.getStatus().equals(EnumStatusType.REJETEE))// Sinon notification du sender du rejet
                     notificationService.sendModifInfoNotificationRejet(dto);
             }

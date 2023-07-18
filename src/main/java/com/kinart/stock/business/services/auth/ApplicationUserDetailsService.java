@@ -28,7 +28,7 @@ public class ApplicationUserDetailsService implements UserDetailsService {
 
     System.out.println("NOMBRE ROLE.................."+utilisation.getRoles().size());
     List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-    utilisation.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getRoleName())));
+    utilisation.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getRoleName().getCode())));
 
     return new ExtendedUser(utilisation.getEmail(), utilisation.getMoteDePasse(), utilisation.getEntreprise().getId()
             , authorities);

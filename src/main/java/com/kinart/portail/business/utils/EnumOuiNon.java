@@ -6,21 +6,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.io.Serializable;
 import java.util.stream.Stream;
 
-public enum EnumStatusType implements Serializable {
+public enum EnumOuiNon implements Serializable {
     NONE("NONE"),
-    EATTENTE_VALIDATION("ATTENTE_VALIDATION"),
-    REJETEE("REJETEE"),
-    VALIDEE("VALIDEE");
+    OUI("OUI"),
+    NON("NON");
 
     private String code;
 
-    private EnumStatusType(String code) {
+    private EnumOuiNon(String code) {
         this.code=code;
     }
 
     @JsonCreator
-    public static EnumStatusType decode(final String code) {
-        return Stream.of(EnumStatusType.values()).filter(targetEnum -> targetEnum.code.equals(code)).findFirst().orElse(null);
+    public static EnumOuiNon decode(final String code) {
+        return Stream.of(EnumOuiNon.values()).filter(targetEnum -> targetEnum.code.equals(code)).findFirst().orElse(null);
     }
 
     @JsonValue
