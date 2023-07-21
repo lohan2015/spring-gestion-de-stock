@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.kinart.api.gestiondepaie.dto.ElementVariableCongeDto;
 import com.kinart.api.gestiondepaie.dto.ParamCalendarDto;
 import com.kinart.api.gestiondepaie.dto.ParamDataDto;
 import com.kinart.api.portail.dto.ElementVarCongeDto;
@@ -19,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.BeanUtils;
 

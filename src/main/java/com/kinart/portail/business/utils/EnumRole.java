@@ -14,7 +14,8 @@ public enum EnumRole {
     SCE_PERSONNEL("SCE_PERSONNEL"),
     DRHL("DRHL"),
     DGA("DGA"),
-    DG("DG");
+    DG("DG"),
+    ADMIN("ADMIN");
 
     private String code;
 

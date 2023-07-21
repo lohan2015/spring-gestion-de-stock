@@ -5,7 +5,6 @@ import com.kinart.stock.business.model.auth.ExtendedUser;
 import com.kinart.stock.business.services.UtilisateurService;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;

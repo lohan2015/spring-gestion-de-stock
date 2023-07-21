@@ -1,28 +1,27 @@
 package com.kinart.api.portail.dto;
 
-import com.kinart.portail.business.model.DemandeAbsenceConge;
 import com.kinart.portail.business.model.DemandeAttestation;
 import com.kinart.portail.business.utils.EnumStatusType;
 import com.kinart.stock.business.model.Utilisateur;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Date;
 
 /** @author c.mbassi */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(description = "Model d'attestation")
 public class DemandeAttestationDto implements Serializable {
 
     private Integer id;

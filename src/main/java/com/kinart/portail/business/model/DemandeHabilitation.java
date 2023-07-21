@@ -32,12 +32,12 @@ public class DemandeHabilitation   extends AbstractEntity {
     private String fileType;
 
     @Column(name = "file_size")
-    private long fileSize;
+    private Long fileSize;
 
     @Lob
-    @Column(name = "data")
+    @Column(name = "file_data")
     @Type(type = "org.hibernate.type.BinaryType")
-    private byte[] data;
+    private byte[] fileData;
 
     @Column(name = "valid", length = 100)
     private String valid;

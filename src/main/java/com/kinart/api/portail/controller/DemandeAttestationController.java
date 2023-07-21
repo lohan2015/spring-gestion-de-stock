@@ -136,8 +136,8 @@ public class DemandeAttestationController {
     })
     ResponseEntity<List<DemandeAttestationDto>> findByUserAndDateStatus(
             @PathVariable("email") String email,
-            @RequestParam("start-date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam("end-date")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam("status1")  String status1
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
@@ -152,12 +152,12 @@ public class DemandeAttestationController {
         }
     }
 
-    @DeleteMapping(value = APP_ROOT_PORTAIL + "/demande/attestation/{demand-id}")
+    @DeleteMapping(value = APP_ROOT_PORTAIL + "/demande/attestation/{demandid}")
     @ApiOperation(value = "Supprimer une demande pas encore validée", notes = "Cette methode permet de supprimer une demande pas encore validée")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément a ete supprime")
     })
-    void delete(@PathVariable("demand-id") Integer demandid) throws Exception {
+    void delete(@PathVariable("demandid") Integer demandid) throws Exception {
         Optional<DemandeAttestation> entite = repository.findById(demandid);
         if(entite.isPresent()) repository.deleteById(demandid);
 

@@ -3,6 +3,7 @@ package com.kinart.api.portail.dto;
 import com.kinart.portail.business.model.DemandePret;
 import com.kinart.portail.business.utils.EnumStatusType;
 import com.kinart.stock.business.model.Utilisateur;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(description = "Model des demandes de prêt")
 public class DemandePretDto implements Serializable {
 
     private Integer id;

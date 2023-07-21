@@ -3,6 +3,7 @@ package com.kinart.api.portail.dto;
 import com.kinart.portail.business.model.DemandeAbsenceConge;
 import com.kinart.portail.business.utils.EnumStatusType;
 import com.kinart.stock.business.model.Utilisateur;
+import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,6 +20,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(description = "Model des demande absences / congé")
 public class DemandeAbsenceCongeDto implements Serializable {
 
     private Integer id;

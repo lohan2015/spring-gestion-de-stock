@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +41,7 @@ import static com.kinart.stock.business.utils.Constants.APP_ROOT_PORTAIL;
 @Api("demande-habilitation")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class DemandeHabilitationController {
 
     private final ObjectsValidator<DemandeHabilitationDto> validator;
@@ -50,28 +52,37 @@ public class DemandeHabilitationController {
 
     private FileNameHelper fileHelper = new FileNameHelper();
 
-    @PostMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/user", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PostMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/user", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Sauvegarte demande habilitation", notes = "Cette methode permet d'enregistrer des demandes habilitation")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<DemandeHabilitationDto> saveUser(@RequestBody DemandeHabilitationDto dto){
-        validator.validate(dto);
+    ResponseEntity<DemandeHabilitationDto> saveUser(@RequestParam("email") String email, @RequestParam("image") MultipartFile file){
+        System.out.println("EMAIL-------------------"+email);
+        System.out.println("IMAGE 1-------------------"+file.getOriginalFilename());
+        System.out.println("IMAGE 2-------------------"+file.getContentType());
+        System.out.println("IMAGE 3-------------------"+file.getSize());
+        //validator.validate(dto);
+        System.out.println("Declaration DemandeHabilitationDto-------------------");
+        DemandeHabilitationDto dto = new DemandeHabilitationDto();
 
         try {
-            String fileName = fileHelper.generateDisplayName(dto.getFile().getOriginalFilename());
-            dto.setFileName(fileName);
-            dto.setData(dto.getFile().getBytes());
-            dto.setFileType(dto.getFile().getContentType());
-            dto.setFileSize(dto.getFile().getSize());
+            System.out.println("Debut Elements fixés-------------------");
+            //String fileName = fileHelper.generateDisplayName(file.getOriginalFilename());
+            dto.setFileName(file.getOriginalFilename());
+            dto.setFileData(file.getBytes());
+            dto.setFileType(file.getContentType());
+            dto.setFileSize(file.getSize());
+            dto.getUserDemHabil().setEmail(email);
+            System.out.println("Elements fixés-------------------");
 
             // Get info user
             Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getUserDemHabil().getEmail());
             if(user.isPresent()){
-                dto.getUserDemHabil().setNom(user.get().getNom());
-                dto.getUserDemHabil().setPrenom(user.get().getPrenom());
+                dto.setUserDemHabil(user.get());
             } else throw new EntityNotFoundException("Utilisateur inexistant");
+            System.out.println("Utilisateur existant-------------------");
 
             // Fixer les validateurs
             String emailValidator = "cyrille.mbassi@yahoo.com";
@@ -86,12 +97,16 @@ public class DemandeHabilitationController {
             if(fnom == null)
                 throw new EntityNotFoundException("Aucune donnée avec l'ID = "+"VAL_DH"+" n'a pas été trouvée dans la table 99", ErrorCodes.ARTICLE_NOT_FOUND);
             else emailValidator = fnom.getVall();
+            System.out.println("Validateur existant-------------------");
+
             dto.setValid(emailValidator);
             dto.setStatus(EnumStatusType.ATTENTE_VALIDATION);
             repository.save(DemandeHabilitationDto.toEntity(dto));
+            System.out.println("Sauvegarde effectuée-------------------");
 
             // Gestion des notifications
             notificationService.sendHabilitationNotification(dto, dto.getValid());
+            System.out.println("Envoi mail effectué-------------------");
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
@@ -102,7 +117,7 @@ public class DemandeHabilitationController {
         return new ResponseEntity(dto, HttpStatus.CREATED);
     }
 
-    @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/valid", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/valid", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Sauvegarte demande habilitation", notes = "Cette methode permet d'enregistrer des demandes habilitation")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
@@ -146,11 +161,11 @@ public class DemandeHabilitationController {
      * @param demandeid
      * @return return valid byte array
      */
-    @GetMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/showdocument/{demande-id}")
+    @GetMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/showdocument/{demandeid}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<byte[]> getDocument(@RequestParam Integer demandeid) throws Exception {
         Optional<DemandeHabilitation> habilitation = repository.findById(demandeid);
         if(habilitation.isPresent())
-            return ResponseEntity.ok().contentType(MediaType.valueOf(habilitation.get().getFileType())).body(habilitation.get().getData());
+            return ResponseEntity.ok().contentType(MediaType.valueOf(habilitation.get().getFileType())).body(habilitation.get().getFileData());
         else throw new EntityNotFoundException("Pas de fichier trouvé");
     }
 
@@ -160,7 +175,7 @@ public class DemandeHabilitationController {
      * @param demandeid
      * @return return valid byte array
      */
-    @GetMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/showdocument2/{demande-id}")
+    @GetMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/showdocument2/{demandeid}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Object> getDocument2(@RequestParam Integer demandeid, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Optional<DemandeHabilitation> habilitation = repository.findById(demandeid);
 
@@ -174,7 +189,7 @@ public class DemandeHabilitationController {
 
             // Read from the file and write into the response
             OutputStream os = response.getOutputStream();
-            os.write(habilitation.get().getData());
+            os.write(habilitation.get().getFileData());
 
             os.flush();
             os.close();
@@ -183,7 +198,7 @@ public class DemandeHabilitationController {
         return null;
     }
 
-    @GetMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/status/{email}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/status/{email}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
     @ApiOperation(value = "Renvoi la liste des demandes", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
             + "dans la BDD", responseContainer = "List<DemandeHabilitationDto>")
     @ApiResponses(value = {
@@ -191,13 +206,13 @@ public class DemandeHabilitationController {
     })
     ResponseEntity<List<DemandeHabilitationDto>> findByUserAndDateStatus(
             @PathVariable("email") String email,
-            @RequestParam("start-date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam("end-date")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam("status1")  String status1
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
-        List<DemandeHabilitationDto> demandeAbsenceConges = repository.searchByUserEmailAndPeriodeStatus(start, end, email, status1).stream()
+        List<DemandeHabilitationDto> demandeAbsenceConges = repository.searchByUserEmailAndPeriodeStatus(start, end, email).stream()
                 .map(DemandeHabilitationDto::fromEntity)
                 .collect(Collectors.toList());
         if(demandeAbsenceConges!=null) {
@@ -207,17 +222,19 @@ public class DemandeHabilitationController {
         }
     }
 
-    @DeleteMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/{demand-id}")
+    @DeleteMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/{demandid}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Supprimer une demande pas encore validée", notes = "Cette methode permet de supprimer une demande pas encore validée")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément a ete supprime")
     })
-    void delete(@PathVariable("demand-id") Integer demandid) throws Exception {
+    ResponseEntity<Void> delete(@PathVariable("demandid") Integer demandid) throws Exception {
         Optional<DemandeHabilitation> entite = repository.findById(demandid);
         if(entite.isPresent()) repository.deleteById(demandid);
 
         // Notification validateur de l'annulation
         DemandeHabilitationDto dto = DemandeHabilitationDto.fromEntity(entite.get());
         notificationService.sendAnnulationHabilitationNotification(dto, dto.getValid());
+
+        return ResponseEntity.accepted().build();
     }
 }

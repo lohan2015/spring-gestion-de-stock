@@ -1,5 +1,6 @@
 package com.kinart.api.portail.dto;
 
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(description = "Model des demande de modif des infos salaries")
 public class ModifInfoSalarieDto implements Serializable {
 
     @NotNull(message = "Le matricule ne doit pas etre vide")

@@ -12,7 +12,6 @@ import com.kinart.stock.business.exception.InvalidEntityException;
 import com.kinart.stock.business.services.CategoryService;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
-import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

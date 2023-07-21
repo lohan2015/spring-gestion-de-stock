@@ -2,13 +2,11 @@ package com.kinart.api.portail.controller;
 
 import com.kinart.api.gestiondepaie.dto.ParamDataDto;
 import com.kinart.api.portail.dto.DemandeModifInfoDto;
-import com.kinart.api.portail.dto.ElementVarCongeDto;
 import com.kinart.api.portail.dto.ModifInfoSalarieDto;
 import com.kinart.paie.business.model.Salarie;
 import com.kinart.paie.business.repository.ParamDataRepository;
 import com.kinart.paie.business.repository.SalarieRepository;
 import com.kinart.portail.business.helper.FileNameHelper;
-import com.kinart.portail.business.model.DemandeHabilitation;
 import com.kinart.portail.business.model.DemandeModifInfo;
 import com.kinart.portail.business.repository.DemandeModifInfoRepository;
 import com.kinart.portail.business.service.NotificationModifInfoService;
@@ -171,7 +169,7 @@ public class DemandeModifInfoController {
      * @param demandeid
      * @return return valid byte array
      */
-    @GetMapping(value = APP_ROOT_PORTAIL + "/demande/modfinfo/showdocument/{demande-id}")
+    @GetMapping(value = APP_ROOT_PORTAIL + "/demande/modfinfo/showdocument/{demandeid}")
     public ResponseEntity<byte[]> getDocument(@RequestParam Integer demandeid) throws Exception {
         Optional<DemandeModifInfo> habilitation = repository.findById(demandeid);
         if(habilitation.isPresent())
@@ -185,7 +183,7 @@ public class DemandeModifInfoController {
      * @param demandeid
      * @return return valid byte array
      */
-    @GetMapping(value = APP_ROOT_PORTAIL + "/demande/modfinfo/showdocument2/{demande-id}")
+    @GetMapping(value = APP_ROOT_PORTAIL + "/demande/modfinfo/showdocument2/{demandeid}")
     public ResponseEntity<Object> getDocument2(@RequestParam Integer demandeid, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Optional<DemandeModifInfo> habilitation = repository.findById(demandeid);
 
@@ -216,8 +214,8 @@ public class DemandeModifInfoController {
     })
     ResponseEntity<List<DemandeModifInfoDto>> findByUserAndDateStatus(
             @PathVariable("email") String email,
-            @RequestParam("start-date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam("end-date")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam("status1")  String status1
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
@@ -232,12 +230,12 @@ public class DemandeModifInfoController {
         }
     }
 
-    @DeleteMapping(value = APP_ROOT_PORTAIL + "/demande/modfinfo/{demand-id}")
+    @DeleteMapping(value = APP_ROOT_PORTAIL + "/demande/modfinfo/{demandid}")
     @ApiOperation(value = "Supprimer une demande pas encore validée", notes = "Cette methode permet de supprimer une demande pas encore validée")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément a ete supprime")
     })
-    void delete(@PathVariable("demand-id") Integer demandid) throws Exception {
+    void delete(@PathVariable("demandid") Integer demandid) throws Exception {
         Optional<DemandeModifInfo> entite = repository.findById(demandid);
         if(entite.isPresent()) repository.deleteById(demandid);
 

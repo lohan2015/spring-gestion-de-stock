@@ -6,7 +6,6 @@ import com.kinart.api.mail.service.EmailService;
 import com.kinart.api.portail.dto.DemandeHabilitationDto;
 import com.kinart.paie.business.repository.ParamDataRepository;
 import com.kinart.portail.business.model.NotifHabilitation;
-import com.kinart.portail.business.repository.NotifAbsCongeRepository;
 import com.kinart.portail.business.repository.NotifHabilitationRepository;
 import com.kinart.portail.business.service.NotificationHabilitationService;
 import com.kinart.stock.business.exception.EntityNotFoundException;

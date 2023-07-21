@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<!--packaging>war</packaging-->
 	<name>API_Gestion_paie_stock</name>
-	<description>API de gestion paie et stock</description>
+	<description>API du portil salarié</description>
 	<properties>
 		<java.version>11</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
@@ -134,6 +134,23 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>42.2.16</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
 		</dependency>
 		<!-- dependency>
 			<groupId>com.oracle</groupId>
@@ -266,9 +283,9 @@
 							</locations>
 							<basePath>http://localhost:8081</basePath>
 							<info>
-								<title>Swagger Api Documentation for Gestion de paie et stock application</title>
+								<title>Swagger Api Documentation for portail salarié application</title>
 								<version>${project.version}</version>
-								<description>Swagger Api documentation for Gestion de paie et stock application</description>
+								<description>Swagger Api documentation for portail salarié application</description>
 								<contact>
 									<email>mbacyrille2002@yahoo.fr</email>
 									<name>Cyrille MBASSI</name>

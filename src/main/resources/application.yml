@@ -47,6 +47,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        format_sql: true
         allow_update_outside_transaction: true
         session_factory:
           interceptor: com.kinart.stock.business.interceptor.Interceptor
@@ -55,6 +56,11 @@ spring:
     hibernate:
       ddl-auto: update
       dialect: org.hibernate.dialect.OracleDialect #org.hibernate.dialect.MySQL8Dialect
+  #logging:
+    #level:
+      #org:
+        #hibernate:
+      #type: trace
 
 server:
   port: 8081

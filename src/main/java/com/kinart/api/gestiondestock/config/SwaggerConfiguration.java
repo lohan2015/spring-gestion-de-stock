@@ -37,8 +37,8 @@ public class SwaggerConfiguration {
     return new Docket(DocumentationType.SWAGGER_2)
         .apiInfo(
             new ApiInfoBuilder()
-                .description("Gestion de paie et stock API documentation")
-                .title("Gestion de paie et stock REST API")
+                .description("Portail salarié API documentation")
+                .title("Portail salarié REST API")
                 .build()
         )
             .groupName("REST API V1")
@@ -53,8 +53,9 @@ public class SwaggerConfiguration {
             .apis(RequestHandlerSelectors.basePackage("com.kinart.api"))
             //.apis(Predicate.not(RequestHandlerSelectors.basePackage("org.springframework.boot")))
             .build()
-            .genericModelSubstitutes(ResponseEntity.class)
-            .ignoredParameterTypes(Timestamp.class);
+            .genericModelSubstitutes(ResponseEntity.class);
+//            .ignoredParameterTypes(Timestamp.class);
+
 //            .select()
 //            .apis(RequestHandlerSelectors.any())
 //            .paths(PathSelectors.any())

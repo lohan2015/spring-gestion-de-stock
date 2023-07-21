@@ -2,10 +2,12 @@ package com.kinart.portail.business.utils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
 
 import java.io.Serializable;
 import java.util.stream.Stream;
 
+@ApiModel(description = "Enum status type")
 public enum EnumStatusType implements Serializable {
     NONE("NONE"),
     ATTENTE_VALIDATION("ATTENTE_VALIDATION"),

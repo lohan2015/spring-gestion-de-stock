@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kinart.portail.business.model.DemandeModifInfo;
 import com.kinart.portail.business.utils.EnumStatusType;
 import com.kinart.stock.business.model.Utilisateur;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,7 @@ import java.time.Instant;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(description = "Model des demandes de modif info")
 public class DemandeModifInfoDto implements Serializable {
 
     private Integer id;

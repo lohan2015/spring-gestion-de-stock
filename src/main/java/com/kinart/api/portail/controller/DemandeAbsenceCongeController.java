@@ -353,8 +353,8 @@ public class DemandeAbsenceCongeController {
     })
     ResponseEntity<List<DemandeAbsenceCongeDto>> findByUserAndDate(
           @PathVariable("email") String email,
-          @RequestParam("start-date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-          @RequestParam("end-date")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
+          @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+          @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
@@ -376,8 +376,8 @@ public class DemandeAbsenceCongeController {
     })
     ResponseEntity<List<DemandeAbsenceCongeDto>> findByUserAndDateStatus1(
             @PathVariable("email") String email,
-            @RequestParam("start-date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam("end-date")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam("status1")  String status1
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
@@ -400,8 +400,8 @@ public class DemandeAbsenceCongeController {
     })
     ResponseEntity<List<DemandeAbsenceCongeDto>> findByUserAndDateStatus2(
             @PathVariable("email") String email,
-            @RequestParam("start-date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam("end-date")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam("status2")  String status2
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
@@ -424,8 +424,8 @@ public class DemandeAbsenceCongeController {
     })
     ResponseEntity<List<DemandeAbsenceCongeDto>> findByUserAndDateStatus3(
             @PathVariable("email") String email,
-            @RequestParam("start-date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam("end-date")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam("status3")  String status3
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
@@ -448,8 +448,8 @@ public class DemandeAbsenceCongeController {
     })
     ResponseEntity<List<DemandeAbsenceCongeDto>> findByUserAndDateStatus4(
             @PathVariable("email") String email,
-            @RequestParam("start-date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam("end-date")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam("status3")  String status4
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
@@ -464,18 +464,20 @@ public class DemandeAbsenceCongeController {
         }
     }
 
-    @DeleteMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/{demand-id}")
+    @DeleteMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/{demandid}")
     @ApiOperation(value = "Supprimer une demande pas encore validée", notes = "Cette methode permet de supprimer une demande pas encore validée")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément a ete supprime")
     })
-    void delete(@PathVariable("demand-id") Integer demandid) throws Exception {
+    ResponseEntity<Void> delete(@PathVariable("demandid") Integer demandid) throws Exception {
         Optional<DemandeAbsenceConge> entite = repository.findById(demandid);
         if(entite.isPresent()) repository.deleteById(demandid);
 
         // Notification validateur de l'annulation
         DemandeAbsenceCongeDto dto = DemandeAbsenceCongeDto.fromEntity(entite.get());
         notificationService.sendAnnulationAbsCgeNotification(dto, dto.getValid1());
+
+        return ResponseEntity.accepted().build();
     }
 
 }

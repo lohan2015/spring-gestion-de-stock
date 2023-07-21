@@ -30,8 +30,8 @@ public interface DemandeHabilitationRepository extends JpaRepository<DemandeHabi
     List<DemandeHabilitation> searchByUserEmail(@Param("email") String email);
 
     @Query(value = "select * from demandehabilitation d "+
-            "where d.valid=:email and d.creation_date between :start and :end and d.status=:status "+
+            "where d.valid=:email and d.creation_date between :start and :end "+// and d.status=:status
             "ORDER BY d.creation_date DESC", nativeQuery = true)  // SQL natif
-    List<DemandeHabilitation> searchByUserEmailAndPeriodeStatus(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("email") String email, @Param("status") String status);
+    List<DemandeHabilitation> searchByUserEmailAndPeriodeStatus(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("email") String email); // , @Param("status") String status
 
 }
