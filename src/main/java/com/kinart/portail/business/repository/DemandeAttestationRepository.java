@@ -1,8 +1,11 @@
 package com.kinart.portail.business.repository;
 
+import com.kinart.api.portail.dto.DemandeAttestationResponse;
+import com.kinart.api.portail.dto.DemandeHabilitationResponse;
 import com.kinart.portail.business.model.DemandeAbsenceConge;
 import com.kinart.portail.business.model.DemandeAttestation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -29,8 +32,18 @@ public interface DemandeAttestationRepository extends JpaRepository<DemandeAttes
    List<DemandeAttestation> searchByUserIDAndTypeDoc(@Param("userID") Integer userID, @Param("typeDoc") String typeDoc);
 
     @Query(value = "select * from demandeattestation d "+
-            "where d.scepersonnel=:email and d.creation_date between :start and :end and d.status=:status "+
+            "where d.scepersonnel=:email and d.creation_date between :start and :end "+ //  and d.status=:status
             "ORDER BY d.creation_date DESC", nativeQuery = true)  // SQL natif
-    List<DemandeAttestation> searchByUserEmailAndPeriodeStatus(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("email") String email, @Param("status") String status);
+    List<DemandeAttestation> searchByUserEmailAndPeriodeStatus(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("email") String email); // , @Param("status") String status
 
+    @Modifying
+    @Query(value = "update demandeattestation set status = :status where id = :id", nativeQuery = true)
+    void updateDemande(@Param(value = "id") Integer id, @Param(value = "status") String status);
+
+    @Modifying
+    @Query(value = "delete demandeattestation where id = :id", nativeQuery = true)
+    void deleteDemande(@Param(value = "id") Integer id);
+
+    @Query(value = "select new com.kinart.api.portail.dto.DemandeAttestationResponse(im.id, im.creationDate, im.idEntreprise, im.scePersonnel, im.userDemAttest) from com.kinart.portail.business.model.DemandeAttestation im where im.id=:id", nativeQuery = false)
+    DemandeAttestationResponse searchDemandeById(@Param(value = "id") Integer id);
 }

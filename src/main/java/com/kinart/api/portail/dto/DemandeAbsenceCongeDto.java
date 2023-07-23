@@ -28,9 +28,9 @@ public class DemandeAbsenceCongeDto implements Serializable {
     private Instant lastModifiedDate;
 
     @NotNull(message = "L'id entreprise ne doit pas etre null")
-    private Integer idEntreprise;
+    private Integer idEntreprise = 1;
 
-    private Utilisateur userDemAbsCg;
+    private Utilisateur userDemAbsCg = new Utilisateur();
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dteDebut;

@@ -29,9 +29,9 @@ public class DemandeAttestationDto implements Serializable {
     private Instant lastModifiedDate;
 
     @NotNull(message = "L'id entreprise ne doit pas etre null")
-    private Integer idEntreprise;
+    private Integer idEntreprise = 1;
 
-    private Utilisateur userDemAttest;
+    private Utilisateur userDemAttest = new Utilisateur();
 
     @NotNull(message = "Le type de document ne doit pas etre vide")
     @NotEmpty(message = "Le type de document ne doit pas etre vide")
@@ -44,6 +44,12 @@ public class DemandeAttestationDto implements Serializable {
     private String scePersonnel;
 
     private EnumStatusType status;
+
+    private String author;
+    private String demandid;
+    private String valueDate;
+    private String userId;
+    private String email;
 
     public static DemandeAttestationDto fromEntity(DemandeAttestation attestation) {
         if (attestation == null) {

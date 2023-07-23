@@ -1,9 +1,11 @@
 package com.kinart.portail.business.repository;
 
+import com.kinart.api.portail.dto.DemandeHabilitationResponse;
 import com.kinart.portail.business.model.DemandeAbsenceConge;
 import com.kinart.portail.business.model.DemandeAttestation;
 import com.kinart.portail.business.model.DemandeHabilitation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -33,5 +35,16 @@ public interface DemandeHabilitationRepository extends JpaRepository<DemandeHabi
             "where d.valid=:email and d.creation_date between :start and :end "+// and d.status=:status
             "ORDER BY d.creation_date DESC", nativeQuery = true)  // SQL natif
     List<DemandeHabilitation> searchByUserEmailAndPeriodeStatus(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("email") String email); // , @Param("status") String status
+
+   @Modifying
+   @Query(value = "update demandehabilitation set status = :status where id = :id", nativeQuery = true)
+   void updateDemande(@Param(value = "id") Integer id, @Param(value = "status") String status);
+
+    @Modifying
+    @Query(value = "delete demandehabilitation where id = :id", nativeQuery = true)
+    void deleteDemande(@Param(value = "id") Integer id);
+
+    @Query(value = "select new com.kinart.api.portail.dto.DemandeHabilitationResponse(im.id, im.creationDate, im.idEntreprise, im.valid, im.userDemHabil) from com.kinart.portail.business.model.DemandeHabilitation im where im.id=:id", nativeQuery = false)
+    DemandeHabilitationResponse searchDemandeById(@Param(value = "id") Integer id);
 
 }

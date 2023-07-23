@@ -119,7 +119,8 @@ public class SalarieServiceImpl implements SalarieService {
             return null;
         }
 
-        List<Salarie> result = generiqueConnexionService.find("FROM Salarie WHERE (nmat like UPPER('%"+nmat+"%') OR nom like UPPER('%"+nmat+"%') OR pren like UPPER('%"+nmat+"%'))");
+        //List<Salarie> result = generiqueConnexionService.find("FROM Salarie WHERE (nmat like UPPER('%"+nmat+"%') OR nom like UPPER('%"+nmat+"%') OR pren like UPPER('%"+nmat+"%'))");
+        List<Salarie> result = generiqueConnexionService.find("FROM Salarie WHERE upper(trim(adr4)) = '"+nmat.trim().toUpperCase()+"'");
         return result.stream().map(SalarieDto::fromEntity).collect(Collectors.toList());
 
         //return salarieRepository.findByMatricule("%"+nmat+"%").stream().map(SalarieDto::fromEntity).collect(Collectors.toList());

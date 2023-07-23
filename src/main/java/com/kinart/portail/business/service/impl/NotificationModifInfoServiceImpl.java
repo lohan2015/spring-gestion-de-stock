@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -49,6 +50,7 @@ public class NotificationModifInfoServiceImpl implements NotificationModifInfoSe
         else modele = fnom.getVall();
 
         modele = modele.replaceAll("\\$SENDER", dto.getUserDemModInfo().getPrenom()+" "+dto.getUserDemModInfo().getNom());
+        modele = modele.replaceAll("\\$NUMERO", String.valueOf(dto.getId()));
 
         NotifModifInfo modifInfo = new NotifModifInfo();
         modifInfo.setSender(dto.getUserDemModInfo().getEmail());
@@ -91,7 +93,8 @@ public class NotificationModifInfoServiceImpl implements NotificationModifInfoSe
             throw new EntityNotFoundException("Aucune donnée avec l'ID = "+"ACK_MODINF"+" n'a pas été trouvée dans la table 99", ErrorCodes.ARTICLE_NOT_FOUND);
         else modele = fnom.getVall();
 
-        modele = modele.replaceAll("\\$$VALIDATOR", validator);
+        modele = modele.replaceAll("\\$VALIDATOR", validator);
+        modele = modele.replaceAll("\\$NUMERO", String.valueOf(dto.getId()));
 
         NotifModifInfo modifInfo = new NotifModifInfo();
         modifInfo.setSender(dto.getUserDemModInfo().getEmail());
@@ -134,7 +137,8 @@ public class NotificationModifInfoServiceImpl implements NotificationModifInfoSe
             throw new EntityNotFoundException("Aucune donnée avec l'ID = "+"REJ_MODINF"+" n'a pas été trouvée dans la table 99", ErrorCodes.ARTICLE_NOT_FOUND);
         else modele = fnom.getVall();
 
-        modele = modele.replaceAll("\\$DATE", new SimpleDateFormat("MM-dd-yyyy").format(dto.getCreationDate()));
+        modele = modele.replaceAll("\\$DATE", new SimpleDateFormat("dd-MM-yyyy").format(Date.from(dto.getCreationDate())));
+        modele = modele.replaceAll("\\$NUMERO", String.valueOf(dto.getId()));
 
         NotifModifInfo modifInfo = new NotifModifInfo();
         modifInfo.setSender(dto.getUserDemModInfo().getEmail());
@@ -178,6 +182,7 @@ public class NotificationModifInfoServiceImpl implements NotificationModifInfoSe
         else modele = fnom.getVall();
 
         modele = modele.replaceAll("\\$SENDER", dto.getUserDemModInfo().getPrenom()+" "+dto.getUserDemModInfo().getNom());
+        modele = modele.replaceAll("\\$NUMERO", String.valueOf(dto.getId()));
 
         NotifModifInfo modifInfo = new NotifModifInfo();
         modifInfo.setSender(dto.getUserDemModInfo().getEmail());

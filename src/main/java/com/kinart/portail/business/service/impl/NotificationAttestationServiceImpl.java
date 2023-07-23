@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -49,6 +50,7 @@ public class NotificationAttestationServiceImpl implements NotificationAttestati
         else modele = fnom.getVall();
 
         modele = modele.replaceAll("\\$SENDER", dto.getUserDemAttest().getPrenom()+" "+dto.getUserDemAttest().getNom());
+        modele = modele.replaceAll("\\$NUMERO", String.valueOf(dto.getId()));
 
         NotifAttestation notifAttestation = new NotifAttestation();
         notifAttestation.setSender(dto.getUserDemAttest().getEmail());
@@ -91,7 +93,8 @@ public class NotificationAttestationServiceImpl implements NotificationAttestati
             throw new EntityNotFoundException("Aucune donnée avec l'ID = "+"ACK_ATTEST"+" n'a pas été trouvée dans la table 99", ErrorCodes.ARTICLE_NOT_FOUND);
         else modele = fnom.getVall();
 
-        modele = modele.replaceAll("\\$$VALIDATOR", validator);
+        modele = modele.replaceAll("\\$VALIDATOR", validator);
+        modele = modele.replaceAll("\\$NUMERO", String.valueOf(dto.getId()));
 
         NotifAttestation notifAttestation = new NotifAttestation();
         notifAttestation.setSender(dto.getUserDemAttest().getEmail());
@@ -134,7 +137,8 @@ public class NotificationAttestationServiceImpl implements NotificationAttestati
             throw new EntityNotFoundException("Aucune donnée avec l'ID = "+"REJ_ATTEST"+" n'a pas été trouvée dans la table 99", ErrorCodes.ARTICLE_NOT_FOUND);
         else modele = fnom.getVall();
 
-        modele = modele.replaceAll("\\$DATE", new SimpleDateFormat("MM-dd-yyyy").format(dto.getCreationDate()));
+        modele = modele.replaceAll("\\$DATE", new SimpleDateFormat("dd-MM-yyyy").format(Date.from(dto.getCreationDate())));
+        modele = modele.replaceAll("\\$NUMERO", String.valueOf(dto.getId()));
 
         NotifAttestation notifAttestation = new NotifAttestation();
         notifAttestation.setSender(dto.getUserDemAttest().getEmail());
@@ -178,6 +182,7 @@ public class NotificationAttestationServiceImpl implements NotificationAttestati
         else modele = fnom.getVall();
 
         modele = modele.replaceAll("\\$SENDER", dto.getUserDemAttest().getPrenom()+" "+dto.getUserDemAttest().getNom());
+        modele = modele.replaceAll("\\$NUMERO", String.valueOf(dto.getId()));
 
         NotifAttestation notifAttestation = new NotifAttestation();
         notifAttestation.setSender(dto.getUserDemAttest().getEmail());

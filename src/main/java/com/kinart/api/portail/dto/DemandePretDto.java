@@ -32,9 +32,9 @@ public class DemandePretDto implements Serializable {
     private Instant lastModifiedDate;
 
     @NotNull(message = "L'id entreprise ne doit pas etre null")
-    private Integer idEntreprise;
+    private Integer idEntreprise = 1;
 
-    private Utilisateur userDemPret;
+    private Utilisateur userDemPret = new Utilisateur();
 
     private BigDecimal montantPret;
 

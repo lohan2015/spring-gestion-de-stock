@@ -1,7 +1,7 @@
 package com.kinart.api.portail.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.kinart.portail.business.model.DemandeModifInfo;
+import com.kinart.portail.business.model.DemandeHabilitation;
 import com.kinart.portail.business.utils.EnumStatusType;
 import com.kinart.stock.business.model.Utilisateur;
 import io.swagger.annotations.ApiModel;
@@ -21,33 +21,29 @@ import java.time.Instant;
 /** @author c.mbassi */
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "Model des demandes de modif info")
-public class DemandeModifInfoDto implements Serializable {
+@AllArgsConstructor
+//@JsonDeserialize(builder = DemandeHabilitationDto.class)
+//@JsonPOJOBuilder(buildMethodName = "buildFile", withPrefix="")
+@ApiModel(description = "Model réponse des habilitations")
+public class DemandeHabilitationResponse implements Serializable {
 
     private Integer id;
+
     private Instant creationDate;
+
     private Instant lastModifiedDate;
 
     @NotNull(message = "L'id entreprise ne doit pas etre null")
     private Integer idEntreprise = 1;
 
-    private Utilisateur userDemModInfo = new Utilisateur();
+    private Integer userId;
 
-    @NotNull(message = "Le champ concerné ne doit pas etre vide")
-    @NotEmpty(message = "Le champ concerné ne doit pas etre vide")
-    @NotBlank(message = "Le champ concerné ne doit pas etre vide")
-    private String champConcerne;
-
-    @NotNull(message = "La valeur concernée ne doit pas etre vide")
-    @NotEmpty(message = "La valeur concernée ne doit pas etre vide")
-    @NotBlank(message = "La valeur concernée ne doit pas etre vide")
-    private String valeurSouhaitee;
+    private String email;
 
     @NotNull(message = "Le nom du fichier ne doit pas etre vide")
     @NotEmpty(message = "Le nom du fichier ne doit pas etre vide")
-    @NotBlank(message = "Le nom du fichier ne doit pas etre vide")
+    @NotBlank(message = "Le tnom du fichier ne doit pas etre vide")
     private String fileName;
 
     @NotNull(message = "Le type du fichier ne doit pas etre vide")
@@ -57,38 +53,44 @@ public class DemandeModifInfoDto implements Serializable {
 
     private Long fileSize;
 
-    @JsonIgnore
-    private byte[] fileData;
-
     @NotNull(message = "Le validateur ne doit pas etre vide")
     @NotEmpty(message = "Le validateur ne doit pas etre vide")
     @NotBlank(message = "Le validateur ne doit pas etre vide")
     private String valid;
 
-    private EnumStatusType status;
+    private String status;
 
-    MultipartFile file;
+    private String author;
 
-    public static DemandeModifInfoDto fromEntity(DemandeModifInfo modifInfo) {
-        if (modifInfo == null) {
-            return null;
-        }
+    private String demandid;
+    private String valueDate;
 
-        DemandeModifInfoDto dto = new DemandeModifInfoDto();
-        BeanUtils.copyProperties(modifInfo, dto);
-
-        return dto;
+    public DemandeHabilitationResponse(Integer id, Instant creationDate, Integer idEntreprise, String valid, Utilisateur user){
+            setId(id);
+            setValid(valid);
+            setIdEntreprise(idEntreprise);
+            setCreationDate(creationDate);
+            setUserId(user.getId());
     }
 
-    public static DemandeModifInfo toEntity(DemandeModifInfoDto dto) {
-        if (dto == null) {
-            return null;
-        }
+    /**
+     *
+     * @param dto
+     * @return
+     */
+    public static DemandeHabilitationResponse fromDto(DemandeHabilitationDto dto){
+        DemandeHabilitationResponse reponse = new DemandeHabilitationResponse();
+        BeanUtils.copyProperties(dto, reponse);
+        reponse.setStatus(dto.getStatus().getCode());
 
-        DemandeModifInfo entity = new DemandeModifInfo();
-        BeanUtils.copyProperties(dto, entity);
+        return reponse;
+    }
 
-        return entity;
+    public static DemandeHabilitationDto toDto(DemandeHabilitationResponse dto){
+        DemandeHabilitationDto reponse = new DemandeHabilitationDto();
+        BeanUtils.copyProperties(dto, reponse);
+
+        return reponse;
     }
 
 }
