@@ -1,6 +1,6 @@
 package com.kinart.api.portail.dto;
 
-import com.kinart.portail.business.model.DemandePret;
+import com.kinart.portail.business.model.DemandeAbsenceConge;
 import com.kinart.portail.business.utils.EnumStatusType;
 import com.kinart.stock.business.model.Utilisateur;
 import io.swagger.annotations.ApiModel;
@@ -15,7 +15,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
 
@@ -24,8 +23,8 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "Model des demandes de prêt")
-public class DemandePretDto implements Serializable {
+@ApiModel(description = "Model des demande absences / congé response")
+public class DemandeAbsenceCongeResponse implements Serializable {
 
     private Integer id;
     private Instant creationDate;
@@ -34,57 +33,46 @@ public class DemandePretDto implements Serializable {
     @NotNull(message = "L'id entreprise ne doit pas etre null")
     private Integer idEntreprise = 1;
 
-    private Utilisateur userDemPret = new Utilisateur();
-
-    private BigDecimal montantPret;
-
-    private Integer dureePret;
+    private Integer userId;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dteDebut;
 
+     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date dteFin;
+
+    @NotNull(message = "Le motif ne doit pas etre vide")
+    @NotEmpty(message = "Le motif ne doit pas etre vide")
+    @NotBlank(message = "Le motif ne doit pas etre vide")
+    private String motif;
+
+    private String raison;
+
     @NotNull(message = "Le validateur 1 ne doit pas etre vide")
     @NotEmpty(message = "Le validateur 1 ne doit pas etre vide")
     @NotBlank(message = "Le validateur 1 ne doit pas etre vide")
-    private String scePersonnel;
+    private String valid1;
 
     @NotNull(message = "Le validateur 2 ne doit pas etre vide")
     @NotEmpty(message = "Le validateur 2 ne doit pas etre vide")
     @NotBlank(message = "Le validateur 2 ne doit pas etre vide")
-    private String drhl;
+    private String valid2;
 
-    private String dga;
+    private String valid3;
 
-    private String dg;
+    private String valid4;
 
-    private EnumStatusType status1;
+    private String status1;
 
-    private EnumStatusType status2;
+    private String status2;
 
-    private EnumStatusType status3;
+    private String status3;
 
-    private EnumStatusType status4;
+    private String status4;
 
-    public static DemandePretDto fromEntity(DemandePret demandePret) {
-        if (demandePret == null) {
-            return null;
-        }
-
-        DemandePretDto dto = new DemandePretDto();
-        BeanUtils.copyProperties(demandePret, dto);
-
-        return dto;
-    }
-
-    public static DemandePret toEntity(DemandePretDto dto) {
-        if (dto == null) {
-            return null;
-        }
-
-        DemandePret entity = new DemandePret();
-        BeanUtils.copyProperties(dto, entity);
-
-        return entity;
-    }
-
+    private String author;
+    private String demandid;
+    private String valueDate;
+    private String email;
+    private String libmotif;
 }

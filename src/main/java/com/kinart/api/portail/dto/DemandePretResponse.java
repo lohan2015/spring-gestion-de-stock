@@ -24,8 +24,8 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "Model des demandes de prêt")
-public class DemandePretDto implements Serializable {
+@ApiModel(description = "Model des demandes de prêt response")
+public class DemandePretResponse implements Serializable {
 
     private Integer id;
     private Instant creationDate;
@@ -34,14 +34,16 @@ public class DemandePretDto implements Serializable {
     @NotNull(message = "L'id entreprise ne doit pas etre null")
     private Integer idEntreprise = 1;
 
-    private Utilisateur userDemPret = new Utilisateur();
+    private Integer userId;
 
     private BigDecimal montantPret;
 
     private Integer dureePret;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date dteDebut;
+    private Date dateDebut;
+
+    private String typePret;
 
     @NotNull(message = "Le validateur 1 ne doit pas etre vide")
     @NotEmpty(message = "Le validateur 1 ne doit pas etre vide")
@@ -57,34 +59,17 @@ public class DemandePretDto implements Serializable {
 
     private String dg;
 
-    private EnumStatusType status1;
+    private String status1;
 
-    private EnumStatusType status2;
+    private String status2;
 
-    private EnumStatusType status3;
+    private String status3;
 
-    private EnumStatusType status4;
+    private String status4;
 
-    public static DemandePretDto fromEntity(DemandePret demandePret) {
-        if (demandePret == null) {
-            return null;
-        }
-
-        DemandePretDto dto = new DemandePretDto();
-        BeanUtils.copyProperties(demandePret, dto);
-
-        return dto;
-    }
-
-    public static DemandePret toEntity(DemandePretDto dto) {
-        if (dto == null) {
-            return null;
-        }
-
-        DemandePret entity = new DemandePret();
-        BeanUtils.copyProperties(dto, entity);
-
-        return entity;
-    }
+    private String author;
+    private String demandid;
+    private String valueDate;
+    private String email;
 
 }

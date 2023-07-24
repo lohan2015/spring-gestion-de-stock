@@ -7,6 +7,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /** @author c.mbassi */
 @Data
@@ -25,8 +26,11 @@ public class DemandePret  extends AbstractEntity {
     @JoinColumn(name="user_id", nullable=false)
     private Utilisateur userDemPret;
 
-    @Column(name = "typepret", length = 50)
+    @Column(name = "typepret", length = 100)
     private String typePret;
+
+    @Column(name = "datedebut")
+    private Date dateDebut;
 
     @Column(name = "montantpret")
     private BigDecimal montantPret;

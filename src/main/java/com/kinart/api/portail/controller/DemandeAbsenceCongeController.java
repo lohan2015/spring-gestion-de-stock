@@ -1,12 +1,12 @@
 package com.kinart.api.portail.controller;
 
-import com.kinart.api.portail.dto.DemandeAbsenceCongeDto;
-import com.kinart.api.portail.dto.ElementVarCongeDto;
+import com.kinart.api.portail.dto.*;
 import com.kinart.paie.business.model.Salarie;
 import com.kinart.paie.business.repository.ParamDataRepository;
 import com.kinart.paie.business.repository.SalarieRepository;
 import com.kinart.paie.business.services.utils.*;
 import com.kinart.portail.business.model.DemandeAbsenceConge;
+import com.kinart.portail.business.model.DemandePret;
 import com.kinart.portail.business.repository.DemandeAbsCongeRepository;
 import com.kinart.portail.business.service.NotificationAbsenceCongeService;
 import com.kinart.portail.business.utils.EnumStatusType;
@@ -20,6 +20,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +32,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.kinart.stock.business.utils.Constants.APP_ROOT_PORTAIL;
@@ -49,35 +50,40 @@ public class DemandeAbsenceCongeController {
     private final SalarieRepository salarieRepository;
     private final GeneriqueConnexionService service;
     private final ParamDataRepository paramDataRepository;
+    private final GeneriqueConnexionService generiqueConnexionService;
 
-    @PostMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/user", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PostMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/user", consumes = {MediaType.ALL_VALUE}, produces = {MediaType.ALL_VALUE})
     @ApiOperation(value = "Sauvegarte demande absence congé", notes = "Cette methode permet d'enregistrer des demandes absence congé")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<DemandeAbsenceCongeDto> saveUser(@RequestBody DemandeAbsenceCongeDto dto){
-        validator.validate(dto);
+    ResponseEntity<DemandeAbsenceCongeResponse> saveUser(@RequestBody DemandeAbsenceCongeResponse dto){
+        //validator.validate(dto);
         try {
+            DemandeAbsenceCongeDto dto2 = new DemandeAbsenceCongeDto();
+            dto2.setMotif(dto.getMotif());
+            dto2.setRaison(dto.getRaison());
+            dto2.setDteFin(dto.getDteFin());
+            dto2.setDteDebut(dto.getDteDebut());
             // Fixer les validateurs
-            Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getUserDemAbsCg().getEmail());
+            Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getEmail());
             if(user.isPresent()){
-                dto.getUserDemAbsCg().setNom(user.get().getNom());
-                dto.getUserDemAbsCg().setPrenom(user.get().getPrenom());
-                dto.setValid1(user.get().getValid1());
-                dto.setValid2(user.get().getValid2());
-                dto.setValid3(user.get().getValid3());
-                dto.setValid4(user.get().getValid4());
+                dto2.setUserDemAbsCg(user.get());
             } else throw new EntityNotFoundException("Utilisateur inexistant");
 
-            dto.setStatus1(EnumStatusType.ATTENTE_VALIDATION);
-            dto.setStatus2(EnumStatusType.NONE);
-            dto.setStatus3(EnumStatusType.NONE);
-            dto.setStatus4(EnumStatusType.NONE);
-            repository.save(DemandeAbsenceCongeDto.toEntity(dto));
+            dto2.setStatus1(EnumStatusType.ATTENTE_VALIDATION);
+            dto2.setStatus2(EnumStatusType.NONE);
+            dto2.setStatus3(EnumStatusType.NONE);
+            dto2.setStatus4(EnumStatusType.NONE);
+            DemandeAbsenceConge entity = repository.save(DemandeAbsenceCongeDto.toEntity(dto2));
+            if(entity != null){
+                dto.setId(entity.getId());
+                dto2.setId(entity.getId());
+            }
 
             // Gestion des notifications
-            notificationService.sendAbsenceCongeNotification(dto, dto.getValid1());
+            notificationService.sendAbsenceCongeNotification(dto2, dto.getValid1());
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
@@ -88,42 +94,41 @@ public class DemandeAbsenceCongeController {
         return new ResponseEntity(dto, HttpStatus.CREATED);
     }
 
-    @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/valid1", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/valid1", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Sauvegarte demande absence congé", notes = "Cette methode permet d'enregistrer des demandes absence congé")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<DemandeAbsenceCongeDto> saveValid1(@RequestBody DemandeAbsenceCongeDto dto){
-        validator.validate(dto);
+    ResponseEntity<DemandeAbsenceCongeResponse> saveValid1(@RequestBody DemandeAbsenceCongeResponse dto){
+        //validator.validate(dto);
         try {
             Optional<DemandeAbsenceConge> dbDemande = repository.findById(dto.getId());
-            if(dbDemande.isPresent()){
-                DemandeAbsenceConge entite = dbDemande.get();
-                entite.setStatus1(dto.getStatus1());
-                if(dto.getStatus1().equals(EnumStatusType.VALIDEE)) entite.setStatus2(EnumStatusType.ATTENTE_VALIDATION);
-                repository.save(entite);
+            DemandeAbsenceConge entity = dbDemande.isPresent()?dbDemande.get():new DemandeAbsenceConge();
+            entity.setStatus1(EnumStatusType.valueOf(dto.getStatus1()));
+            if(EnumStatusType.VALIDEE.getCode().equalsIgnoreCase(dto.getStatus1()))
+                entity.setStatus2(EnumStatusType.ATTENTE_VALIDATION);
+            repository.save(entity);
 
-                // Gestion des notifications
-                Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getUserDemAbsCg().getEmail());
-                Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(entite.getValid2());
-                if(user.isPresent()){
-                    dto.getUserDemAbsCg().setNom(user.get().getNom());
-                    dto.getUserDemAbsCg().setPrenom(user.get().getPrenom());
-                } else throw new EntityNotFoundException("Utilisateur inexistant");
+            //Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getEmail());
+            Optional<Utilisateur> validatorPrec =  utilisateurRepository.findUtilisateurByEmail(entity.getValid1());
+            Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(entity.getValid2());
+            DemandeAbsenceCongeDto dto2 = new DemandeAbsenceCongeDto();
+            BeanUtils.copyProperties(entity, dto2);
+
                 // Si validé envoi mail a sender et validateur suivant
-                if(dto.getStatus1().equals(EnumStatusType.VALIDEE)){
+                if(dto.getStatus1().equals(EnumStatusType.VALIDEE.getCode())){
                     if(validator.isPresent())
-                        notificationService.sendAbsCongeNotificationSender(dto, validator.get().getPrenom()+ " "+validator.get().getNom());
-                    notificationService.sendAbsenceCongeNotification(dto, entite.getValid2());
-                    if(StringUtil.isNoneEmpty(entite.getValid3()))
-                        notificationService.sendAbsenceCongeNotification(dto, entite.getValid2());
+                        notificationService.sendAbsCongeNotificationSender(dto2, validatorPrec.get().getPrenom()+ " "+validatorPrec.get().getNom());
+                    notificationService.sendAbsenceCongeNotification(dto2, entity.getValid2());
+                    if(StringUtil.isNoneEmpty(entity.getValid3()))
+                        notificationService.sendAbsenceCongeNotification(dto2, entity.getValid2());
                     else { // Pas de validateur de niveau 4
-                        insertEV(dto);
+                        insertEV(dto2);
                     }
-                } else if(dto.getStatus1().equals(EnumStatusType.REJETEE))// Sinon notification du sender du rejet
-                    notificationService.sendAbsCongeNotificationRejet(dto);
-            }
+                } else if(dto.getStatus1().equals(EnumStatusType.REJETEE.getCode()))// Sinon notification du sender du rejet
+                    notificationService.sendAbsCongeNotificationRejet(dto2);
+
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -133,41 +138,39 @@ public class DemandeAbsenceCongeController {
         return new ResponseEntity(dto, HttpStatus.CREATED);
     }
 
-    @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/valid2", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/valid2", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Sauvegarte demande absence congé", notes = "Cette methode permet d'enregistrer des demandes absence congé")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<DemandeAbsenceCongeDto> saveValid2(@RequestBody DemandeAbsenceCongeDto dto){
-        validator.validate(dto);
+    ResponseEntity<DemandeAbsenceCongeResponse> saveValid2(@RequestBody DemandeAbsenceCongeResponse dto){
+        //validator.validate(dto);
         try {
             Optional<DemandeAbsenceConge> dbDemande = repository.findById(dto.getId());
-            if(dbDemande.isPresent()){
-                DemandeAbsenceConge entite = dbDemande.get();
-                entite.setStatus2(dto.getStatus2());
-                if(dto.getStatus2().equals(EnumStatusType.VALIDEE)) entite.setStatus3(EnumStatusType.ATTENTE_VALIDATION);
-                repository.save(entite);
+            DemandeAbsenceConge entity = dbDemande.isPresent()?dbDemande.get():new DemandeAbsenceConge();
+            entity.setStatus2(EnumStatusType.valueOf(dto.getStatus2()));
+            if(EnumStatusType.VALIDEE.getCode().equalsIgnoreCase(dto.getStatus2()))
+                entity.setStatus3(EnumStatusType.ATTENTE_VALIDATION);
+            repository.save(entity);
 
-                // Gestion des notifications
-                Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getUserDemAbsCg().getEmail());
-                Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(entite.getValid3());
-                if(user.isPresent()){
-                    dto.getUserDemAbsCg().setNom(user.get().getNom());
-                    dto.getUserDemAbsCg().setPrenom(user.get().getPrenom());
-                } else throw new EntityNotFoundException("Utilisateur inexistant");
+            //Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getEmail());
+            Optional<Utilisateur> validatorPrec =  utilisateurRepository.findUtilisateurByEmail(entity.getValid2());
+            Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(entity.getValid3());
+            DemandeAbsenceCongeDto dto2 = new DemandeAbsenceCongeDto();
+            BeanUtils.copyProperties(entity, dto2);
                 // Si validé envoi mail a sender et validateur suivant
                 if(dto.getStatus2().equals(EnumStatusType.VALIDEE)){
                     if(validator.isPresent())
-                        notificationService.sendAbsCongeNotificationSender(dto, validator.get().getPrenom()+ " "+validator.get().getNom());
-                    if(StringUtil.isNoneEmpty(entite.getValid3()))
-                        notificationService.sendAbsenceCongeNotification(dto, entite.getValid3());
+                        notificationService.sendAbsCongeNotificationSender(dto2, validatorPrec.get().getPrenom()+ " "+validatorPrec.get().getNom());
+                    if(StringUtil.isNoneEmpty(entity.getValid3()))
+                        notificationService.sendAbsenceCongeNotification(dto2, entity.getValid3());
                     else { // Pas de validateur de niveau 4
-                        insertEV(dto);
+                        insertEV(dto2);
                     }
                 } else if(dto.getStatus1().equals(EnumStatusType.REJETEE))// Sinon notification du sender du rejet
-                    notificationService.sendAbsCongeNotificationRejet(dto);
-            }
+                    notificationService.sendAbsCongeNotificationRejet(dto2);
+
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -177,41 +180,39 @@ public class DemandeAbsenceCongeController {
         return new ResponseEntity(dto, HttpStatus.CREATED);
     }
 
-    @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/valid3", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/valid3", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Sauvegarte demande absence congé", notes = "Cette methode permet d'enregistrer des demandes absence congé")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<DemandeAbsenceCongeDto> saveValid3(@RequestBody DemandeAbsenceCongeDto dto){
-        validator.validate(dto);
+    ResponseEntity<DemandeAbsenceCongeResponse> saveValid3(@RequestBody DemandeAbsenceCongeResponse dto){
+        //validator.validate(dto);
         try {
             Optional<DemandeAbsenceConge> dbDemande = repository.findById(dto.getId());
-            if(dbDemande.isPresent()){
-                DemandeAbsenceConge entite = dbDemande.get();
-                entite.setStatus3(dto.getStatus3());
-                if(dto.getStatus3().equals(EnumStatusType.VALIDEE)) entite.setStatus4(EnumStatusType.ATTENTE_VALIDATION);
-                repository.save(entite);
+            DemandeAbsenceConge entity = dbDemande.isPresent()?dbDemande.get():new DemandeAbsenceConge();
+            entity.setStatus3(EnumStatusType.valueOf(dto.getStatus3()));
+            if(EnumStatusType.VALIDEE.getCode().equalsIgnoreCase(dto.getStatus3()))
+                entity.setStatus4(EnumStatusType.ATTENTE_VALIDATION);
+            repository.save(entity);
 
-                // Gestion des notifications
-                Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getUserDemAbsCg().getEmail());
-                Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(entite.getValid4());
-                if(user.isPresent()){
-                    dto.getUserDemAbsCg().setNom(user.get().getNom());
-                    dto.getUserDemAbsCg().setPrenom(user.get().getPrenom());
-                } else throw new EntityNotFoundException("Utilisateur inexistant");
-                // Si validé envoi mail a sender et validateur suivant
+            //Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getEmail());
+            Optional<Utilisateur> validatorPrec =  utilisateurRepository.findUtilisateurByEmail(entity.getValid3());
+            Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(entity.getValid4());
+            DemandeAbsenceCongeDto dto2 = new DemandeAbsenceCongeDto();
+            BeanUtils.copyProperties(entity, dto2);
+                            // Si validé envoi mail a sender et validateur suivant
                 if(dto.getStatus3().equals(EnumStatusType.VALIDEE)){
                     if(validator.isPresent())
-                        notificationService.sendAbsCongeNotificationSender(dto, validator.get().getPrenom()+ " "+validator.get().getNom());
-                    if(StringUtil.isNotEmpty(entite.getValid4()))
-                        notificationService.sendAbsenceCongeNotification(dto, entite.getValid4());
+                        notificationService.sendAbsCongeNotificationSender(dto2, validatorPrec.get().getPrenom()+ " "+validatorPrec.get().getNom());
+                    if(StringUtil.isNotEmpty(entity.getValid4()))
+                        notificationService.sendAbsenceCongeNotification(dto2, entity.getValid4());
                     else { // Pas de validateur de niveau 4
-                        insertEV(dto);
+                        insertEV(dto2);
                     }
                 } else if(dto.getStatus1().equals(EnumStatusType.REJETEE))// Sinon notification du sender du rejet
-                    notificationService.sendAbsCongeNotificationRejet(dto);
-            }
+                    notificationService.sendAbsCongeNotificationRejet(dto2);
+
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -266,38 +267,34 @@ public class DemandeAbsenceCongeController {
         } else throw new EntityNotFoundException("Aucun salarié correspondant a l'adresse mail de l'utilisateur");
     }
 
-    @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/valid4", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/absconge/valid4", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Sauvegarte demande absence congé", notes = "Cette methode permet d'enregistrer des demandes absence congé")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<DemandeAbsenceCongeDto> saveValid4(@RequestBody DemandeAbsenceCongeDto dto){
-        validator.validate(dto);
+    ResponseEntity<DemandeAbsenceCongeResponse> saveValid4(@RequestBody DemandeAbsenceCongeResponse dto){
+        //validator.validate(dto);
         try {
             Optional<DemandeAbsenceConge> dbDemande = repository.findById(dto.getId());
-            if(dbDemande.isPresent()){
-                DemandeAbsenceConge entite = dbDemande.get();
-                entite.setStatus4(dto.getStatus4());
-                repository.save(entite);
+            DemandeAbsenceConge entity = dbDemande.isPresent()?dbDemande.get():new DemandeAbsenceConge();
+            entity.setStatus4(EnumStatusType.valueOf(dto.getStatus4()));
+            repository.save(entity);
 
-                // Gestion des notifications
-                Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getUserDemAbsCg().getEmail());
-                Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(dto.getValid4());
-                if(user.isPresent()){
-                    dto.getUserDemAbsCg().setNom(user.get().getNom());
-                    dto.getUserDemAbsCg().setPrenom(user.get().getPrenom());
-                } else throw new EntityNotFoundException("Utilisateur inexistant");
+            //Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getEmail());
+            Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(entity.getValid4());
+            DemandeAbsenceCongeDto dto2 = new DemandeAbsenceCongeDto();
+            BeanUtils.copyProperties(entity, dto2);
                 // Si validé envoi mail a sender et validateur suivant
                 if(dto.getStatus4().equals(EnumStatusType.VALIDEE)){
                     if(validator.isPresent())
-                        notificationService.sendAbsCongeNotificationSender(dto, validator.get().getPrenom()+ " "+validator.get().getNom());
+                        notificationService.sendAbsCongeNotificationSender(dto2, validator.get().getPrenom()+ " "+validator.get().getNom());
                     // MAJ dans Amplitude RH
-                    insertEV(dto);
+                    insertEV(dto2);
 
                 } else if(dto.getStatus1().equals(EnumStatusType.REJETEE))// Sinon notification du sender du rejet
-                    notificationService.sendAbsCongeNotificationRejet(dto);
-            }
+                    notificationService.sendAbsCongeNotificationRejet(dto2);
+
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -351,20 +348,63 @@ public class DemandeAbsenceCongeController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
     })
-    ResponseEntity<List<DemandeAbsenceCongeDto>> findByUserAndDate(
+    ResponseEntity<List<DemandeAbsenceCongeResponse>> findByUserAndDate(
           @PathVariable("email") String email,
           @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
           @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
-        List<DemandeAbsenceCongeDto> demandeAbsenceConges = repository.searchByUserEmailAndPeriode(start, end, email).stream()
-                .map(DemandeAbsenceCongeDto::fromEntity)
-                .collect(Collectors.toList());
-        if(demandeAbsenceConges!=null) {
-            return ResponseEntity.ok(demandeAbsenceConges);
+        Session session = generiqueConnexionService.getSession();
+        String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.valid1, n.status1, u1.nom, u1.prenom, u1.email, n.motif "+
+                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall  "+
+                "FROM demandeabsenceconge n "+
+                "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
+                "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.motif AND m1.ctab=22 and m1.nume=1 "+
+                "WHERE u1.email=:email AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
+
+        Query q = session.createSQLQuery(query);
+        q.setParameter("email", email);
+        q.setParameter("start", start);
+        q.setParameter("end", end);
+        List<Object[]> lst = q.getResultList();
+        generiqueConnexionService.closeSession(session);
+        List<DemandeAbsenceCongeResponse> liste = new ArrayList<DemandeAbsenceCongeResponse>();
+        for (Object[] o : lst)
+        {
+            DemandeAbsenceCongeResponse cptble = new DemandeAbsenceCongeResponse();
+            if(o[0]!=null) cptble.setId(Integer.parseInt(o[0].toString()));
+            if(o[1]!=null) cptble.setCreationDate(((Date) o[1]).toInstant());
+            if(o[2]!=null) cptble.setIdEntreprise(Integer.parseInt(o[2].toString()));
+            if(o[3]!=null) cptble.setUserId(Integer.parseInt(o[3].toString()));
+            if(o[4]!=null) cptble.setValid1(o[4].toString());
+            if(o[5]!=null) cptble.setStatus1(o[5].toString());
+            if(o[6]!=null) cptble.setAuthor(o[6].toString());
+            if(o[7]!=null) cptble.setAuthor(cptble.getAuthor()+" "+o[7].toString());
+            if(o[8]!=null) cptble.setEmail(o[8].toString());
+            if(o[9]!=null) cptble.setMotif(o[9].toString());
+            if(o[10]!=null) cptble.setRaison(o[10].toString());
+            if(o[11]!=null) cptble.setDteDebut((Date) o[11]);
+            if(o[12]!=null) cptble.setDteFin((Date) o[12]);
+            if(o[13]!=null) cptble.setValid2(o[13].toString());
+            if(o[14]!=null) cptble.setValid3(o[14].toString());
+            if(o[15]!=null) cptble.setValid4(o[15].toString());
+            if(o[16]!=null) cptble.setStatus2(o[16].toString());
+            if(o[17]!=null) cptble.setStatus3(o[17].toString());
+            if(o[18]!=null) cptble.setStatus4(o[18].toString());
+            if(o[19]!=null) cptble.setLibmotif(o[19].toString());
+
+            cptble.setDemandid(String.valueOf(cptble.getId()));
+            //System.out.println("DEMANDE ID="+cptble.getDemandid());
+            cptble.setValueDate(new ClsDate((Date) o[1]).getDateS("dd/MM/yyyy"));
+
+            liste.add(cptble);
+        }
+
+        if(liste!=null) {
+            return ResponseEntity.ok(liste);
         } else {
-            throw new EntityNotFoundException("Pas de demandes");
+            throw new EntityNotFoundException("Pas de notification");
         }
     }
 
@@ -374,7 +414,7 @@ public class DemandeAbsenceCongeController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
     })
-    ResponseEntity<List<DemandeAbsenceCongeDto>> findByUserAndDateStatus1(
+    ResponseEntity<List<DemandeAbsenceCongeResponse>> findByUserAndDateStatus1(
             @PathVariable("email") String email,
             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
@@ -382,13 +422,56 @@ public class DemandeAbsenceCongeController {
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
-        List<DemandeAbsenceCongeDto> demandeAbsenceConges = repository.searchByUserEmailAndPeriodeStatus1(start, end, email, status1).stream()
-                .map(DemandeAbsenceCongeDto::fromEntity)
-                .collect(Collectors.toList());
-        if(demandeAbsenceConges!=null) {
-            return ResponseEntity.ok(demandeAbsenceConges);
+        Session session = generiqueConnexionService.getSession();
+        String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.valid1, n.status1, u1.nom, u1.prenom, u1.email, n.motif "+
+                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall  "+
+                "FROM demandeabsenceconge n "+
+                "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
+                "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.motif AND m1.ctab=22 and m1.nume=1 "+
+                "WHERE (u1.email=:email OR n.valid1=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
+
+        Query q = session.createSQLQuery(query);
+        q.setParameter("email", email);
+        q.setParameter("start", start);
+        q.setParameter("end", end);
+        List<Object[]> lst = q.getResultList();
+        generiqueConnexionService.closeSession(session);
+        List<DemandeAbsenceCongeResponse> liste = new ArrayList<DemandeAbsenceCongeResponse>();
+        for (Object[] o : lst)
+        {
+            DemandeAbsenceCongeResponse cptble = new DemandeAbsenceCongeResponse();
+            if(o[0]!=null) cptble.setId(Integer.parseInt(o[0].toString()));
+            if(o[1]!=null) cptble.setCreationDate(((Date) o[1]).toInstant());
+            if(o[2]!=null) cptble.setIdEntreprise(Integer.parseInt(o[2].toString()));
+            if(o[3]!=null) cptble.setUserId(Integer.parseInt(o[3].toString()));
+            if(o[4]!=null) cptble.setValid1(o[4].toString());
+            if(o[5]!=null) cptble.setStatus1(o[5].toString());
+            if(o[6]!=null) cptble.setAuthor(o[6].toString());
+            if(o[7]!=null) cptble.setAuthor(cptble.getAuthor()+" "+o[7].toString());
+            if(o[8]!=null) cptble.setEmail(o[8].toString());
+            if(o[9]!=null) cptble.setMotif(o[9].toString());
+            if(o[10]!=null) cptble.setRaison(o[10].toString());
+            if(o[11]!=null) cptble.setDteDebut((Date) o[11]);
+            if(o[12]!=null) cptble.setDteFin((Date) o[12]);
+            if(o[13]!=null) cptble.setValid2(o[13].toString());
+            if(o[14]!=null) cptble.setValid3(o[14].toString());
+            if(o[15]!=null) cptble.setValid4(o[15].toString());
+            if(o[16]!=null) cptble.setStatus2(o[16].toString());
+            if(o[17]!=null) cptble.setStatus3(o[17].toString());
+            if(o[18]!=null) cptble.setStatus4(o[18].toString());
+            if(o[19]!=null) cptble.setLibmotif(o[19].toString());
+
+            cptble.setDemandid(String.valueOf(cptble.getId()));
+            //System.out.println("DEMANDE ID="+cptble.getDemandid());
+            cptble.setValueDate(new ClsDate((Date) o[1]).getDateS("dd/MM/yyyy"));
+
+            liste.add(cptble);
+        }
+
+        if(liste!=null) {
+            return ResponseEntity.ok(liste);
         } else {
-            throw new EntityNotFoundException("Pas de demandes");
+            throw new EntityNotFoundException("Pas de notification");
         }
     }
 
@@ -398,7 +481,7 @@ public class DemandeAbsenceCongeController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
     })
-    ResponseEntity<List<DemandeAbsenceCongeDto>> findByUserAndDateStatus2(
+    ResponseEntity<List<DemandeAbsenceCongeResponse>> findByUserAndDateStatus2(
             @PathVariable("email") String email,
             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
@@ -406,13 +489,56 @@ public class DemandeAbsenceCongeController {
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
-        List<DemandeAbsenceCongeDto> demandeAbsenceConges = repository.searchByUserEmailAndPeriodeStatus2(start, end, email, status2).stream()
-                .map(DemandeAbsenceCongeDto::fromEntity)
-                .collect(Collectors.toList());
-        if(demandeAbsenceConges!=null) {
-            return ResponseEntity.ok(demandeAbsenceConges);
+        Session session = generiqueConnexionService.getSession();
+        String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.valid1, n.status1, u1.nom, u1.prenom, u1.email, n.motif "+
+                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall  "+
+                "FROM demandeabsenceconge n "+
+                "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
+                "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.motif AND m1.ctab=22 and m1.nume=1 "+
+                "WHERE (u1.email=:email OR n.valid2=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
+
+        Query q = session.createSQLQuery(query);
+        q.setParameter("email", email);
+        q.setParameter("start", start);
+        q.setParameter("end", end);
+        List<Object[]> lst = q.getResultList();
+        generiqueConnexionService.closeSession(session);
+        List<DemandeAbsenceCongeResponse> liste = new ArrayList<DemandeAbsenceCongeResponse>();
+        for (Object[] o : lst)
+        {
+            DemandeAbsenceCongeResponse cptble = new DemandeAbsenceCongeResponse();
+            if(o[0]!=null) cptble.setId(Integer.parseInt(o[0].toString()));
+            if(o[1]!=null) cptble.setCreationDate(((Date) o[1]).toInstant());
+            if(o[2]!=null) cptble.setIdEntreprise(Integer.parseInt(o[2].toString()));
+            if(o[3]!=null) cptble.setUserId(Integer.parseInt(o[3].toString()));
+            if(o[4]!=null) cptble.setValid1(o[4].toString());
+            if(o[5]!=null) cptble.setStatus1(o[5].toString());
+            if(o[6]!=null) cptble.setAuthor(o[6].toString());
+            if(o[7]!=null) cptble.setAuthor(cptble.getAuthor()+" "+o[7].toString());
+            if(o[8]!=null) cptble.setEmail(o[8].toString());
+            if(o[9]!=null) cptble.setMotif(o[9].toString());
+            if(o[10]!=null) cptble.setRaison(o[10].toString());
+            if(o[11]!=null) cptble.setDteDebut((Date) o[11]);
+            if(o[12]!=null) cptble.setDteFin((Date) o[12]);
+            if(o[13]!=null) cptble.setValid2(o[13].toString());
+            if(o[14]!=null) cptble.setValid3(o[14].toString());
+            if(o[15]!=null) cptble.setValid4(o[15].toString());
+            if(o[16]!=null) cptble.setStatus2(o[16].toString());
+            if(o[17]!=null) cptble.setStatus3(o[17].toString());
+            if(o[18]!=null) cptble.setStatus4(o[18].toString());
+            if(o[19]!=null) cptble.setLibmotif(o[19].toString());
+
+            cptble.setDemandid(String.valueOf(cptble.getId()));
+            //System.out.println("DEMANDE ID="+cptble.getDemandid());
+            cptble.setValueDate(new ClsDate((Date) o[1]).getDateS("dd/MM/yyyy"));
+
+            liste.add(cptble);
+        }
+
+        if(liste!=null) {
+            return ResponseEntity.ok(liste);
         } else {
-            throw new EntityNotFoundException("Pas de demandes");
+            throw new EntityNotFoundException("Pas de notification");
         }
     }
 
@@ -422,7 +548,7 @@ public class DemandeAbsenceCongeController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
     })
-    ResponseEntity<List<DemandeAbsenceCongeDto>> findByUserAndDateStatus3(
+    ResponseEntity<List<DemandeAbsenceCongeResponse>> findByUserAndDateStatus3(
             @PathVariable("email") String email,
             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
@@ -430,13 +556,56 @@ public class DemandeAbsenceCongeController {
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
-        List<DemandeAbsenceCongeDto> demandeAbsenceConges = repository.searchByUserEmailAndPeriodeStatus3(start, end, email, status3).stream()
-                .map(DemandeAbsenceCongeDto::fromEntity)
-                .collect(Collectors.toList());
-        if(demandeAbsenceConges!=null) {
-            return ResponseEntity.ok(demandeAbsenceConges);
+        Session session = generiqueConnexionService.getSession();
+        String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.valid1, n.status1, u1.nom, u1.prenom, u1.email, n.motif "+
+                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall  "+
+                "FROM demandeabsenceconge n "+
+                "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
+                "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.motif AND m1.ctab=22 and m1.nume=1 "+
+                "WHERE (u1.email=:email OR n.valid3=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
+
+        Query q = session.createSQLQuery(query);
+        q.setParameter("email", email);
+        q.setParameter("start", start);
+        q.setParameter("end", end);
+        List<Object[]> lst = q.getResultList();
+        generiqueConnexionService.closeSession(session);
+        List<DemandeAbsenceCongeResponse> liste = new ArrayList<DemandeAbsenceCongeResponse>();
+        for (Object[] o : lst)
+        {
+            DemandeAbsenceCongeResponse cptble = new DemandeAbsenceCongeResponse();
+            if(o[0]!=null) cptble.setId(Integer.parseInt(o[0].toString()));
+            if(o[1]!=null) cptble.setCreationDate(((Date) o[1]).toInstant());
+            if(o[2]!=null) cptble.setIdEntreprise(Integer.parseInt(o[2].toString()));
+            if(o[3]!=null) cptble.setUserId(Integer.parseInt(o[3].toString()));
+            if(o[4]!=null) cptble.setValid1(o[4].toString());
+            if(o[5]!=null) cptble.setStatus1(o[5].toString());
+            if(o[6]!=null) cptble.setAuthor(o[6].toString());
+            if(o[7]!=null) cptble.setAuthor(cptble.getAuthor()+" "+o[7].toString());
+            if(o[8]!=null) cptble.setEmail(o[8].toString());
+            if(o[9]!=null) cptble.setMotif(o[9].toString());
+            if(o[10]!=null) cptble.setRaison(o[10].toString());
+            if(o[11]!=null) cptble.setDteDebut((Date) o[11]);
+            if(o[12]!=null) cptble.setDteFin((Date) o[12]);
+            if(o[13]!=null) cptble.setValid2(o[13].toString());
+            if(o[14]!=null) cptble.setValid3(o[14].toString());
+            if(o[15]!=null) cptble.setValid4(o[15].toString());
+            if(o[16]!=null) cptble.setStatus2(o[16].toString());
+            if(o[17]!=null) cptble.setStatus3(o[17].toString());
+            if(o[18]!=null) cptble.setStatus4(o[18].toString());
+            if(o[19]!=null) cptble.setLibmotif(o[19].toString());
+
+            cptble.setDemandid(String.valueOf(cptble.getId()));
+            //System.out.println("DEMANDE ID="+cptble.getDemandid());
+            cptble.setValueDate(new ClsDate((Date) o[1]).getDateS("dd/MM/yyyy"));
+
+            liste.add(cptble);
+        }
+
+        if(liste!=null) {
+            return ResponseEntity.ok(liste);
         } else {
-            throw new EntityNotFoundException("Pas de demandes");
+            throw new EntityNotFoundException("Pas de notification");
         }
     }
 
@@ -446,7 +615,7 @@ public class DemandeAbsenceCongeController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
     })
-    ResponseEntity<List<DemandeAbsenceCongeDto>> findByUserAndDateStatus4(
+    ResponseEntity<List<DemandeAbsenceCongeResponse>> findByUserAndDateStatus4(
             @PathVariable("email") String email,
             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam("endDate")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
@@ -454,13 +623,56 @@ public class DemandeAbsenceCongeController {
     ){
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
-        List<DemandeAbsenceCongeDto> demandeAbsenceConges = repository.searchByUserEmailAndPeriodeStatus4(start, end, email, status4).stream()
-                .map(DemandeAbsenceCongeDto::fromEntity)
-                .collect(Collectors.toList());
-        if(demandeAbsenceConges!=null) {
-            return ResponseEntity.ok(demandeAbsenceConges);
+        Session session = generiqueConnexionService.getSession();
+        String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.valid1, n.status1, u1.nom, u1.prenom, u1.email, n.motif "+
+                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall  "+
+                "FROM demandeabsenceconge n "+
+                "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
+                "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.motif AND m1.ctab=22 and m1.nume=1 "+
+                "WHERE (u1.email=:email OR n.valid4=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
+
+        Query q = session.createSQLQuery(query);
+        q.setParameter("email", email);
+        q.setParameter("start", start);
+        q.setParameter("end", end);
+        List<Object[]> lst = q.getResultList();
+        generiqueConnexionService.closeSession(session);
+        List<DemandeAbsenceCongeResponse> liste = new ArrayList<DemandeAbsenceCongeResponse>();
+        for (Object[] o : lst)
+        {
+            DemandeAbsenceCongeResponse cptble = new DemandeAbsenceCongeResponse();
+            if(o[0]!=null) cptble.setId(Integer.parseInt(o[0].toString()));
+            if(o[1]!=null) cptble.setCreationDate(((Date) o[1]).toInstant());
+            if(o[2]!=null) cptble.setIdEntreprise(Integer.parseInt(o[2].toString()));
+            if(o[3]!=null) cptble.setUserId(Integer.parseInt(o[3].toString()));
+            if(o[4]!=null) cptble.setValid1(o[4].toString());
+            if(o[5]!=null) cptble.setStatus1(o[5].toString());
+            if(o[6]!=null) cptble.setAuthor(o[6].toString());
+            if(o[7]!=null) cptble.setAuthor(cptble.getAuthor()+" "+o[7].toString());
+            if(o[8]!=null) cptble.setEmail(o[8].toString());
+            if(o[9]!=null) cptble.setMotif(o[9].toString());
+            if(o[10]!=null) cptble.setRaison(o[10].toString());
+            if(o[11]!=null) cptble.setDteDebut((Date) o[11]);
+            if(o[12]!=null) cptble.setDteFin((Date) o[12]);
+            if(o[13]!=null) cptble.setValid2(o[13].toString());
+            if(o[14]!=null) cptble.setValid3(o[14].toString());
+            if(o[15]!=null) cptble.setValid4(o[15].toString());
+            if(o[16]!=null) cptble.setStatus2(o[16].toString());
+            if(o[17]!=null) cptble.setStatus3(o[17].toString());
+            if(o[18]!=null) cptble.setStatus4(o[18].toString());
+            if(o[19]!=null) cptble.setLibmotif(o[19].toString());
+
+            cptble.setDemandid(String.valueOf(cptble.getId()));
+            //System.out.println("DEMANDE ID="+cptble.getDemandid());
+            cptble.setValueDate(new ClsDate((Date) o[1]).getDateS("dd/MM/yyyy"));
+
+            liste.add(cptble);
+        }
+
+        if(liste!=null) {
+            return ResponseEntity.ok(liste);
         } else {
-            throw new EntityNotFoundException("Pas de demandes");
+            throw new EntityNotFoundException("Pas de notification");
         }
     }
 
