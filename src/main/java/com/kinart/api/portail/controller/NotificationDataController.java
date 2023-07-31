@@ -2,6 +2,8 @@ package com.kinart.api.portail.controller;
 
 import com.kinart.api.portail.dto.*;
 import com.kinart.paie.business.services.utils.GeneriqueConnexionService;
+import com.kinart.portail.business.model.NotifModifInfo;
+import com.kinart.portail.business.model.NotifPret;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -341,7 +343,7 @@ public class NotificationDataController {
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.sender, n.recipient, n.message "+
                 ", u1.nom as nomsender, u1.prenom as prenomsender, u2.nom as nomrecip, u2.prenom as prenomrecip "+
-                "FROM notifhabilitation n "+
+                "FROM NotifModifInfo n "+
                 "LEFT JOIN utilisateur u1 ON u1.email=n.sender "+
                 "LEFT JOIN utilisateur u2 ON u2.email=n.recipient "+
                 "WHERE n.recipient=:email AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
@@ -389,7 +391,7 @@ public class NotificationDataController {
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.sender, n.recipient, n.message "+
                 ", u1.nom as nomsender, u1.prenom as prenomsender, u2.nom as nomrecip, u2.prenom as prenomrecip "+
-                "FROM notifhabilitation n "+
+                "FROM NotifModifInfo n "+
                 "LEFT JOIN utilisateur u1 ON u1.email=n.sender "+
                 "LEFT JOIN utilisateur u2 ON u2.email=n.recipient "+
                 "WHERE n.recipient=:email ORDER BY n.creation_date DESC";
@@ -440,7 +442,7 @@ public class NotificationDataController {
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.sender, n.recipient, n.message "+
                         ", u1.nom as nomsender, u1.prenom as prenomsender, u2.nom as nomrecip, u2.prenom as prenomrecip "+
-                        "FROM notifhabilitation n "+
+                        "FROM NotifPret n "+
                         "LEFT JOIN utilisateur u1 ON u1.email=n.sender "+
                         "LEFT JOIN utilisateur u2 ON u2.email=n.recipient "+
                         "WHERE n.recipient=:email AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
@@ -488,7 +490,7 @@ public class NotificationDataController {
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.sender, n.recipient, n.message "+
                 ", u1.nom as nomsender, u1.prenom as prenomsender, u2.nom as nomrecip, u2.prenom as prenomrecip "+
-                "FROM notifhabilitation n "+
+                "FROM NotifPret n "+
                 "LEFT JOIN utilisateur u1 ON u1.email=n.sender "+
                 "LEFT JOIN utilisateur u2 ON u2.email=n.recipient "+
                 "WHERE n.recipient=:email ORDER BY n.creation_date DESC";
