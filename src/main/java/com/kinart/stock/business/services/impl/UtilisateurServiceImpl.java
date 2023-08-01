@@ -1,5 +1,6 @@
 package com.kinart.stock.business.services.impl;
 
+import com.itextpdf.text.pdf.PdfName;
 import com.kinart.api.gestiondestock.dto.ChangerMotDePasseUtilisateurDto;
 import com.kinart.api.gestiondestock.dto.RolesDto;
 import com.kinart.api.gestiondestock.dto.UtilisateurDto;
@@ -7,6 +8,7 @@ import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.ErrorCodes;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import com.kinart.stock.business.exception.InvalidOperationException;
+import com.kinart.stock.business.model.Roles;
 import com.kinart.stock.business.model.Utilisateur;
 import com.kinart.stock.business.repository.RolesRepository;
 import com.kinart.stock.business.repository.UtilisateurRepository;
@@ -21,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 
@@ -41,6 +44,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
   }
 
   @Override
+  @Transactional
   public UtilisateurDto save(UtilisateurDto dto) {
     List<String> errors = UtilisateurValidator.validate(dto);
     if (!errors.isEmpty()) {
@@ -49,21 +53,27 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     if(userAlreadyExists(dto.getEmail())) {
-      throw new InvalidEntityException("Un autre utilisateur avec le meme email existe deja", ErrorCodes.UTILISATEUR_ALREADY_EXISTS,
-          Collections.singletonList("Un autre utilisateur avec le meme email existe deja dans la BDD"));
-    }
-
-
-    dto.setMoteDePasse(passwordEncoder.encode(dto.getMoteDePasse()));
+      /*throw new InvalidEntityException("Un autre utilisateur avec le meme email existe deja", ErrorCodes.UTILISATEUR_ALREADY_EXISTS,
+          Collections.singletonList("Un autre utilisateur avec le meme email existe deja dans la BDD"));*/
+      utilisateurRepository.save(UtilisateurDto.toEntity(dto));
+    } else
+         dto.setMoteDePasse(passwordEncoder.encode(dto.getMoteDePasse()));
 
     UtilisateurDto userDbDto = UtilisateurDto.fromEntity(utilisateurRepository.save(UtilisateurDto.toEntity(dto)));
 
     // Save rôles
     // Delete all role existant
-    rolesRepository.deleteByUtilisateurId(userDbDto.getId());
+    rolesRepository.deleteRoleByUtilisateurId(userDbDto.getId());
     for(RolesDto roleDto : dto.getRoles()){
-      roleDto.setUtilisateur(userDbDto);
-      rolesRepository.save(RolesDto.toEntity(roleDto));
+      /**if(roleDto.getId() == null){
+        roleDto.setUtilisateur(userDbDto);
+        rolesRepository.save(RolesDto.toEntity(roleDto));
+      } else {*/
+        roleDto.setId(null);
+        roleDto.setUtilisateur(userDbDto);
+        rolesRepository.save(RolesDto.toEntity(roleDto));
+      //}
+
     }
 
     return userDbDto;

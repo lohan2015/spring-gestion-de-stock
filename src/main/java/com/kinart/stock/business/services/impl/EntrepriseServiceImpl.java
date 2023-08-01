@@ -13,6 +13,7 @@ import com.kinart.stock.business.services.EntrepriseService;
 import com.kinart.stock.business.services.UtilisateurService;
 import com.kinart.stock.business.validator.EntrepriseValidator;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -71,7 +72,7 @@ public class EntrepriseServiceImpl implements EntrepriseService {
         .email(dto.getEmail())
         .moteDePasse(generateRandomPassword())
         .entreprise(dto)
-        .dateDeNaissance(Instant.now())
+        .dateDeNaissance(new Date())
         .photo(dto.getPhoto())
         .build();
   }

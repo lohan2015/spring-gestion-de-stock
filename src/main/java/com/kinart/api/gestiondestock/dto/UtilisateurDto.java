@@ -5,6 +5,7 @@ import com.kinart.stock.business.model.Utilisateur;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ public class UtilisateurDto implements Serializable {
 
   private String email;
 
-  private Instant dateDeNaissance;
+  private Date dateDeNaissance;
 
   private String moteDePasse;
 
@@ -84,7 +85,15 @@ public class UtilisateurDto implements Serializable {
         .dateDeNaissance(utilisateur.getDateDeNaissance())
         .adresse(AdresseDto.fromEntity(utilisateur.getAdresse()))
         .photo(utilisateur.getPhoto())
-        .entreprise(EntrepriseDto.fromEntity(utilisateur.getEntreprise()))
+            .dg(utilisateur.getDg())
+            .dga(utilisateur.getDga())
+            .drhl(utilisateur.getDrhl())
+            .scepersonnel(utilisateur.getScepersonnel())
+            .valid1(utilisateur.getValid1())
+            .valid2(utilisateur.getValid2())
+            .valid3(utilisateur.getValid3())
+            .valid4(utilisateur.getValid4())
+         .entreprise(EntrepriseDto.fromEntity(utilisateur.getEntreprise()))
         .roles(
                     utilisateur.getRoles() != null ?
                             utilisateur.getRoles().stream()
@@ -109,6 +118,14 @@ public class UtilisateurDto implements Serializable {
     utilisateur.setAdresse(AdresseDto.toEntity(dto.getAdresse()));
     utilisateur.setPhoto(dto.getPhoto());
     utilisateur.setEntreprise(EntrepriseDto.toEntity(dto.getEntreprise()));
+    utilisateur.setDg(dto.getDg());
+    utilisateur.setDga(dto.getDga());
+    utilisateur.setScepersonnel(dto.getScepersonnel());
+    utilisateur.setDrhl(dto.getDrhl());
+    utilisateur.setValid1(dto.getValid1());
+    utilisateur.setValid2(dto.getValid2());
+    utilisateur.setValid3(dto.getValid3());
+    utilisateur.setValid4(dto.getValid4());
 
     return utilisateur;
   }

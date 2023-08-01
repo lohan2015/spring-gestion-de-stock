@@ -8,6 +8,7 @@ import com.kinart.api.gestiondestock.dto.UtilisateurDto;
 import io.swagger.annotations.Api;
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,22 +19,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Api("utilisateurs")
 public interface UtilisateurApi {
 
-  @PostMapping(UTILISATEUR_ENDPOINT + "/create")
+  @PostMapping(value =UTILISATEUR_ENDPOINT + "/create", consumes = {MediaType.ALL_VALUE}, produces = {MediaType.ALL_VALUE})
   ResponseEntity<UtilisateurDto> save(@RequestBody UtilisateurDto dto) throws Exception;
 
-  @PostMapping(UTILISATEUR_ENDPOINT + "/update/password")
+  @PostMapping(value =UTILISATEUR_ENDPOINT + "/update/password", consumes = {MediaType.ALL_VALUE}, produces = {MediaType.ALL_VALUE})
   UtilisateurDto changerMotDePasse(@RequestBody ChangerMotDePasseUtilisateurDto dto) throws Exception;
 
-  @GetMapping(UTILISATEUR_ENDPOINT + "/{idUtilisateur}")
+  @GetMapping(value =UTILISATEUR_ENDPOINT + "/{idUtilisateur}", consumes = {MediaType.ALL_VALUE}, produces = {MediaType.ALL_VALUE})
   UtilisateurDto findById(@PathVariable("idUtilisateur") Integer id) throws Exception;
 
-  @GetMapping(UTILISATEUR_ENDPOINT + "/find/{email}")
+  @GetMapping(value =UTILISATEUR_ENDPOINT + "/find/{email}", consumes = {MediaType.ALL_VALUE}, produces = {MediaType.ALL_VALUE})
   UtilisateurDto findByEmail(@PathVariable("email") String email) throws Exception;
 
-  @GetMapping(UTILISATEUR_ENDPOINT + "/all")
+  @GetMapping(value =UTILISATEUR_ENDPOINT + "/all", consumes = {MediaType.ALL_VALUE}, produces = {MediaType.ALL_VALUE})
   List<UtilisateurDto> findAll() throws Exception;
 
-  @DeleteMapping(UTILISATEUR_ENDPOINT + "/delete/{idUtilisateur}")
+  @DeleteMapping(value =UTILISATEUR_ENDPOINT + "/delete/{idUtilisateur}", consumes = {MediaType.ALL_VALUE}, produces = {MediaType.ALL_VALUE})
   void delete(@PathVariable("idUtilisateur") Integer id) throws Exception;
 
 }

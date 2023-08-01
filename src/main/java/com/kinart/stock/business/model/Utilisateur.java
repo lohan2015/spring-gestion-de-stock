@@ -2,6 +2,7 @@ package com.kinart.stock.business.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
 
@@ -33,7 +34,7 @@ public class Utilisateur extends AbstractEntity {
   private String email;
 
   @Column(name = "datedenaissance")
-  private Instant dateDeNaissance;
+  private Date dateDeNaissance;
 
   @Column(name = "motdepasse")
   private String moteDePasse;
