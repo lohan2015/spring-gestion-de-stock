@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RptBulletinPaie" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="de577cb4-9d72-4fde-8356-abbb41dbb844">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
@@ -417,7 +417,7 @@
 				<textElement>
 					<font fontName="Bookman Old Style" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[N° NIU:]]></text>
+				<text><![CDATA[N° CNSS:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="5" y="94" width="76" height="13" uuid="9e2be100-2c00-4379-8cf9-193fce5d342a">
@@ -426,7 +426,7 @@
 				<textElement>
 					<font fontName="Bookman Old Style" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[N° CNSS:]]></text>
+				<text><![CDATA[N° employeur:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="5" y="112" width="76" height="13" uuid="c904ee11-bb35-428d-a41f-5334305995c2">
@@ -723,7 +723,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Bookman Old Style" size="9" isBold="true"/>
 									</textElement>
-									<text><![CDATA[Part Patr.]]></text>
+									<text><![CDATA[PART PATR.]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:columnFooter style="Table_CH" height="0" rowSpan="1"/>
@@ -798,7 +798,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bookman Old Style" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{INFO_NAP})+" FCFA"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,###").format($P{INFO_NAP})+" XOF"]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="1" y="47" width="48" height="47" uuid="04f8dca2-ab4f-4a61-9892-268d7b335d4f"/>

@@ -16,6 +16,7 @@ import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -103,7 +104,14 @@ public class CalculPaieController implements CalculPaieApi {
 
      @Override
      public ResponseEntity<List<CalculPaieDto>> findResultCalculByFilter(RechercheDto dto) {
-         List<CalculPaieDto> calculsPaieDto = calculPaieService.findResultCalculByFilter(dto);
+         List<CalculPaieDto> calculsPaieDto = new ArrayList<CalculPaieDto>();//calculPaieService.findResultCalculByFilter(dto);
+         List<CumulPaieDto> histoCalcul = calculPaieService.findCumulByFilter(dto);
+         for (CumulPaieDto cumul: histoCalcul) {
+             CalculPaieDto calcul = new CalculPaieDto();
+             BeanUtils.copyProperties(cumul, calcul);
+             calculsPaieDto.add(calcul);
+         }
+
          if(calculsPaieDto!=null) {
              return ResponseEntity.ok(calculsPaieDto);
          } else {
@@ -118,17 +126,25 @@ public class CalculPaieController implements CalculPaieApi {
             List<SalarieDto> salariesDto = calculPaieService.findListeSalarieByFilter(dto);
             if(salariesDto == null || salariesDto.size()==0) return new ResponseEntity("Pas de salarié correspondant aux critères", HttpStatus.BAD_REQUEST);
             SalarieDto salDto = salariesDto.get(0);
-            List<CalculPaieDto> calculsPaieDto = calculPaieService.findResultCalculByFilter(dto);
+
+            List<CalculPaieDto> calculsPaieDto = new ArrayList<CalculPaieDto>();// calculPaieService.findResultCalculByFilter(dto);
+            List<CumulPaieDto> histoCalcul = calculPaieService.findCumulByFilter(dto);
+            for (CumulPaieDto cumul: histoCalcul) {
+                CalculPaieDto calcul = new CalculPaieDto();
+                BeanUtils.copyProperties(cumul, calcul);
+                calculsPaieDto.add(calcul);
+            }
+
             if(calculsPaieDto == null || calculsPaieDto.size()==0) return new ResponseEntity("Pas de bulletin à éditer", HttpStatus.BAD_REQUEST);
 
             //Lecture du mot de passe
-            String password = "XXXXX";
+            /**String password = "XXXXX";
             List<FreeZone> result = generiqueConnexionService.find("From FreeZone Where idEntreprise='"+salDto.getIdentreprise()+"' And nmat='"+salDto.getNmat()+"' And numerozl=5");
             FreeZone zl = null;
             if(result!=null && result.size()>0){
                 zl = result.get(0);
                 if(zl!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(zl.getVallzl())) password = zl.getVallzl().trim();
-            }
+            }*/
 
             String filePath = ResourceUtils.getFile("classpath:RptBulletinPaie.jrxml")
                      .getAbsolutePath();
@@ -136,8 +152,15 @@ public class CalculPaieController implements CalculPaieApi {
              //System.out.println("Chemin report="+filePath);
 
              //System.out.println("Ajout datasource");
-            CalculPaieDto calDto = calculsPaieDto.get(calculsPaieDto.size()-1);
-            calculsPaieDto.remove(calDto);
+            CalculPaieDto calDto = calculsPaieDto.remove(calculsPaieDto.size()-1);
+            if(calDto.getRubq().equalsIgnoreCase("9500")  || calDto.getRubq().equalsIgnoreCase("3500"))
+                calculsPaieDto.remove(calculsPaieDto.size()-1);
+            else {
+                calculsPaieDto.remove(calDto);
+                calDto = calculsPaieDto.remove(calculsPaieDto.size()-1);
+                calculsPaieDto.remove(calDto);
+            }
+            //CalculPaieDto calDto = calculsPaieDto.get(calculsPaieDto.size()-1);
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(calculsPaieDto);
 
              // System.out.println("Ajout paramètres");
@@ -173,7 +196,7 @@ public class CalculPaieController implements CalculPaieApi {
              System.out.println("Fichier à télécharger: "+Paths.get(uploadDir).toString()+"/"+fileName);
              //System.out.println("URI: "+filePat.toUri());
             //Envoi mail
-            if(org.apache.commons.lang3.StringUtils.isNotEmpty(salDto.getAdr4())){
+            /**if(org.apache.commons.lang3.StringUtils.isNotEmpty(salDto.getAdr4())){
                 EmailDetails paramMail = new EmailDetails();
                 paramMail.setAttachment(uploadDir+fileName);
                 paramMail.setFilename(fileName);
@@ -189,7 +212,7 @@ public class CalculPaieController implements CalculPaieApi {
                     }
                 }
 
-            }
+            }*/
 
              File file = new File(filePat.toUri());
              FileInputStream is = new FileInputStream(file);
@@ -216,7 +239,7 @@ public class CalculPaieController implements CalculPaieApi {
              is.close();
 
             // Mise à jour du bulletin
-            generiqueConnexionService.updateFromTable("UPDATE CalculPaie SET trtb='2' WHERE idEntreprise="+salDto.getIdentreprise()+" AND nmat='"+salDto.getNmat()+"' AND aamm='"+dto.periodeDePaie+"'");
+            //generiqueConnexionService.updateFromTable("UPDATE CalculPaie SET trtb='2' WHERE idEntreprise="+salDto.getIdentreprise()+" AND nmat='"+salDto.getNmat()+"' AND aamm='"+dto.periodeDePaie+"'");
 
          } catch(Exception e) {
              System.out.println("Exception while creating report");
@@ -229,16 +252,17 @@ public class CalculPaieController implements CalculPaieApi {
      private Map<String, Object> getReportParameters(SalarieDto salarieDto, String periode, String numbul){
          VirementSalarieDto virDto = virementSalaireService.findByMatricule(salarieDto.getNmat());
         Map<String, Object> parameters = new HashMap<String, Object>();
-         parameters.put("NOM_SOCIETE", "MEGATIM");
-         parameters.put("ADRESSE_SOCIETE", "B.P.: 56789 YAOUNDE");
-         parameters.put("CONTACT_SOCIETE", "Tél.: +237 694 45 67 23");
+         parameters.put("NOM_SOCIETE", "SONIBANK");
+         parameters.put("ADRESSE_SOCIETE", "AVENUE DE LA MAIRIE NIAMEY NE 0891, Ave de l'Africa, Niamey, Niger");
+         parameters.put("CONTACT_SOCIETE", "Tél.: +227 20 73 47 40");
          parameters.put("INFO_MATRICULE", salarieDto.getNmat());
          parameters.put("INFO_NOM", salarieDto.getNom()+" "+salarieDto.getPren());
          parameters.put("INFO_NIU", salarieDto.getNoss());
          parameters.put("INFO_CATEGORIE", salarieDto.getCat());
          parameters.put("INFO_ECHELON", salarieDto.getLibechelon());
          parameters.put("INFO_CHARGE", salarieDto.getNbpt().intValue()+"");
-         parameters.put("INFO_ADRESSE", salarieDto.getAdr1());
+         parameters.put("INFO_ADRESSE", org.apache.commons.lang3.StringUtils.isNotEmpty(salarieDto.getAdr1())?salarieDto.getAdr1():"");
+         parameters.put("INFO_TELEPHONE", org.apache.commons.lang3.StringUtils.isNotEmpty(salarieDto.getNtel())?salarieDto.getNtel():"");
          parameters.put("INFO_FONCTION", org.apache.commons.lang3.StringUtils.isNotEmpty(salarieDto.getLibfonction())?salarieDto.getLibfonction():"" );
          parameters.put("INFO_DATE_ENTREE", new ClsDate(salarieDto.getDtes()).getDateS("dd/MM/yyyy"));
          parameters.put("INFO_NUMERO_CNSS", org.apache.commons.lang3.StringUtils.isNotEmpty(salarieDto.getCont())?salarieDto.getCont():"");
@@ -261,7 +285,8 @@ public class CalculPaieController implements CalculPaieApi {
 //         parameters.put("CUM_COL3", new BigDecimal(0));
 //         parameters.put("CUM_COL4", new BigDecimal(0));
 //         parameters.put("CUM_COL5", new BigDecimal(0));
-         parameters.put("CHEMIN_LOGO", "D:\\Programmation orientee objet\\Technologies\\Angular\\projets\\gestiondestock\\logo\\logo.jpg");
+         //parameters.put("CHEMIN_LOGO", "D:\\Projets\\angular-gestion-de-stock\\src\\assets\\logosonibank.jpg");
+         parameters.put("CHEMIN_LOGO", ".\\logosonibank.jpg");
 
          //TODO Entêtes colonnes cumuls
          Session session = generiqueConnexionService.getSession();
@@ -310,8 +335,8 @@ public class CalculPaieController implements CalculPaieApi {
 
                  "FROM SALARIE AGENT "+
                  "JOIN ELEMENTSALAIRE RUB ON (RUB.IDENTREPRISE = AGENT.IDENTREPRISE) AND RUB.EPBUL in (1,2,3,4,5,6)  and (RUB.CALC='O')  "+
-                 "LEFT JOIN CALCULPAIE CALCUL  ON ( AGENT.IDENTREPRISE = CALCUL.IDENTREPRISE) AND (AGENT.NMAT=CALCUL.NMAT) AND (CALCUL.RUBQ=RUB.CRUB) AND  (CALCUL.IDENTREPRISE=AGENT.IDENTREPRISE) AND (CALCUL.NBUL = :nbul) AND (CALCUL.AAMM = :periode) "+
-                 "LEFT JOIN CUMULPAIE TBCUMUL ON (RUB.CRUB=TBCUMUL.RUBQ AND AGENT.IDENTREPRISE=TBCUMUL.IDENTREPRISE AND AGENT.NMAT=TBCUMUL.NMAT  AND TBCUMUL.NBUL=:nbul AND TBCUMUL.AAMM= :percumul)  "+
+                 "JOIN HISTOCALCULPAIE CALCUL  ON ( AGENT.IDENTREPRISE = CALCUL.IDENTREPRISE) AND CALCUL.NBUL=:nbul AND (AGENT.NMAT=CALCUL.NMAT) AND (CALCUL.RUBQ=RUB.CRUB) AND  (CALCUL.IDENTREPRISE=AGENT.IDENTREPRISE) AND (CALCUL.NBUL = :nbul) AND (CALCUL.AAMM = :periode) "+
+                 "JOIN HISTOCALCULPAIE TBCUMUL ON (RUB.CRUB=TBCUMUL.RUBQ AND AGENT.IDENTREPRISE=TBCUMUL.IDENTREPRISE AND AGENT.NMAT=TBCUMUL.NMAT  AND TBCUMUL.NBUL=:nbul AND TBCUMUL.AAMM= :percumul)  "+
                  "WHERE  (AGENT.IDENTREPRISE=:dossier)  AND (AGENT.NMAT = :matricule)  ORDER BY EPBUL";
          q = session.createSQLQuery(query);
          q.setParameter("dossier", salarieDto.getIdentreprise());
@@ -325,14 +350,16 @@ public class CalculPaieController implements CalculPaieApi {
          i = 1;
          int j = 6;
          if(lst!=null && lst.size()>0){
-         for (Object[] o : lst)
-         {
-             parameters.put("MOIS_COL"+i, (o[i+j]!=null)?new BigDecimal(o[i+j].toString()):BigDecimal.ZERO);
-             parameters.put("CUM_COL"+i, (o[i+j+1]!=null)?new BigDecimal(o[i+j+1].toString()):BigDecimal.ZERO);
+             for (Object[] o : lst)
+             {
+                 if((i+j)==19) break;
 
-             i = i + 1;
-             j = j + 1;
-         }
+                 parameters.put("MOIS_COL"+i, (o[i+j]!=null)?new BigDecimal(o[i+j].toString()):BigDecimal.ZERO);
+                 parameters.put("CUM_COL"+i, (o[i+j+1]!=null)?new BigDecimal(o[i+j+1].toString()):BigDecimal.ZERO);
+
+                 i = i + 1;
+                 j = j + 1;
+             }
          } else{
              parameters.put("MOIS_COL1", new BigDecimal(0));
          parameters.put("MOIS_COL2", new BigDecimal(0));
