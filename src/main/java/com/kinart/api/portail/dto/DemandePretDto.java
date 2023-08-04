@@ -40,8 +40,10 @@ public class DemandePretDto implements Serializable {
 
     private Integer dureePret;
 
+    private String typePret;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date dteDebut;
+    private Date dteDebutPret;
 
     @NotNull(message = "Le validateur 1 ne doit pas etre vide")
     @NotEmpty(message = "Le validateur 1 ne doit pas etre vide")

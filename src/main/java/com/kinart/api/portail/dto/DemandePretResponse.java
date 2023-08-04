@@ -40,8 +40,8 @@ public class DemandePretResponse implements Serializable {
 
     private Integer dureePret;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date dateDebut;
+    //@DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date dteDebutPret;
 
     private String typePret;
 
@@ -71,5 +71,6 @@ public class DemandePretResponse implements Serializable {
     private String demandid;
     private String valueDate;
     private String email;
+    private String dateFin;
 
 }

@@ -51,6 +51,7 @@ public class NotificationAbsenceCongeServiceImpl implements NotificationAbsenceC
         modele = modele.replaceAll("\\$SENDER", dto.getUserDemAbsCg().getPrenom()+" "+dto.getUserDemAbsCg().getNom());
         modele = modele.replaceAll("\\$DATEDEBUT", new SimpleDateFormat("MM-dd-yyyy").format(dto.getDteDebut()));
         modele = modele.replaceAll("\\$DATEFIN", new SimpleDateFormat("MM-dd-yyyy").format(dto.getDteFin()));
+        modele = modele.replaceAll("\\$NUMERO", String.valueOf(dto.getId()));
 
         NotifAbsConge notifAbsConge = new NotifAbsConge();
         notifAbsConge.setSender(dto.getUserDemAbsCg().getEmail());
@@ -93,7 +94,8 @@ public class NotificationAbsenceCongeServiceImpl implements NotificationAbsenceC
             throw new EntityNotFoundException("Aucune donnée avec l'ID = "+"ACK_ABSCGE"+" n'a pas été trouvée dans la table 99", ErrorCodes.ARTICLE_NOT_FOUND);
         else modele = fnom.getVall();
 
-        modele = modele.replaceAll("\\$$VALIDATOR", validator);
+        modele = modele.replaceAll("\\$VALIDATOR", validator);
+        modele = modele.replaceAll("\\$NUMERO", String.valueOf(dto.getId()));
 
         NotifAbsConge notifAbsConge = new NotifAbsConge();
         notifAbsConge.setSender(dto.getUserDemAbsCg().getEmail());
@@ -138,6 +140,7 @@ public class NotificationAbsenceCongeServiceImpl implements NotificationAbsenceC
 
         modele = modele.replaceAll("\\$DATEDEBUT", new SimpleDateFormat("MM-dd-yyyy").format(dto.getDteDebut()));
         modele = modele.replaceAll("\\$DATEFIN", new SimpleDateFormat("MM-dd-yyyy").format(dto.getDteFin()));
+        modele = modele.replaceAll("\\$NUMERO", String.valueOf(dto.getId()));
 
         NotifAbsConge notifAbsConge = new NotifAbsConge();
         notifAbsConge.setSender(dto.getUserDemAbsCg().getEmail());
@@ -181,6 +184,7 @@ public class NotificationAbsenceCongeServiceImpl implements NotificationAbsenceC
         else modele = fnom.getVall();
 
         modele = modele.replaceAll("\\$SENDER", dto.getUserDemAbsCg().getPrenom()+" "+dto.getUserDemAbsCg().getNom());
+        modele = modele.replaceAll("\\$NUMERO", String.valueOf(dto.getId()));
 
         NotifAbsConge notifAbsConge = new NotifAbsConge();
         notifAbsConge.setSender(dto.getUserDemAbsCg().getEmail());

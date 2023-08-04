@@ -119,9 +119,11 @@ public class DemandePretController {
 
     System.out.println("Fixation valeur........................");
             dto2.setMontantPret(dto.getMontantPret());
-            dto2.setDteDebut(dto.getDateDebut());
+            dto2.setDteDebutPret(dto.getDteDebutPret());
+            dto2.setTypePret(dto.getTypePret());
             dto2.setDureePret(dto.getDureePret());
-            System.out.println("Fin Fixation valeur........................");
+            dto.setDateFin(new ClsDate(dto.getDteDebutPret()).getDateS("dd/MM/yyyy"));
+            System.out.println("Fin Fixation valeur........................"+dto.getDteDebutPret());
 
             Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getEmail());
             if(user.isPresent()){
@@ -361,7 +363,7 @@ public class DemandePretController {
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.scepersonnel, n.status1, u1.nom, u1.prenom, u1.email, n.typepret "+
-                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.datedebut  "+
+                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret  "+
                 "FROM demandepret n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
                 "WHERE u1.email=:email AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
@@ -394,9 +396,12 @@ public class DemandePretController {
             if(o[15]!=null) cptble.setStatus2(o[15].toString());
             if(o[16]!=null) cptble.setStatus3(o[16].toString());
             if(o[17]!=null) cptble.setStatus4(o[17].toString());
-            if(o[18]!=null) cptble.setDateDebut((Date) o[18]);
+            if(o[18]!=null){
+                cptble.setDteDebutPret((Date) o[18]);
+                cptble.setDateFin(new ClsDate((Date) o[18]).getDateS("dd/MM/yyyy"));
+            }
 
-            cptble.setDemandid(String.valueOf(cptble.getId()));
+           cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
             cptble.setValueDate(new ClsDate((Date) o[1]).getDateS("dd/MM/yyyy"));
 
@@ -426,7 +431,7 @@ public class DemandePretController {
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.scepersonnel, n.status1, u1.nom, u1.prenom, u1.email, n.typepret "+
-                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.datedebut  "+
+                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret  "+
                 "FROM demandepret n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
                 "WHERE (u1.email=:email OR n.scepersonnel=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
@@ -459,7 +464,10 @@ public class DemandePretController {
             if(o[15]!=null) cptble.setStatus2(o[15].toString());
             if(o[16]!=null) cptble.setStatus3(o[16].toString());
             if(o[17]!=null) cptble.setStatus4(o[17].toString());
-            if(o[18]!=null) cptble.setDateDebut((Date) o[18]);
+            if(o[18]!=null){
+                cptble.setDteDebutPret((Date) o[18]);
+                cptble.setDateFin(new ClsDate((Date) o[18]).getDateS("dd/MM/yyyy"));
+            }
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
@@ -490,8 +498,8 @@ public class DemandePretController {
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.scepersonnel, n.status1, u1.nom, u1.prenom, u1.email, n.typepret "+
-                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.datedebut  "+
-                "FROM demandeattestation n "+
+                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret  "+
+                "FROM demandepret n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
                 "WHERE (u1.email=:email OR n.drhl=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
 
@@ -524,7 +532,10 @@ public class DemandePretController {
             if(o[15]!=null) cptble.setStatus2(o[15].toString());
             if(o[16]!=null) cptble.setStatus3(o[16].toString());
             if(o[17]!=null) cptble.setStatus4(o[17].toString());
-            if(o[18]!=null) cptble.setDateDebut((Date) o[18]);
+            if(o[18]!=null){
+                cptble.setDteDebutPret((Date) o[18]);
+                cptble.setDateFin(new ClsDate((Date) o[18]).getDateS("dd/MM/yyyy"));
+            }
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
@@ -555,7 +566,7 @@ public class DemandePretController {
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.scepersonnel, n.status1, u1.nom, u1.prenom, u1.email, n.typepret "+
-                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.datedebut  "+
+                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret  "+
                 "FROM demandepret n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
                 "WHERE (u1.email=:email OR n.dga=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
@@ -589,7 +600,10 @@ public class DemandePretController {
             if(o[15]!=null) cptble.setStatus2(o[15].toString());
             if(o[16]!=null) cptble.setStatus3(o[16].toString());
             if(o[17]!=null) cptble.setStatus4(o[17].toString());
-            if(o[18]!=null) cptble.setDateDebut((Date) o[18]);
+            if(o[18]!=null){
+                cptble.setDteDebutPret((Date) o[18]);
+                cptble.setDateFin(new ClsDate((Date) o[18]).getDateS("dd/MM/yyyy"));
+            }
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
@@ -620,7 +634,7 @@ public class DemandePretController {
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.scepersonnel, n.status1, u1.nom, u1.prenom, u1.email, n.typepret "+
-                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.datedebut  "+
+                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret  "+
                 "FROM demandepret n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
                 "WHERE (u1.email=:email OR n.dg=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
@@ -654,7 +668,10 @@ public class DemandePretController {
             if(o[15]!=null) cptble.setStatus2(o[15].toString());
             if(o[16]!=null) cptble.setStatus3(o[16].toString());
             if(o[17]!=null) cptble.setStatus4(o[17].toString());
-            if(o[18]!=null) cptble.setDateDebut((Date) o[18]);
+            if(o[18]!=null){
+                cptble.setDteDebutPret((Date) o[18]);
+                cptble.setDateFin(new ClsDate((Date) o[18]).getDateS("dd/MM/yyyy"));
+            }
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());

@@ -29,8 +29,8 @@ public class DemandePret  extends AbstractEntity {
     @Column(name = "typepret", length = 100)
     private String typePret;
 
-    @Column(name = "datedebut")
-    private Date dateDebut;
+    @Column(name = "dtedebutpret")
+    private Date dteDebutPret;
 
     @Column(name = "montantpret")
     private BigDecimal montantPret;

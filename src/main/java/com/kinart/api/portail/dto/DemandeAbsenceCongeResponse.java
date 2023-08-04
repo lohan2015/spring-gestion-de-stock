@@ -75,4 +75,6 @@ public class DemandeAbsenceCongeResponse implements Serializable {
     private String valueDate;
     private String email;
     private String libmotif;
+    private String strDateDebut;
+    private String strDateFin;
 }

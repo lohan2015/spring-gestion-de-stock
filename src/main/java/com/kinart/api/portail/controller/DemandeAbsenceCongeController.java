@@ -62,14 +62,21 @@ public class DemandeAbsenceCongeController {
         //validator.validate(dto);
         try {
             DemandeAbsenceCongeDto dto2 = new DemandeAbsenceCongeDto();
+            //System.out.println("RAISON=============="+dto.getRaison());
             dto2.setMotif(dto.getMotif());
             dto2.setRaison(dto.getRaison());
             dto2.setDteFin(dto.getDteFin());
             dto2.setDteDebut(dto.getDteDebut());
+            dto.setStrDateDebut(new ClsDate(dto.getDteDebut()).getDateS("dd/MM/yyyy"));
+            dto.setStrDateFin(new ClsDate(dto.getDteFin()).getDateS("dd/MM/yyyy"));
             // Fixer les validateurs
             Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getEmail());
             if(user.isPresent()){
                 dto2.setUserDemAbsCg(user.get());
+                dto2.setValid1(user.get().getValid1());
+                dto2.setValid2(user.get().getValid2());
+                dto2.setValid3(user.get().getValid3());
+                dto2.setValid4(user.get().getValid4());
             } else throw new EntityNotFoundException("Utilisateur inexistant");
 
             dto2.setStatus1(EnumStatusType.ATTENTE_VALIDATION);
@@ -83,7 +90,7 @@ public class DemandeAbsenceCongeController {
             }
 
             // Gestion des notifications
-            notificationService.sendAbsenceCongeNotification(dto2, dto.getValid1());
+            notificationService.sendAbsenceCongeNotification(dto2, dto2.getValid1());
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
@@ -397,6 +404,8 @@ public class DemandeAbsenceCongeController {
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
             cptble.setValueDate(new ClsDate((Date) o[1]).getDateS("dd/MM/yyyy"));
+            cptble.setStrDateDebut(new ClsDate(cptble.getDteDebut()).getDateS("dd/MM/yyyy"));
+            cptble.setStrDateFin(new ClsDate(cptble.getDteFin()).getDateS("dd/MM/yyyy"));
 
             liste.add(cptble);
         }
@@ -464,6 +473,8 @@ public class DemandeAbsenceCongeController {
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
             cptble.setValueDate(new ClsDate((Date) o[1]).getDateS("dd/MM/yyyy"));
+            cptble.setStrDateDebut(new ClsDate(cptble.getDteDebut()).getDateS("dd/MM/yyyy"));
+            cptble.setStrDateFin(new ClsDate(cptble.getDteFin()).getDateS("dd/MM/yyyy"));
 
             liste.add(cptble);
         }
@@ -531,6 +542,8 @@ public class DemandeAbsenceCongeController {
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
             cptble.setValueDate(new ClsDate((Date) o[1]).getDateS("dd/MM/yyyy"));
+            cptble.setStrDateDebut(new ClsDate(cptble.getDteDebut()).getDateS("dd/MM/yyyy"));
+            cptble.setStrDateFin(new ClsDate(cptble.getDteFin()).getDateS("dd/MM/yyyy"));
 
             liste.add(cptble);
         }
@@ -598,6 +611,8 @@ public class DemandeAbsenceCongeController {
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
             cptble.setValueDate(new ClsDate((Date) o[1]).getDateS("dd/MM/yyyy"));
+            cptble.setStrDateDebut(new ClsDate(cptble.getDteDebut()).getDateS("dd/MM/yyyy"));
+            cptble.setStrDateFin(new ClsDate(cptble.getDteFin()).getDateS("dd/MM/yyyy"));
 
             liste.add(cptble);
         }
@@ -665,6 +680,8 @@ public class DemandeAbsenceCongeController {
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
             cptble.setValueDate(new ClsDate((Date) o[1]).getDateS("dd/MM/yyyy"));
+            cptble.setStrDateDebut(new ClsDate(cptble.getDteDebut()).getDateS("dd/MM/yyyy"));
+            cptble.setStrDateFin(new ClsDate(cptble.getDteFin()).getDateS("dd/MM/yyyy"));
 
             liste.add(cptble);
         }
