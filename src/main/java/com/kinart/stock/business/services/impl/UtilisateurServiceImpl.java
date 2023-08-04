@@ -106,11 +106,14 @@ public class UtilisateurServiceImpl implements UtilisateurService {
   }
 
   @Override
+  @Transactional
   public void delete(Integer id) {
     if (id == null) {
       log.error("Utilisateur ID is null");
       return;
     }
+
+    rolesRepository.deleteRoleByUtilisateurId(id);
     utilisateurRepository.deleteById(id);
   }
 

@@ -55,6 +55,7 @@ public class UtilisateurController implements UtilisateurApi {
 
   @Override
   public void delete(Integer id) throws Exception {
+    //System.out.println("SUPPRESSION UTILISATEUR--------------"+id);
     utilisateurService.delete(id);
   }
 }

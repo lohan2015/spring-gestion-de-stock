@@ -117,7 +117,7 @@ public class DemandePretController {
                 throw new EntityNotFoundException("Aucune donnée avec l'ID = "+"VAL_DG"+" n'a pas été trouvée dans la table 99", ErrorCodes.ARTICLE_NOT_FOUND);
             else dto2.setDg(fnom.getVall());
 
-    System.out.println("Fixation valeur........................");
+    //System.out.println("Fixation valeur........................");
             dto2.setMontantPret(dto.getMontantPret());
             dto2.setDteDebutPret(dto.getDteDebutPret());
             dto2.setTypePret(dto.getTypePret());
