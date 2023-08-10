@@ -9,10 +9,15 @@ public class AuthenticationResponse {
 
   private String accessToken;
 
+  private String secret2FA;
+
   public AuthenticationResponse() {
   }
 
-  public AuthenticationResponse(String accessToken) {
+  public AuthenticationResponse(String accessToken, String secret2FA) {
+
     this.accessToken = accessToken;
+    this.secret2FA = secret2FA;
+
   }
 }

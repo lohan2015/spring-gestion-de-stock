@@ -3,6 +3,8 @@ package com.kinart.stock.business.utils;
 import com.kinart.stock.business.model.auth.ExtendedUser;
 import io.jsonwebtoken.*;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +19,9 @@ import org.springframework.stereotype.Service;
 public class JwtUtil {
 
   private String SECRET_KEY = "secret";
+  static final String SOURCE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                + "abcdefghijklmnopqrstuvwxyz";
+  static SecureRandom secureRnd = null;
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
@@ -78,6 +83,15 @@ public class JwtUtil {
   public Boolean validateToken(String token, UserDetails userDetails) {
     final String username = extractUsername(token);
     return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+  }
+
+  public String generateSecret2FA() throws NoSuchAlgorithmException {
+    secureRnd = SecureRandom.getInstance("SHA1PRNG");
+    StringBuilder sb = new StringBuilder(10);
+    for (int i = 0; i < 10; i++)
+      sb.append(SOURCE.charAt(secureRnd.nextInt(SOURCE.length())));
+
+    return sb.toString();
   }
 
 }

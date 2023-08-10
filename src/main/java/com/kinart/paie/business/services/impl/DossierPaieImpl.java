@@ -4,6 +4,7 @@ import com.kinart.api.gestiondepaie.dto.DossierPaieDto;
 import com.kinart.paie.business.model.DossierPaie;
 import com.kinart.paie.business.repository.DossierPaieRepository;
 import com.kinart.paie.business.services.DossierPaieService;
+import com.kinart.paie.business.services.utils.ClsDate;
 import com.kinart.paie.business.validator.DossierPaieValidator;
 import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.ErrorCodes;
@@ -74,15 +75,15 @@ public class DossierPaieImpl implements DossierPaieService {
 
     @Override
     public Date getMoisDePaieCourant(Integer idEntreprise) {
-        DossierPaie dossierPaie = dossierPaieRepository.findByIdEntreprise(idEntreprise);
-        if(dossierPaie != null) return dossierPaie.getDdmp();
-        return null;
+        //DossierPaie dossierPaie = dossierPaieRepository.findByIdEntreprise(idEntreprise);
+        //if(dossierPaie != null) return dossierPaie.getDdmp();
+        return new ClsDate("01/01/2024").getDate();
     }
 
     @Override
     public Integer getNumeroBulletinPaie(Integer idEntreprise) {
-        DossierPaie dossierPaie = dossierPaieRepository.findByIdEntreprise(idEntreprise);
-        if(dossierPaie != null) return dossierPaie.getDnbu();
-        return null;
+        //DossierPaie dossierPaie = dossierPaieRepository.findByIdEntreprise(idEntreprise);
+        //if(dossierPaie != null) return dossierPaie.getDnbu();
+        return 9;
     }
 }

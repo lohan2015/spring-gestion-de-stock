@@ -14,6 +14,7 @@ import com.kinart.stock.business.exception.EntityNotFoundException;
 import com.kinart.stock.business.exception.InvalidEntityException;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.BeanUtils;
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -146,8 +148,7 @@ public class CalculPaieController implements CalculPaieApi {
                 if(zl!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(zl.getVallzl())) password = zl.getVallzl().trim();
             }*/
 
-            String filePath = ResourceUtils.getFile("classpath:RptBulletinPaie.jrxml")
-                     .getAbsolutePath();
+            //String filePath = ResourceUtils.getFile("classpath:RptBulletinPaie.jrxml").getAbsolutePath();
 
              //System.out.println("Chemin report="+filePath);
 
@@ -171,7 +172,11 @@ public class CalculPaieController implements CalculPaieApi {
              parameters.put("INFO_NAP", calDto.getMont());
 
              //System.out.println("Compilation");
-             JasperReport report = JasperCompileManager.compileReport(filePath);
+            String reportFilename = "/RptBulletinPaie.jrxml";
+            InputStream is2 = getClass().getResourceAsStream(reportFilename);
+            //System.out.println(is2.toString());
+            //JasperReport report = (JasperReport) JRLoader.loadObject(is2);
+            JasperReport report = JasperCompileManager.compileReport(is2);//(filePath);
 
              //System.out.println("Association des données");
              JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource(1));
@@ -286,8 +291,8 @@ public class CalculPaieController implements CalculPaieApi {
 //         parameters.put("CUM_COL4", new BigDecimal(0));
 //         parameters.put("CUM_COL5", new BigDecimal(0));
          //parameters.put("CHEMIN_LOGO", "D:\\Projets\\angular-gestion-de-stock\\src\\assets\\logosonibank.jpg");
-         parameters.put("CHEMIN_LOGO", ".\\logosonibank.jpg");
-
+         parameters.put("CHEMIN_LOGO", "/logosonibank.jpg"); // En mode développement mettre .\\logosonibank.jpg
+                                                             // Et mode production /logosonibank.jpg
          //TODO Entêtes colonnes cumuls
          Session session = generiqueConnexionService.getSession();
          String query = "SELECT DISTINCT " +
