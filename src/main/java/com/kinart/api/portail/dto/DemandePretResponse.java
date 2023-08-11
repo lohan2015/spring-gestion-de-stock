@@ -83,4 +83,6 @@ public class DemandePretResponse implements Serializable {
 
     private String commentDg;
 
+    private String libTypePret;
+
 }

@@ -363,9 +363,10 @@ public class DemandePretController {
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.scepersonnel, n.status1, u1.nom, u1.prenom, u1.email, n.typepret "+
-                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret  "+
+                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret, n.comment_user, n.comment_scrpers, n.comment_drhl, n.comment_dga, n.comment_dg, m1.vall  "+
                 "FROM demandepret n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
+                "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.typepret AND m1.ctab=802 and m1.nume=1 "+
                 "WHERE u1.email=:email AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
 
         Query q = session.createSQLQuery(query);
@@ -400,6 +401,12 @@ public class DemandePretController {
                 cptble.setDteDebutPret((Date) o[18]);
                 cptble.setDateFin(new ClsDate((Date) o[18]).getDateS("dd/MM/yyyy"));
             }
+            if(o[19]!=null) cptble.setCommentUser(o[19].toString());
+            if(o[20]!=null) cptble.setCommentScepers(o[20].toString());
+            if(o[21]!=null) cptble.setCommentDrhl(o[21].toString());
+            if(o[22]!=null) cptble.setCommentDga(o[22].toString());
+            if(o[23]!=null) cptble.setCommentDg(o[23].toString());
+            if(o[24]!=null) cptble.setLibTypePret(o[24].toString());
 
            cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
@@ -431,9 +438,10 @@ public class DemandePretController {
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.scepersonnel, n.status1, u1.nom, u1.prenom, u1.email, n.typepret "+
-                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret  "+
+                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret, n.comment_user, n.comment_scrpers, n.comment_drhl, n.comment_dga, n.comment_dg, m1.vall  "+
                 "FROM demandepret n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
+                "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.typepret AND m1.ctab=802 and m1.nume=1 "+
                 "WHERE (u1.email=:email OR n.scepersonnel=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
 
         Query q = session.createSQLQuery(query);
@@ -468,6 +476,12 @@ public class DemandePretController {
                 cptble.setDteDebutPret((Date) o[18]);
                 cptble.setDateFin(new ClsDate((Date) o[18]).getDateS("dd/MM/yyyy"));
             }
+            if(o[19]!=null) cptble.setCommentUser(o[19].toString());
+            if(o[20]!=null) cptble.setCommentScepers(o[20].toString());
+            if(o[21]!=null) cptble.setCommentDrhl(o[21].toString());
+            if(o[22]!=null) cptble.setCommentDga(o[22].toString());
+            if(o[23]!=null) cptble.setCommentDg(o[23].toString());
+            if(o[24]!=null) cptble.setLibTypePret(o[24].toString());
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
@@ -498,9 +512,10 @@ public class DemandePretController {
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.scepersonnel, n.status1, u1.nom, u1.prenom, u1.email, n.typepret "+
-                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret  "+
+                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret, n.comment_user, n.comment_scrpers, n.comment_drhl, n.comment_dga, n.comment_dg, m1.vall  "+
                 "FROM demandepret n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
+                "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.typepret AND m1.ctab=802 and m1.nume=1 "+
                 "WHERE (u1.email=:email OR n.drhl=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
 
         Session session = generiqueConnexionService.getSession();
@@ -536,6 +551,12 @@ public class DemandePretController {
                 cptble.setDteDebutPret((Date) o[18]);
                 cptble.setDateFin(new ClsDate((Date) o[18]).getDateS("dd/MM/yyyy"));
             }
+            if(o[19]!=null) cptble.setCommentUser(o[19].toString());
+            if(o[20]!=null) cptble.setCommentScepers(o[20].toString());
+            if(o[21]!=null) cptble.setCommentDrhl(o[21].toString());
+            if(o[22]!=null) cptble.setCommentDga(o[22].toString());
+            if(o[23]!=null) cptble.setCommentDg(o[23].toString());
+            if(o[24]!=null) cptble.setLibTypePret(o[24].toString());
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
@@ -566,9 +587,10 @@ public class DemandePretController {
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.scepersonnel, n.status1, u1.nom, u1.prenom, u1.email, n.typepret "+
-                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret  "+
+                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret, n.comment_user, n.comment_scrpers, n.comment_drhl, n.comment_dga, n.comment_dg, m1.vall  "+
                 "FROM demandepret n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
+                "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.typepret AND m1.ctab=802 and m1.nume=1 "+
                 "WHERE (u1.email=:email OR n.dga=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
 
         Session session = generiqueConnexionService.getSession();
@@ -604,6 +626,12 @@ public class DemandePretController {
                 cptble.setDteDebutPret((Date) o[18]);
                 cptble.setDateFin(new ClsDate((Date) o[18]).getDateS("dd/MM/yyyy"));
             }
+            if(o[19]!=null) cptble.setCommentUser(o[19].toString());
+            if(o[20]!=null) cptble.setCommentScepers(o[20].toString());
+            if(o[21]!=null) cptble.setCommentDrhl(o[21].toString());
+            if(o[22]!=null) cptble.setCommentDga(o[22].toString());
+            if(o[23]!=null) cptble.setCommentDg(o[23].toString());
+            if(o[24]!=null) cptble.setLibTypePret(o[24].toString());
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
@@ -634,9 +662,10 @@ public class DemandePretController {
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0, 0));
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.scepersonnel, n.status1, u1.nom, u1.prenom, u1.email, n.typepret "+
-                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret  "+
+                ", n.montantpret, n.dureepret, n.drhl, n.dga, n.dg, n.status2, n.status3, n.status4, n.dtedebutpret, n.comment_user, n.comment_scrpers, n.comment_drhl, n.comment_dga, n.comment_dg, m1.vall  "+
                 "FROM demandepret n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
+                "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.typepret AND m1.ctab=802 and m1.nume=1 "+
                 "WHERE (u1.email=:email OR n.dg=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
 
         Session session = generiqueConnexionService.getSession();
@@ -672,6 +701,12 @@ public class DemandePretController {
                 cptble.setDteDebutPret((Date) o[18]);
                 cptble.setDateFin(new ClsDate((Date) o[18]).getDateS("dd/MM/yyyy"));
             }
+            if(o[19]!=null) cptble.setCommentUser(o[19].toString());
+            if(o[20]!=null) cptble.setCommentScepers(o[20].toString());
+            if(o[21]!=null) cptble.setCommentDrhl(o[21].toString());
+            if(o[22]!=null) cptble.setCommentDga(o[22].toString());
+            if(o[23]!=null) cptble.setCommentDg(o[23].toString());
+            if(o[24]!=null) cptble.setLibTypePret(o[24].toString());
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
