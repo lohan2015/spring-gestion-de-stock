@@ -66,4 +66,19 @@ public class DemandePret  extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private EnumStatusType status4 = EnumStatusType.NONE;
 
+    @Column(name = "comment_user", length = 1000)
+    private String commentUser;
+
+    @Column(name = "comment_scrpers", length = 1000)
+    private String commentScepers;
+
+    @Column(name = "comment_drhl", length = 1000)
+    private String commentDrhl;
+
+    @Column(name = "comment_dga", length = 1000)
+    private String commentDga;
+
+    @Column(name = "comment_dg", length = 1000)
+    private String commentDg;
+
 }

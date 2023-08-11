@@ -45,4 +45,10 @@ public class DemandeHabilitation   extends AbstractEntity {
     @Column(name = "status", length = 20)
     @Enumerated(EnumType.STRING)
     private EnumStatusType status = EnumStatusType.ATTENTE_VALIDATION;
+
+    @Column(name = "demand_type", length = 10)
+    private String demandType;
+
+    @Column(name = "demand_comment", length = 1000)
+    private String demandComment;
 }

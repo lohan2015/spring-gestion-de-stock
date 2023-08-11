@@ -28,6 +28,7 @@ import org.springframework.core.io.InputStreamSource;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -81,6 +82,12 @@ public class DemandeHabilitationDto implements Serializable {
     private String valid;
 
     private EnumStatusType status;
+
+    private String demandType;
+
+    private String demandCommande;
+
+    private String libDemandType;
 
     MultipartFile file;
 

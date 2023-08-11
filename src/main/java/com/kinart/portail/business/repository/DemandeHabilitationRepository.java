@@ -37,8 +37,8 @@ public interface DemandeHabilitationRepository extends JpaRepository<DemandeHabi
     List<DemandeHabilitation> searchByUserEmailAndPeriodeStatus(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("email") String email); // , @Param("status") String status
 
    @Modifying
-   @Query(value = "update demandehabilitation set status = :status where id = :id", nativeQuery = true)
-   void updateDemande(@Param(value = "id") Integer id, @Param(value = "status") String status);
+   @Query(value = "update demandehabilitation set status=:status, demand_type=:demtype, demand_comment=:demcmt  where id = :id", nativeQuery = true)
+   void updateDemande(@Param(value = "id") Integer id, @Param(value = "status") String status, @Param(value = "demtype") String demtype, @Param(value = "demcmt") String demcmt);
 
     @Modifying
     @Query(value = "delete demandehabilitation where id = :id", nativeQuery = true)

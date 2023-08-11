@@ -64,6 +64,9 @@ public class DemandeHabilitationResponse implements Serializable {
 
     private String demandid;
     private String valueDate;
+    private String demandType;
+    private String demandComment;
+    private String libDemandType;
 
     public DemandeHabilitationResponse(Integer id, Instant creationDate, Integer idEntreprise, String valid, Utilisateur user){
             setId(id);

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -66,6 +67,8 @@ public class DemandeModifInfoDto implements Serializable {
     private String valid;
 
     private EnumStatusType status;
+
+    private String commentDrhl;
 
     MultipartFile file;
 

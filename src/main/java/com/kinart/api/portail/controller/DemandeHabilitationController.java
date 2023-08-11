@@ -114,8 +114,11 @@ public class DemandeHabilitationController {
             dto.setValid(emailValidator);
             dto.setStatus(EnumStatusType.ATTENTE_VALIDATION);
             DemandeHabilitation entity = repository.save(DemandeHabilitationDto.toEntity(dto));
-            if(entity != null)
+            if(entity != null){
                 dto.setId(entity.getId());
+                dto.setCreationDate(entity.getCreationDate());
+            }
+
             //System.out.println("Sauvegarde effectuée-------------------");
 
             // Gestion des notifications
@@ -128,7 +131,10 @@ public class DemandeHabilitationController {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity(DemandeHabilitationResponse.fromDto(dto), HttpStatus.CREATED);
+        DemandeHabilitationResponse dtoResponse = DemandeHabilitationResponse.fromDto(dto);
+        dtoResponse.setStatus(dto.getStatus().getCode());
+        dtoResponse.setValueDate(new ClsDate(Date.from(dto.getCreationDate())).getDateS("dd/MM/yyyy"));
+        return new ResponseEntity(dtoResponse, HttpStatus.CREATED);
     }
 
     @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/habilitation/valid", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -145,7 +151,7 @@ public class DemandeHabilitationController {
                 /**DemandeHabilitation entite = dbDemande.get();
                 entite.setStatus(EnumStatusType.valueOf(dto.getStatus()));
                 repository.save(entite);*/
-                repository.updateDemande(dto.getId(), dto.getStatus());
+                repository.updateDemande(dto.getId(), dto.getStatus(), dto.getDemandType(), dto.getDemandComment());
 
                 // Gestion des notifications
                 Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getEmail());
@@ -262,9 +268,10 @@ public class DemandeHabilitationController {
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.file_name "+
-                ", n.file_type, n.file_size, n.valid, n.status, u1.nom, u1.prenom, u1.email "+
+                ", n.file_type, n.file_size, n.valid, n.status, u1.nom, u1.prenom, u1.email, n.demand_type, n.demand_comment, m1.vall "+
                 "FROM demandehabilitation n "+
                 "LEFT JOIN utilisateur u1 ON u1.id=n.user_id "+
+                "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.demand_type AND m1.ctab=801 and m1.nume=1 "+
                 "WHERE (u1.email=:email OR n.valid=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
 
         Query q = session.createSQLQuery(query);
@@ -289,7 +296,9 @@ public class DemandeHabilitationController {
             if(o[9]!=null) cptble.setAuthor(o[9].toString());
             if(o[10]!=null) cptble.setAuthor(cptble.getAuthor()+" "+o[10].toString());
             if(o[11]!=null) cptble.setEmail(o[11].toString());
-
+            if(o[12]!=null) cptble.setDemandType(o[12].toString());
+            if(o[13]!=null) cptble.setDemandComment(o[13].toString());
+            if(o[14]!=null) cptble.setLibDemandType(o[14].toString());
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());

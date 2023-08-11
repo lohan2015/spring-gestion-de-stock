@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -66,6 +67,16 @@ public class DemandePretDto implements Serializable {
     private EnumStatusType status3;
 
     private EnumStatusType status4;
+
+    private String commentUser;
+
+    private String commentScepers;
+
+    private String commentDrhl;
+
+    private String commentDga;
+
+    private String commentDg;
 
     public static DemandePretDto fromEntity(DemandePret demandePret) {
         if (demandePret == null) {

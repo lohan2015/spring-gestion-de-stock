@@ -73,4 +73,14 @@ public class DemandePretResponse implements Serializable {
     private String email;
     private String dateFin;
 
+    private String commentUser;
+
+    private String commentScepers;
+
+    private String commentDrhl;
+
+    private String commentDga;
+
+    private String commentDg;
+
 }
