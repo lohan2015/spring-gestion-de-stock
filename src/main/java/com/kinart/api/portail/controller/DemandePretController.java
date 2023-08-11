@@ -122,6 +122,7 @@ public class DemandePretController {
             dto2.setDteDebutPret(dto.getDteDebutPret());
             dto2.setTypePret(dto.getTypePret());
             dto2.setDureePret(dto.getDureePret());
+            dto2.setCommentUser(dto.getCommentUser());
             dto.setDateFin(new ClsDate(dto.getDteDebutPret()).getDateS("dd/MM/yyyy"));
             System.out.println("Fin Fixation valeur........................"+dto.getDteDebutPret());
 
@@ -165,6 +166,7 @@ public class DemandePretController {
         try {
             Optional<DemandePret> dbDemande = repository.findById(dto.getId());
             DemandePret entity = dbDemande.isPresent()?dbDemande.get():new DemandePret();
+            entity.setCommentScepers(dto.getCommentScepers());
             entity.setStatus1(EnumStatusType.valueOf(dto.getStatus1()));
             if(EnumStatusType.VALIDEE.getCode().equalsIgnoreCase(dto.getStatus1()))
                 entity.setStatus2(EnumStatusType.ATTENTE_VALIDATION);
@@ -208,6 +210,7 @@ public class DemandePretController {
         try {
             Optional<DemandePret> dbDemande = repository.findById(dto.getId());
             DemandePret entity = dbDemande.isPresent()?dbDemande.get():new DemandePret();
+            entity.setCommentDrhl(dto.getCommentDrhl());
             entity.setStatus2(EnumStatusType.valueOf(dto.getStatus2()));
             if(EnumStatusType.VALIDEE.getCode().equalsIgnoreCase(dto.getStatus2()))
                 entity.setStatus3(EnumStatusType.ATTENTE_VALIDATION);
@@ -247,6 +250,7 @@ public class DemandePretController {
         try {
             Optional<DemandePret> dbDemande = repository.findById(dto.getId());
             DemandePret entity = dbDemande.isPresent()?dbDemande.get():new DemandePret();
+            entity.setCommentDga(dto.getCommentDga());
             entity.setStatus3(EnumStatusType.valueOf(dto.getStatus3()));
             if(EnumStatusType.VALIDEE.getCode().equalsIgnoreCase(dto.getStatus3()))
                 entity.setStatus4(EnumStatusType.ATTENTE_VALIDATION);
@@ -286,6 +290,7 @@ public class DemandePretController {
         try {
             Optional<DemandePret> dbDemande = repository.findById(dto.getId());
             DemandePret entity = dbDemande.isPresent()?dbDemande.get():new DemandePret();
+            entity.setCommentDg(dto.getCommentDg());
             entity.setStatus4(EnumStatusType.valueOf(dto.getStatus4()));
             repository.save(entity);
 

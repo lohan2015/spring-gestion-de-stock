@@ -6,6 +6,7 @@ import com.kinart.stock.business.model.Utilisateur;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /** @author c.mbassi */
@@ -64,5 +65,23 @@ public class DemandeAbsenceConge  extends AbstractEntity {
     @Column(name = "status4", length = 20)
     @Enumerated(EnumType.STRING)
     private EnumStatusType status4 = EnumStatusType.NONE;
+
+    @Column(name = "comment_n1", length = 1000)
+    private String commentN1;
+
+    @Column(name = "comment_n2", length = 1000)
+    private String commentN2;
+
+    @Column(name = "comment_n3", length = 1000)
+    private String commentN3;
+
+    @Column(name = "comment_n4", length = 1000)
+    private String commentN4;
+
+    @Column(name = "nbabs")
+    private BigDecimal nbAbs;
+
+    @Column(name = "nbcg")
+    private BigDecimal nbCg;
 
 }

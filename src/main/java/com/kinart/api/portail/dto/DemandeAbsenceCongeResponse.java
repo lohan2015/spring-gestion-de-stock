@@ -15,6 +15,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
 
@@ -77,4 +78,16 @@ public class DemandeAbsenceCongeResponse implements Serializable {
     private String libmotif;
     private String strDateDebut;
     private String strDateFin;
+
+    private String commentN1;
+
+    private String commentN2;
+
+    private String commentN3;
+
+    private String commentN4;
+
+    private BigDecimal nbAbs;
+
+    private BigDecimal nbCg;
 }

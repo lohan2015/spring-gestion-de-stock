@@ -58,15 +58,15 @@ public class AuthenticationController implements AuthenticationApi {
       // Generate secret 2 factor authentification en send mail
       final String secret2FA = jwtUtil.generateSecret2FA();
       // Envoi notification
-      EmailDetails paramMail = new EmailDetails();
-      paramMail.setMsgBody("Code secret d'acces au portail salarié: "+secret2FA);
-      paramMail.setRecipient(request.getLogin());
-      paramMail.setSubject("Accès au portail salarié SONIBANK");
-      try {
-        emailService.sendSimpleMail(paramMail);
-      } catch (Exception e){
-        e.printStackTrace();
-      }
+//      EmailDetails paramMail = new EmailDetails();
+//      paramMail.setMsgBody("Code secret d'acces au portail salarié: "+secret2FA);
+//      paramMail.setRecipient(request.getLogin());
+//      paramMail.setSubject("Accès au portail salarié SONIBANK");
+//      try {
+//        emailService.sendSimpleMail(paramMail);
+//      } catch (Exception e){
+//        e.printStackTrace();
+//      }
 
       return ResponseEntity.ok(AuthenticationResponse.builder().accessToken(jwt).secret2FA(secret2FA).build());
     } catch (UsernameNotFoundException e){

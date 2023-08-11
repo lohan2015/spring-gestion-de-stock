@@ -8,10 +8,12 @@ import lombok.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
 
@@ -66,6 +68,18 @@ public class DemandeAbsenceCongeDto implements Serializable {
     private EnumStatusType status3;
 
     private EnumStatusType status4;
+
+    private String commentN1;
+
+    private String commentN2;
+
+    private String commentN3;
+
+    private String commentN4;
+
+    private BigDecimal nbAbs;
+
+    private BigDecimal nbCg;
 
     public static DemandeAbsenceCongeDto fromEntity(DemandeAbsenceConge absenceConge) {
         if (absenceConge == null) {
