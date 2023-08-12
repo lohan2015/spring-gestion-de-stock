@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.BeanUtils;
@@ -67,6 +68,8 @@ public class DemandeAbsenceCongeController {
             dto2.setRaison(dto.getRaison());
             dto2.setDteFin(dto.getDteFin());
             dto2.setDteDebut(dto.getDteDebut());
+            dto2.setNbAbs(dto.getNbAbs());
+            dto2.setNbCg(dto.getNbCg());
             dto.setStrDateDebut(new ClsDate(dto.getDteDebut()).getDateS("dd/MM/yyyy"));
             dto.setStrDateFin(new ClsDate(dto.getDteFin()).getDateS("dd/MM/yyyy"));
             // Fixer les validateurs
@@ -112,6 +115,11 @@ public class DemandeAbsenceCongeController {
         try {
             Optional<DemandeAbsenceConge> dbDemande = repository.findById(dto.getId());
             DemandeAbsenceConge entity = dbDemande.isPresent()?dbDemande.get():new DemandeAbsenceConge();
+            entity.setNbAbs(dto.getNbAbs());
+            entity.setNbCg(dto.getNbCg());
+            entity.setDteFin(dto.getDteFin());
+            entity.setDteDebut(dto.getDteDebut());
+            entity.setCommentN1(dto.getCommentN1());
             entity.setStatus1(EnumStatusType.valueOf(dto.getStatus1()));
             if(EnumStatusType.VALIDEE.getCode().equalsIgnoreCase(dto.getStatus1()))
                 entity.setStatus2(EnumStatusType.ATTENTE_VALIDATION);
@@ -156,6 +164,11 @@ public class DemandeAbsenceCongeController {
         try {
             Optional<DemandeAbsenceConge> dbDemande = repository.findById(dto.getId());
             DemandeAbsenceConge entity = dbDemande.isPresent()?dbDemande.get():new DemandeAbsenceConge();
+            entity.setNbAbs(dto.getNbAbs());
+            entity.setNbCg(dto.getNbCg());
+            entity.setDteFin(dto.getDteFin());
+            entity.setDteDebut(dto.getDteDebut());
+            entity.setCommentN2(dto.getCommentN2());
             entity.setStatus2(EnumStatusType.valueOf(dto.getStatus2()));
             if(EnumStatusType.VALIDEE.getCode().equalsIgnoreCase(dto.getStatus2()))
                 entity.setStatus3(EnumStatusType.ATTENTE_VALIDATION);
@@ -198,6 +211,11 @@ public class DemandeAbsenceCongeController {
         try {
             Optional<DemandeAbsenceConge> dbDemande = repository.findById(dto.getId());
             DemandeAbsenceConge entity = dbDemande.isPresent()?dbDemande.get():new DemandeAbsenceConge();
+            entity.setNbAbs(dto.getNbAbs());
+            entity.setNbCg(dto.getNbCg());
+            entity.setDteFin(dto.getDteFin());
+            entity.setDteDebut(dto.getDteDebut());
+            entity.setCommentN3(dto.getCommentN3());
             entity.setStatus3(EnumStatusType.valueOf(dto.getStatus3()));
             if(EnumStatusType.VALIDEE.getCode().equalsIgnoreCase(dto.getStatus3()))
                 entity.setStatus4(EnumStatusType.ATTENTE_VALIDATION);
@@ -251,11 +269,11 @@ public class DemandeAbsenceCongeController {
             elementVarCongeDto.setDdeb(dto.getDteDebut());
             elementVarCongeDto.setDfin(dto.getDteFin());
             // Calcul des nombres de jour de congé et absence
-            ClsDateRhpcalendrier rhp = new ClsDateRhpcalendrier(service, paramDataRepository, "1", "dd/MM/yyyy");
-            int nbJrAbs = rhp.getNombreDeJoursAbsences(dto.getDteDebut(), dto.getDteFin(), TypeBDUtil.OR);
-            int nbJrCgs = rhp.getNombreDeJoursConges(dto.getDteDebut(), dto.getDteFin(), TypeBDUtil.OR);
-            elementVarCongeDto.setNbjc(new BigDecimal(nbJrCgs));
-            elementVarCongeDto.setNbja(new BigDecimal(nbJrAbs));
+//            ClsDateRhpcalendrier rhp = new ClsDateRhpcalendrier(service, paramDataRepository, "1", "dd/MM/yyyy");
+//            int nbJrAbs = rhp.getNombreDeJoursAbsences(dto.getDteDebut(), dto.getDteFin(), TypeBDUtil.OR);
+//            int nbJrCgs = rhp.getNombreDeJoursConges(dto.getDteDebut(), dto.getDteFin(), TypeBDUtil.OR);
+            elementVarCongeDto.setNbjc(dto.getNbCg());
+            elementVarCongeDto.setNbja(dto.getNbAbs());
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -285,22 +303,38 @@ public class DemandeAbsenceCongeController {
         try {
             Optional<DemandeAbsenceConge> dbDemande = repository.findById(dto.getId());
             DemandeAbsenceConge entity = dbDemande.isPresent()?dbDemande.get():new DemandeAbsenceConge();
+            entity.setNbAbs(dto.getNbAbs());
+            entity.setNbCg(dto.getNbCg());
+            entity.setDteFin(dto.getDteFin());
+            entity.setDteDebut(dto.getDteDebut());
+            entity.setCommentN4(dto.getCommentN4());
             entity.setStatus4(EnumStatusType.valueOf(dto.getStatus4()));
             repository.save(entity);
 
             //Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getEmail());
-            Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(entity.getValid4());
-            DemandeAbsenceCongeDto dto2 = new DemandeAbsenceCongeDto();
-            BeanUtils.copyProperties(entity, dto2);
+            if(StringUtils.isEmpty(dto.getIsDrhl()) || "N".equalsIgnoreCase(dto.getIsDrhl())){
+                Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(entity.getValid4());
+                DemandeAbsenceCongeDto dto2 = new DemandeAbsenceCongeDto();
+                BeanUtils.copyProperties(entity, dto2);
                 // Si validé envoi mail a sender et validateur suivant
                 if(dto.getStatus4().equals(EnumStatusType.VALIDEE)){
                     if(validator.isPresent())
                         notificationService.sendAbsCongeNotificationSender(dto2, validator.get().getPrenom()+ " "+validator.get().getNom());
                     // MAJ dans Amplitude RH
-                    insertEV(dto2);
+//                    insertEV(dto2);
 
                 } else if(dto.getStatus1().equals(EnumStatusType.REJETEE))// Sinon notification du sender du rejet
                     notificationService.sendAbsCongeNotificationRejet(dto2);
+            } else if("O".equalsIgnoreCase(dto.getIsDrhl())){
+                Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(entity.getValid4());
+                DemandeAbsenceCongeDto dto2 = new DemandeAbsenceCongeDto();
+                BeanUtils.copyProperties(entity, dto2);
+                if(dto.getStatus4().equals(EnumStatusType.VALIDEE)){
+                    // MAJ dans Amplitude RH
+                    insertEV(dto2);
+
+                }
+            }
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
@@ -364,7 +398,7 @@ public class DemandeAbsenceCongeController {
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.valid1, n.status1, u1.nom, u1.prenom, u1.email, n.motif "+
-                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall  "+
+                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall, n.comment_n1, n.comment_n2, n.comment_n3, n.comment_n4, n.nbAbs, n.nbCg  "+
                 "FROM demandeabsenceconge n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
                 "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.motif AND m1.ctab=22 and m1.nume=1 "+
@@ -400,6 +434,13 @@ public class DemandeAbsenceCongeController {
             if(o[17]!=null) cptble.setStatus3(o[17].toString());
             if(o[18]!=null) cptble.setStatus4(o[18].toString());
             if(o[19]!=null) cptble.setLibmotif(o[19].toString());
+            if(o[20]!=null) cptble.setCommentN1(o[20].toString());
+            if(o[21]!=null) cptble.setCommentN2(o[21].toString());
+            if(o[22]!=null) cptble.setCommentN3(o[22].toString());
+            if(o[23]!=null) cptble.setCommentN4(o[23].toString());
+
+            if(o[24]!=null) cptble.setNbAbs(new BigDecimal(o[24].toString()));
+            if(o[25]!=null) cptble.setNbCg(new BigDecimal(o[25].toString()));
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
@@ -433,7 +474,7 @@ public class DemandeAbsenceCongeController {
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.valid1, n.status1, u1.nom, u1.prenom, u1.email, n.motif "+
-                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall  "+
+                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall, n.comment_n1, n.comment_n2, n.comment_n3, n.comment_n4, n.nbAbs, n.nbCg  "+
                 "FROM demandeabsenceconge n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
                 "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.motif AND m1.ctab=22 and m1.nume=1 "+
@@ -469,6 +510,12 @@ public class DemandeAbsenceCongeController {
             if(o[17]!=null) cptble.setStatus3(o[17].toString());
             if(o[18]!=null) cptble.setStatus4(o[18].toString());
             if(o[19]!=null) cptble.setLibmotif(o[19].toString());
+            if(o[20]!=null) cptble.setCommentN1(o[20].toString());
+            if(o[21]!=null) cptble.setCommentN2(o[21].toString());
+            if(o[22]!=null) cptble.setCommentN3(o[22].toString());
+            if(o[23]!=null) cptble.setCommentN4(o[23].toString());
+            if(o[24]!=null) cptble.setNbAbs(new BigDecimal(o[24].toString()));
+            if(o[25]!=null) cptble.setNbCg(new BigDecimal(o[25].toString()));
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
@@ -502,7 +549,7 @@ public class DemandeAbsenceCongeController {
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.valid1, n.status1, u1.nom, u1.prenom, u1.email, n.motif "+
-                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall  "+
+                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall, n.comment_n1, n.comment_n2, n.comment_n3, n.comment_n4, n.nbAbs, n.nbCg  "+
                 "FROM demandeabsenceconge n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
                 "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.motif AND m1.ctab=22 and m1.nume=1 "+
@@ -538,6 +585,12 @@ public class DemandeAbsenceCongeController {
             if(o[17]!=null) cptble.setStatus3(o[17].toString());
             if(o[18]!=null) cptble.setStatus4(o[18].toString());
             if(o[19]!=null) cptble.setLibmotif(o[19].toString());
+            if(o[20]!=null) cptble.setCommentN1(o[20].toString());
+            if(o[21]!=null) cptble.setCommentN2(o[21].toString());
+            if(o[22]!=null) cptble.setCommentN3(o[22].toString());
+            if(o[23]!=null) cptble.setCommentN4(o[23].toString());
+            if(o[24]!=null) cptble.setNbAbs(new BigDecimal(o[24].toString()));
+            if(o[25]!=null) cptble.setNbCg(new BigDecimal(o[25].toString()));
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
@@ -571,7 +624,7 @@ public class DemandeAbsenceCongeController {
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.valid1, n.status1, u1.nom, u1.prenom, u1.email, n.motif "+
-                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall  "+
+                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall, n.comment_n1, n.comment_n2, n.comment_n3, n.comment_n4, n.nbAbs, n.nbCg  "+
                 "FROM demandeabsenceconge n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
                 "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.motif AND m1.ctab=22 and m1.nume=1 "+
@@ -607,6 +660,12 @@ public class DemandeAbsenceCongeController {
             if(o[17]!=null) cptble.setStatus3(o[17].toString());
             if(o[18]!=null) cptble.setStatus4(o[18].toString());
             if(o[19]!=null) cptble.setLibmotif(o[19].toString());
+            if(o[20]!=null) cptble.setCommentN1(o[20].toString());
+            if(o[21]!=null) cptble.setCommentN2(o[21].toString());
+            if(o[22]!=null) cptble.setCommentN3(o[22].toString());
+            if(o[23]!=null) cptble.setCommentN4(o[23].toString());
+            if(o[24]!=null) cptble.setNbAbs(new BigDecimal(o[24].toString()));
+            if(o[25]!=null) cptble.setNbCg(new BigDecimal(o[25].toString()));
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());
@@ -640,14 +699,24 @@ public class DemandeAbsenceCongeController {
         LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(23, 59, 59));
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.valid1, n.status1, u1.nom, u1.prenom, u1.email, n.motif "+
-                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall  "+
+                ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall, n.comment_n1, n.comment_n2, n.comment_n3, n.comment_n4, n.nbAbs, n.nbCg  "+
                 "FROM demandeabsenceconge n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
                 "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.motif AND m1.ctab=22 and m1.nume=1 "+
                 "WHERE (u1.email=:email OR n.valid4=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
 
+        // Check if user is DRHL
+        if(StringUtils.isNotEmpty(status4) && status4.equalsIgnoreCase("DRHL"))
+            query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.valid1, n.status1, u1.nom, u1.prenom, u1.email, n.motif "+
+                    ", n.raison, n.dteDebut, n.dteFin, n.valid2, n.valid3, n.valid4, n.status2, n.status3, n.status4, m1.vall, n.comment_n1, n.comment_n2, n.comment_n3, n.comment_n4  "+
+                    "FROM demandeabsenceconge n "+
+                    "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
+                    "LEFT JOIN paramdata m1 ON m1.identreprise=n.identreprise AND m1.cacc=n.motif AND m1.ctab=22 and m1.nume=1 "+
+                    "WHERE n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
+
         Query q = session.createSQLQuery(query);
-        q.setParameter("email", email);
+        if(StringUtils.isEmpty(status4) || !status4.equalsIgnoreCase("DRHL"))
+            q.setParameter("email", email);
         q.setParameter("start", start);
         q.setParameter("end", end);
         List<Object[]> lst = q.getResultList();
@@ -676,6 +745,12 @@ public class DemandeAbsenceCongeController {
             if(o[17]!=null) cptble.setStatus3(o[17].toString());
             if(o[18]!=null) cptble.setStatus4(o[18].toString());
             if(o[19]!=null) cptble.setLibmotif(o[19].toString());
+            if(o[20]!=null) cptble.setCommentN1(o[20].toString());
+            if(o[21]!=null) cptble.setCommentN2(o[21].toString());
+            if(o[22]!=null) cptble.setCommentN3(o[22].toString());
+            if(o[23]!=null) cptble.setCommentN4(o[23].toString());
+            if(o[24]!=null) cptble.setNbAbs(new BigDecimal(o[24].toString()));
+            if(o[25]!=null) cptble.setNbCg(new BigDecimal(o[25].toString()));
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());

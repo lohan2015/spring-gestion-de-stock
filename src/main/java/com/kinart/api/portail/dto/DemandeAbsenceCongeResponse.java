@@ -90,4 +90,6 @@ public class DemandeAbsenceCongeResponse implements Serializable {
     private BigDecimal nbAbs;
 
     private BigDecimal nbCg;
+
+    private String isDrhl;
 }
