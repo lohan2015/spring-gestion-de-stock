@@ -70,6 +70,8 @@ public class DemandeModifInfoDto implements Serializable {
 
     private String commentDrhl;
 
+    private String commentUser;
+
     MultipartFile file;
 
     public static DemandeModifInfoDto fromEntity(DemandeModifInfo modifInfo) {

@@ -415,4 +415,12 @@ public class Salarie extends AbstractEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "salarie")
     private List<PretExterneEntete> pretExterneEntete;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "salarie")
+    private List<EnfantSalarie> enfantSalarie;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "salarie")
+    private List<ConjointSalarie> conjointSalarie;
 }

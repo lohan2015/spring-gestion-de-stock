@@ -66,8 +66,8 @@ public class DemandeModifInfoController {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<DemandeModifInfoResponse> saveUser(@RequestParam("email") String email, @RequestParam("champ") String champ, @RequestParam("valeur") String valeur, @RequestParam("image") MultipartFile file){
-        System.out.println("ENREGISTRER DEMANDE................");
+    ResponseEntity<DemandeModifInfoResponse> saveUser(@RequestParam("email") String email, @RequestParam("champ") String champ, @RequestParam("valeur") String valeur, @RequestParam("commentUser") String commentUser, @RequestParam("image") MultipartFile file){
+        //System.out.println("ENREGISTRER DEMANDE................");
         DemandeModifInfoDto dto = new DemandeModifInfoDto();
 
         try {
@@ -77,6 +77,7 @@ public class DemandeModifInfoController {
             dto.setFileSize(file.getSize());
             dto.setChampConcerne(champ);
             dto.setValeurSouhaitee(valeur);
+            dto.setCommentUser(commentUser);
             dto.getUserDemModInfo().setEmail(email);
 
             // Get info user
@@ -251,7 +252,7 @@ public class DemandeModifInfoController {
         Session session = generiqueConnexionService.getSession();
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.file_name "+
                 ", n.file_type, n.file_size, n.valid, n.status, u1.nom, u1.prenom, u1.email "+
-                ", n.champconcerne, n.valeursouhaitee, u2.vall "+
+                ", n.champconcerne, n.valeursouhaitee, u2.vall, n.comment_user, n.comment_drhl "+
                 "FROM demandemodifinfo n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
                 "LEFT JOIN paramdata u2 ON u2.identreprise=n.identreprise AND u2.cacc=n.champconcerne AND u2.ctab=264 AND u2.nume=1 "+
@@ -282,6 +283,8 @@ public class DemandeModifInfoController {
             if(o[12]!=null) cptble.setChampConcerne(o[12].toString());
             if(o[13]!=null) cptble.setValeurSouhaitee(o[13].toString());
             if(o[14]!=null) cptble.setValueChamp(o[14].toString());
+            if(o[15]!=null) cptble.setCommentUser(o[145].toString());
+            if(o[16]!=null) cptble.setCommentDrhl(o[16].toString());
 
 
             cptble.setDemandid(String.valueOf(cptble.getId()));

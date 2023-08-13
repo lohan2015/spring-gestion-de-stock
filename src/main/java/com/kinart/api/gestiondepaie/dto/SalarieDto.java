@@ -1,6 +1,8 @@
 package com.kinart.api.gestiondepaie.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.kinart.paie.business.model.ConjointSalarie;
+import com.kinart.paie.business.model.EnfantSalarie;
 import com.kinart.paie.business.model.Salarie;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
@@ -298,6 +300,12 @@ public class SalarieDto implements Serializable {
     @JsonIgnore
     private List<PretInterneDto> pretInterne;
 
+    @JsonIgnore
+    private List<EnfantSalarie> enfantSalarie;
+
+    @JsonIgnore
+    private List<ConjointSalarie> conjointSalarie;
+
     public static SalarieDto fromEntity(Salarie salarie) {
         if (salarie == null) {
             return null;
@@ -312,7 +320,7 @@ public class SalarieDto implements Serializable {
             return null;
         }
         Salarie sal = new Salarie();
-        BeanUtils.copyProperties(dto, sal, "elementFixeSalaire", "caisseMutuelleSalarie", "virementSalarie", "pretInterne");
+        BeanUtils.copyProperties(dto, sal, "elementFixeSalaire", "caisseMutuelleSalarie", "virementSalarie", "pretInterne", "enfantSalarie", "conjointSalarie");
         return sal;
     }
 

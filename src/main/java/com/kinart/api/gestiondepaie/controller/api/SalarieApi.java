@@ -1,6 +1,8 @@
 package com.kinart.api.gestiondepaie.controller.api;
 
 import com.kinart.api.gestiondepaie.dto.SalarieDto;
+import com.kinart.paie.business.model.ConjointSalarie;
+import com.kinart.paie.business.model.EnfantSalarie;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -70,4 +72,20 @@ public interface SalarieApi {
             @ApiResponse(code = 200, message = "Le salarié a ete supprime")
     })
     void delete(@PathVariable("idSalarie") Integer id);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/salaries/enfants/{nmat}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Rechercher les enfants des salariés", notes = "Cette methode permet de chercher un salarié par son CODE", responseContainer = "List<EnfantSalarie>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Le salarié a ete trouve dans la BDD"),
+            @ApiResponse(code = 404, message = "Aucun salarié n'existe dans la BDD avec le CODE fourni")
+    })
+    ResponseEntity<List<EnfantSalarie>> loadEnfants(@PathVariable("nmat") String nmat);
+
+    @GetMapping(value = APP_ROOT_PAIE + "/salaries/conjoints/{nmat}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Rechercher les conjoints des salariés", notes = "Cette methode permet de chercher un salarié par son CODE", responseContainer = "List<ConjointSalarie>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Le salarié a ete trouve dans la BDD"),
+            @ApiResponse(code = 404, message = "Aucun salarié n'existe dans la BDD avec le CODE fourni")
+    })
+    ResponseEntity<List<ConjointSalarie>> loadConjoints(@PathVariable("nmat") String nmat);
 }

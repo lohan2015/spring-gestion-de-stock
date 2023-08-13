@@ -66,6 +66,7 @@ public class DemandeModifInfoResponse implements Serializable {
     private String valueDate;
     private String valueChamp;
     private String commentDrhl;
+    private String commentUser;
 
     public DemandeModifInfoResponse(Integer id, Instant creationDate, Integer idEntreprise, String valid, Utilisateur user){
             setId(id);

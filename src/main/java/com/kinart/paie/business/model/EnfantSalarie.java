@@ -3,9 +3,7 @@ package com.kinart.paie.business.model;
 import com.kinart.stock.business.model.AbstractEntity;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -50,5 +48,9 @@ public class EnfantSalarie extends AbstractEntity {
 
     @Column(name = "achg", length = 1)
     private String achg;
+
+    @ManyToOne
+    @JoinColumn(name = "idsalarie")
+    private Salarie salarie;
 
 }
