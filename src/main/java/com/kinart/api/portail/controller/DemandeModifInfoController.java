@@ -2,7 +2,11 @@ package com.kinart.api.portail.controller;
 
 import com.kinart.api.gestiondepaie.dto.ParamDataDto;
 import com.kinart.api.portail.dto.*;
+import com.kinart.paie.business.model.ConjointSalarie;
+import com.kinart.paie.business.model.EnfantSalarie;
 import com.kinart.paie.business.model.Salarie;
+import com.kinart.paie.business.repository.ConjointSalarieRepository;
+import com.kinart.paie.business.repository.EnfantSalarieRepository;
 import com.kinart.paie.business.repository.ParamDataRepository;
 import com.kinart.paie.business.repository.SalarieRepository;
 import com.kinart.paie.business.services.utils.ClsDate;
@@ -57,6 +61,8 @@ public class DemandeModifInfoController {
     private final RestTemplate restTemplate;
     private final SalarieRepository salarieRepository;
     private final GeneriqueConnexionService generiqueConnexionService;
+    private final EnfantSalarieRepository enfantSalarieRepository;
+    private final ConjointSalarieRepository conjointSalarieRepository;
 
     private FileNameHelper fileHelper = new FileNameHelper();
 
@@ -66,7 +72,7 @@ public class DemandeModifInfoController {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<DemandeModifInfoResponse> saveUser(@RequestParam("email") String email, @RequestParam("champ") String champ, @RequestParam("valeur") String valeur, @RequestParam("commentUser") String commentUser, @RequestParam("image") MultipartFile file){
+    ResponseEntity<DemandeModifInfoResponse> saveUser(@RequestParam("email") String email, @RequestParam("champ") String champ, @RequestParam("valeur") String valeur, @RequestParam("image") MultipartFile file){
         //System.out.println("ENREGISTRER DEMANDE................");
         DemandeModifInfoDto dto = new DemandeModifInfoDto();
 
@@ -77,7 +83,6 @@ public class DemandeModifInfoController {
             dto.setFileSize(file.getSize());
             dto.setChampConcerne(champ);
             dto.setValeurSouhaitee(valeur);
-            dto.setCommentUser(commentUser);
             dto.getUserDemModInfo().setEmail(email);
 
             // Get info user
@@ -117,6 +122,47 @@ public class DemandeModifInfoController {
         return new ResponseEntity(DemandeModifInfoResponse.fromDto(dto), HttpStatus.CREATED);
     }
 
+    @PutMapping(value = APP_ROOT_PORTAIL + "/demande/modfinfo/update", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @ApiOperation(value = "Mise a jour demande modfinfo", notes = "Cette methode permet d'enregistrer des demandes modfinfo")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "L'élément cree / modifie"),
+            @ApiResponse(code = 400, message = "L'élément n'est pas valide")
+    })
+    ResponseEntity<DemandeModifInfoResponse> updateDemande(@RequestBody DemandeModifInfoResponse dto){
+
+        try {
+              Optional<DemandeModifInfo> demandeDB =  repository.findById(dto.getId());
+              if(demandeDB.isPresent()){
+                  DemandeModifInfo demandeModifInfo = demandeDB.get();
+                  demandeModifInfo.setCommentUser(dto.getCommentUser());
+                  demandeModifInfo.setCommentDrhl(dto.getCommentDrhl());
+                  demandeModifInfo.setChampConcerne(dto.getChampConcerne());
+                  demandeModifInfo.setDteEvt(dto.getDteEvt());
+                  demandeModifInfo.setEmpl(dto.getEmpl());
+                  demandeModifInfo.setAchg(dto.getAchg());
+                  demandeModifInfo.setEstConjoint(dto.getEstConjoint());
+                  demandeModifInfo.setEstEnfant(dto.getEstEnfant());
+                  demandeModifInfo.setNjf(dto.getNjf());
+                  demandeModifInfo.setNom(dto.getNom());
+                  demandeModifInfo.setPren(dto.getPren());
+                  demandeModifInfo.setPays(dto.getPays());
+                  demandeModifInfo.setProf(dto.getProf());
+                  demandeModifInfo.setScol(dto.getScol());
+                  demandeModifInfo.setSexe(dto.getSexe());
+                  demandeModifInfo.setValeurSouhaitee(dto.getValeurSouhaitee());
+
+                  repository.save(demandeModifInfo);
+              } else return new ResponseEntity("Elément inexistant en base de données", HttpStatus.BAD_REQUEST);
+
+        } catch (InvalidEntityException e){
+            return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity(dto, HttpStatus.CREATED);
+    }
+
     @PatchMapping(value = APP_ROOT_PORTAIL + "/demande/modfinfo/valid", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ApiOperation(value = "Sauvegarte demande modfinfo", notes = "Cette methode permet d'enregistrer des demandes modfinfo")
     @ApiResponses(value = {
@@ -126,42 +172,97 @@ public class DemandeModifInfoController {
     ResponseEntity<DemandeModifInfoResponse> saveValid(@RequestBody DemandeModifInfoResponse dto){
 
         try {
-                repository.updateDemande(dto.getId(), dto.getStatus());
+            repository.updateDemande(dto.getId(), dto.getStatus());
 
-                // Gestion des notifications
-                Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getEmail());
-                Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(dto.getValid());
-                DemandeModifInfoDto dto2 = new DemandeModifInfoDto();
-                BeanUtils.copyProperties(dto, dto2);
-                dto2.setCreationDate(new ClsDate(dto.getValueDate(), "dd/MM/yyyy").getDate().toInstant());
+            // Gestion des notifications
+            Optional<Utilisateur> user =  utilisateurRepository.findUtilisateurByEmail(dto.getEmail());
+            Optional<Utilisateur> validator =  utilisateurRepository.findUtilisateurByEmail(dto.getValid());
+            DemandeModifInfoDto dto2 = new DemandeModifInfoDto();
+            BeanUtils.copyProperties(dto, dto2);
+            dto2.setCreationDate(new ClsDate(dto.getValueDate(), "dd/MM/yyyy").getDate().toInstant());
 
-                if(user.isPresent()){
-                    dto2.setUserDemModInfo(user.get());
-                } else throw new EntityNotFoundException("Utilisateur inexistant");
-                // Si validé envoi mail a sender et validateur suivant
-                if(dto.getStatus().equals(EnumStatusType.VALIDEE.getCode())){
-                    if(validator.isPresent())
-                        notificationService.sendModifInfoNotificationSender(dto2, validator.get().getPrenom()+ " "+validator.get().getNom());
-                    // MAJ dans Amplitude RH
-                    Optional<Salarie> salDB =   salarieRepository.findByAdr4(dto2.getUserDemModInfo().getEmail());
-                    if(salDB.isPresent()){
-                        String host = "http://localhost:8082";
-                        String urlPost = host+"/amplituderh/v1/modifinfosalarie";
-                        ModifInfoSalarieDto modifInfoSalarieDto = new ModifInfoSalarieDto();
-                        modifInfoSalarieDto.setCdos("02");
-                        modifInfoSalarieDto.setMatricule(salDB.get().getNmat());
-                        modifInfoSalarieDto.setKey(dto.getChampConcerne());
-                        modifInfoSalarieDto.setValue(dto.getValeurSouhaitee());
+            if(user.isPresent()){
+                dto2.setUserDemModInfo(user.get());
+            } else throw new EntityNotFoundException("Utilisateur inexistant");
+            // Si validé envoi mail a sender et validateur suivant
+            if(dto.getStatus().equals(EnumStatusType.VALIDEE.getCode())){
+                Optional<Salarie> salDB =   salarieRepository.findByAdr4(dto2.getUserDemModInfo().getEmail());
+                // MAJ dans portail
+                if(salDB.isPresent()){
+                    if("O".equalsIgnoreCase(dto.getEstEnfant())){
+                        EnfantSalarie enfant = new EnfantSalarie();
+                        enfant.setAchg(dto.getAchg());
+                        enfant.setIdEntreprise(dto.getIdEntreprise());
+                        enfant.setNom(dto.getNom());
+                        enfant.setPnai(dto.getPays());
+                        enfant.setDtna(dto.getDteEvt());
+                        enfant.setNmat(salDB.get().getNmat());
+                        enfant.setScol(dto.getScol());
+                        enfant.setSexe(dto.getSexe());
 
-                        HttpHeaders headers = new HttpHeaders();
-                        headers.setContentType(MediaType.APPLICATION_JSON);
-                        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-                        HttpEntity<ModifInfoSalarieDto> entity = new  HttpEntity<ModifInfoSalarieDto>(modifInfoSalarieDto,headers);
-                        restTemplate.exchange(urlPost, HttpMethod.POST, entity, ModifInfoSalarieDto.class);
-                    } else throw new EntityNotFoundException("Aucun salarié correspondant a l'adresse mail de l'utilisateur");
+                        enfantSalarieRepository.save(enfant);
+                    } else if("O".equalsIgnoreCase(dto.getEstEnfant())){
+                        ConjointSalarie conjoint = new ConjointSalarie();
+                        conjoint.setPren(dto.getPren());
+                        conjoint.setIdEntreprise(dto.getIdEntreprise());
+                        conjoint.setNom(dto.getNom());
+                        conjoint.setEmpl(dto.getEmpl());
+                        conjoint.setDmar(dto.getDteEvt());
+                        conjoint.setNmat(salDB.get().getNmat());
+                        conjoint.setAdrc(dto.getAdrc());
+                        conjoint.setAdre(dto.getAdrc());
+                        conjoint.setNjf(dto.getNjf());
+                        conjoint.setProf(dto.getProf());
 
-                } else if(dto.getStatus().equals(EnumStatusType.REJETEE.getCode()))// Sinon notification du sender du rejet
-                    notificationService.sendModifInfoNotificationRejet(dto2);
+                        conjointSalarieRepository.save(conjoint);
+                    } else {
+                        Salarie entity = salDB.get();
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("NIV1")) entity.setNiv1(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("NIV2")) entity.setNiv2(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("NIV3")) entity.setNiv3(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("CODESITE")) entity.setCodesite(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("AFEC")) entity.setAfec(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("ADR1")) entity.setAdr1(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("CAT")) entity.setCat(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("CAT")) entity.setEch(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("FONC")) entity.setFonc(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("GRAD")) entity.setGrad(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("LEMB")) entity.setLemb(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("LNAI")) entity.setLnai(dto.getValeurSouhaitee());
+
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("NOSS")) entity.setNoss(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("NATO")) entity.setNato(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("NTEL")) entity.setNtel(dto.getValeurSouhaitee());
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("NBEC")) entity.setNbec(Integer.valueOf(dto.getValeurSouhaitee()));
+                        if(dto.getChampConcerne().toUpperCase(Locale.ROOT).equals("PNAI")) entity.setPnai(dto.getValeurSouhaitee());
+
+                        salarieRepository.save(entity);
+                    }
+
+                }
+
+                if(validator.isPresent())
+                    notificationService.sendModifInfoNotificationSender(dto2, validator.get().getPrenom()+ " "+validator.get().getNom());
+
+                // MAJ dans Amplitude RH
+                if(salDB.isPresent()){
+                    String host = "http://localhost:8082";
+                    String urlPost = host+"/amplituderh/v1/modifinfosalarie";
+                    ModifInfoSalarieDto modifInfoSalarieDto = new ModifInfoSalarieDto();
+                    modifInfoSalarieDto.setCdos("02");
+                    modifInfoSalarieDto.setMatricule(salDB.get().getNmat());
+                    modifInfoSalarieDto.setKey(dto.getChampConcerne());
+                    modifInfoSalarieDto.setValue(dto.getValeurSouhaitee());
+
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+                    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+                    HttpEntity<ModifInfoSalarieDto> entity = new  HttpEntity<ModifInfoSalarieDto>(modifInfoSalarieDto,headers);
+                    restTemplate.exchange(urlPost, HttpMethod.POST, entity, ModifInfoSalarieDto.class);
+                } else throw new EntityNotFoundException("Aucun salarié correspondant a l'adresse mail de l'utilisateur");
+
+            } else if(dto.getStatus().equals(EnumStatusType.REJETEE.getCode()))// Sinon notification du sender du rejet
+                notificationService.sendModifInfoNotificationRejet(dto2);
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
@@ -253,9 +354,13 @@ public class DemandeModifInfoController {
         String query = "SELECT n.id, n.creation_date, n.identreprise, n.user_id, n.file_name "+
                 ", n.file_type, n.file_size, n.valid, n.status, u1.nom, u1.prenom, u1.email "+
                 ", n.champconcerne, n.valeursouhaitee, u2.vall, n.comment_user, n.comment_drhl "+
+                ", n.est_enf, n.est_conf, u2.nom, n.njf, n.pren, n.prof, n.empl, u2.adrc, n.sexe, n.pays "+
+                ", n.achg, n.scol, u2.dte_evt, s2.vall as libsexe, p2.vall as libpays  "+
                 "FROM demandemodifinfo n "+
                 "LEFT JOIN utilisateur u1 ON u1.identreprise=n.identreprise AND u1.id=n.user_id "+
                 "LEFT JOIN paramdata u2 ON u2.identreprise=n.identreprise AND u2.cacc=n.champconcerne AND u2.ctab=264 AND u2.nume=1 "+
+                "LEFT JOIN paramdata s2 ON s2.identreprise=n.identreprise AND s2.cacc=n.sexe AND s2.ctab=205 AND s2.nume=1 "+
+                "LEFT JOIN paramdata p2 ON p2.identreprise=n.identreprise AND p2.cacc=n.pays AND p2.ctab=74 AND p2.nume=1 "+
                 "WHERE (u1.email=:email OR n.valid=:email) AND n.creation_date BETWEEN :start AND :end ORDER BY n.creation_date DESC";
 
         Query q = session.createSQLQuery(query);
@@ -285,7 +390,21 @@ public class DemandeModifInfoController {
             if(o[14]!=null) cptble.setValueChamp(o[14].toString());
             if(o[15]!=null) cptble.setCommentUser(o[145].toString());
             if(o[16]!=null) cptble.setCommentDrhl(o[16].toString());
-
+            if(o[17]!=null) cptble.setEstEnfant(o[17].toString());
+            if(o[18]!=null) cptble.setEstConjoint(o[18].toString());
+            if(o[19]!=null) cptble.setNom(o[19].toString());
+            if(o[20]!=null) cptble.setNjf(o[20].toString());
+            if(o[21]!=null) cptble.setPren(o[21].toString());
+            if(o[22]!=null) cptble.setProf(o[22].toString());
+            if(o[23]!=null) cptble.setEmpl(o[23].toString());
+            if(o[24]!=null) cptble.setAdrc(o[24].toString());
+            if(o[25]!=null) cptble.setSexe(o[25].toString());
+            if(o[26]!=null) cptble.setPays(o[26].toString());
+            if(o[27]!=null) cptble.setAchg(o[27].toString());
+            if(o[28]!=null) cptble.setScol(o[28].toString());
+            if(o[29]!=null) cptble.setDteEvt((Date)o[29]);
+            if(o[30]!=null) cptble.setLibsexe(o[30].toString());
+            if(o[31]!=null) cptble.setLibpays(o[31].toString());
 
             cptble.setDemandid(String.valueOf(cptble.getId()));
             //System.out.println("DEMANDE ID="+cptble.getDemandid());

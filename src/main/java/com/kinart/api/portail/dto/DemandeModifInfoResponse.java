@@ -13,6 +13,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 
 /** @author c.mbassi */
 @Data
@@ -67,6 +68,35 @@ public class DemandeModifInfoResponse implements Serializable {
     private String valueChamp;
     private String commentDrhl;
     private String commentUser;
+    private String estEnfant;
+
+    private String estConjoint;
+
+    private String nom;
+
+    private String njf;
+
+    private String pren;
+
+    private String prof;
+
+    private String empl;
+
+    private String sexe;
+
+    private String libsexe;
+
+    private String pays;
+
+    private String libpays;
+
+    private String achg;
+
+    private String scol;
+
+    private Date dteEvt;
+
+    private String adrc;
 
     public DemandeModifInfoResponse(Integer id, Instant creationDate, Integer idEntreprise, String valid, Utilisateur user){
             setId(id);

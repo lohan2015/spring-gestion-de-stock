@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /** @author c.mbassi */
 @Data
@@ -57,4 +58,43 @@ public class DemandeModifInfo  extends AbstractEntity {
 
     @Column(name = "comment_drhl", length = 1000)
     private String commentDrhl;
+
+    @Column(name = "est_enf", length = 1)
+    private String estEnfant;
+
+    @Column(name = "est_conf", length = 1)
+    private String estConjoint;
+
+    @Column(name = "nom", length = 100)
+    private String nom;
+
+    @Column(name = "njf", length = 100)
+    private String njf;
+
+    @Column(name = "pren", length = 100)
+    private String pren;
+
+    @Column(name = "prof", length = 100)
+    private String prof;
+
+    @Column(name = "empl", length = 100)
+    private String empl;
+
+    @Column(name = "adrc", length = 100)
+    private String adrc;
+
+    @Column(name = "sexe", length = 10)
+    private String sexe;
+
+    @Column(name = "pays", length = 10)
+    private String pays;
+
+    @Column(name = "achg", length = 1)
+    private String achg;
+
+    @Column(name = "scol", length = 1)
+    private String scol;
+
+    @Column(name = "dte_evt")
+    private Date dteEvt;
 }
