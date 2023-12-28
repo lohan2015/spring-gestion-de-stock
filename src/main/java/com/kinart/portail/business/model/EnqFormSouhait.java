@@ -27,4 +27,9 @@ public class EnqFormSouhait extends AbstractEntity {
 
     @Column(name = "objectif", length = 1000)
     private String objectif;
+
+    public EnqFormSouhait(String nmat, int annee){
+        this.nmat = nmat;
+        this.annee = annee;
+    }
 }

@@ -36,4 +36,9 @@ public class EnqFormSuivie extends AbstractEntity {
 
     @Column(name = "mep")
     private boolean mep;
+
+    public EnqFormSuivie(String nmat, int annee){
+        this.nmat = nmat;
+        this.annee = annee;
+    }
 }

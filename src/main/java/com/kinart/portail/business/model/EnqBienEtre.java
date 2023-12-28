@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "enqbienetre")
@@ -30,4 +30,12 @@ public class EnqBienEtre extends AbstractEntity {
 
     @Column(name = "reponse", length = 1000)
     private String reponse;
+
+    public EnqBienEtre(String nmat, int annee, int nume, String question, String reponse){
+        this.nmat = nmat;
+        this.annee = annee;
+        this.nume = nume;
+        this.question = question;
+        this.reponse = reponse;
+    }
 }

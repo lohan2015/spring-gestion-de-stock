@@ -33,4 +33,9 @@ public class EnqBilanObj extends AbstractEntity {
 
     @Column(name = "commentaire", length = 1000)
     private String commentaire;
+
+    public EnqBilanObj(String nmat, int annee){
+        this.nmat = nmat;
+        this.annee = annee;
+    }
 }

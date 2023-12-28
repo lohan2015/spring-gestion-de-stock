@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * @author c.mbassi
@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface EnqSalarieEnteteRepository extends JpaRepository<EnqSalarieEntete, Integer> {
 
-   List<EnqSalarieEntete> findByNmatAndAnnee(@Param("nmat") String nmat, @Param("annee") int annee);
+   Optional<EnqSalarieEntete> findByNmatAndAnnee(@Param("nmat") String nmat, @Param("annee") int annee);
 
    @Modifying
    void deleteByNmatAndAnnee(@Param("nmat") String nmat, @Param("annee") int annee);

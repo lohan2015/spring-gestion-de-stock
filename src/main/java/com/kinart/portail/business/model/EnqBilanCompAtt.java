@@ -33,4 +33,10 @@ public class EnqBilanCompAtt extends AbstractEntity {
 
     @Column(name = "action", length = 1000)
     private String action;
+
+    public EnqBilanCompAtt(String nmat, int annee, String competence){
+        this.nmat = nmat;
+        this.annee = annee;
+        this.competence = competence;
+    }
 }

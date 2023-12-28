@@ -27,4 +27,10 @@ public class EnqCondition extends AbstractEntity {
 
     @Column(name = "reponse", length = 1000)
     private String reponse;
+
+    public EnqCondition(String nmat, int annee, String titre){
+        this.nmat = nmat;
+        this.annee = annee;
+        this.titre = titre;
+    }
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -36,5 +37,27 @@ public class EnqSalarieEnteteDto  implements Serializable {
     List<EnqFormSuivie> listeFormationSuivie = new ArrayList<>();
     List<EnqFormSouhait> listeFormationSouhaitee = new ArrayList<>();
     List<EnqCondition> listeCondition = new ArrayList<>();
+
+    public static EnqSalarieEnteteDto fromEntity(EnqSalarieEntete enqSalarieEntete) {
+        if (enqSalarieEntete == null) {
+            return null;
+        }
+
+        EnqSalarieEnteteDto dto = new EnqSalarieEnteteDto();
+        BeanUtils.copyProperties(enqSalarieEntete, dto);
+
+        return dto;
+    }
+
+    public static EnqSalarieEntete toEntity(EnqSalarieEnteteDto dto) {
+        if (dto == null) {
+            return null;
+        }
+
+        EnqSalarieEntete entity = new EnqSalarieEntete();
+        BeanUtils.copyProperties(dto, entity);
+
+        return entity;
+    }
 
 }
