@@ -1,5 +1,6 @@
 package com.kinart.api.portail.controller;
 
+import com.kinart.api.portail.dto.DemandePretDto;
 import com.kinart.api.portail.dto.EnqSalarieEnteteDto;
 import com.kinart.portail.business.model.*;
 import com.kinart.portail.business.repository.*;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -315,7 +317,7 @@ public class EnqueteController {
         return new ResponseEntity(dto, HttpStatus.CREATED);
     }
 
-    @GetMapping(value = APP_ROOT_PORTAIL + "/enquete/{matricule}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = APP_ROOT_PORTAIL + "/enquete/{matricule}", produces = {MediaType.ALL_VALUE, MediaType.ALL_VALUE})
     @ApiOperation(value = "Renvoi la liste des demandes", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
             + "dans la BDD", responseContainer = "List<DemandePretResponse>")
     @ApiResponses(value = {
@@ -336,17 +338,21 @@ public class EnqueteController {
 
         // Bien-être
         List<EnqBienEtre> listeBienEtre = enqBienEtreRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
-        if(listeBienEtre != null) result.setListeBienEtre(listeBienEtre);
+        if(listeBienEtre != null && listeBienEtre.size()>0) {
+            result.setListeBienEtre(listeBienEtre);
+            System.out.println("LECTURE BIEN ETRE ------------------------------------------------------------");
+        }
         else {
             result.getListeBienEtre().add(new EnqBienEtre(matricule, Integer.parseInt(year), 1, "Comment vous sentez-vous dans votre travail ?", StringUtils.EMPTY));
             result.getListeBienEtre().add(new EnqBienEtre(matricule, Integer.parseInt(year), 2, "Le poste que vous occupez vous plaît-il ?", StringUtils.EMPTY));
             result.getListeBienEtre().add(new EnqBienEtre(matricule, Integer.parseInt(year), 3, "Les relations avec les autres membres de votre équipe sont-elles bonnes ?", StringUtils.EMPTY));
             result.getListeBienEtre().add(new EnqBienEtre(matricule, Integer.parseInt(year), 4, "Commentaires", StringUtils.EMPTY));
+            System.out.println("AJOUT BIEN ETRE ------------------------------------------------------------");
         }
 
         // Bilan objectif
         List<EnqBilanObj> listeBilanObj = enqBilanObjRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
-        if(listeBilanObj != null) result.setListeBilanObjectif(listeBilanObj);
+        if(listeBilanObj != null && listeBilanObj.size()>0) result.setListeBilanObjectif(listeBilanObj);
         else {
             result.getListeBilanObjectif().add(new EnqBilanObj(matricule, Integer.parseInt(year)));
             result.getListeBilanObjectif().add(new EnqBilanObj(matricule, Integer.parseInt(year)));
@@ -417,6 +423,58 @@ public class EnqueteController {
 
         if(result!=null) {
             return ResponseEntity.ok(result);
+        } else {
+            throw new EntityNotFoundException("Pas de notification");
+        }
+    }
+
+    @DeleteMapping(value = APP_ROOT_PORTAIL + "/enquete/{matricule}", consumes = {MediaType.ALL_VALUE}, produces = {MediaType.ALL_VALUE})
+    @ApiOperation(value = "Supprimer une demande pas encore validée", notes = "Cette methode permet de supprimer une demande pas encore validée")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "L'élément a ete supprime")
+    })
+    ResponseEntity<Void> delete(@PathVariable("enqid") Integer enqid) throws Exception {
+        Optional<EnqSalarieEntete> entite = enqSalarieEnteteRepository.findById(enqid);
+
+        if(entite.isPresent()) {
+            enqConditionRepository.deleteByNmatAndAnnee(entite.get().getNmat(), entite.get().getAnnee());
+            enqFormSouhaitRepository.deleteByNmatAndAnnee(entite.get().getNmat(), entite.get().getAnnee());
+            enqFormSuivieRepository.deleteByNmatAndAnnee(entite.get().getNmat(), entite.get().getAnnee());
+            enqBilanCompAttRepository.deleteByNmatAndAnnee(entite.get().getNmat(), entite.get().getAnnee());
+            enqBilanCompPosteRepository.deleteByNmatAndAnnee(entite.get().getNmat(), entite.get().getAnnee());
+            enqBilanActRepository.deleteByNmatAndAnnee(entite.get().getNmat(), entite.get().getAnnee());
+            enqBilanObjRepository.deleteByNmatAndAnnee(entite.get().getNmat(), entite.get().getAnnee());
+            enqBienEtreRepository.deleteByNmatAndAnnee(entite.get().getNmat(), entite.get().getAnnee());
+            enqSalarieEnteteRepository.deleteByNmatAndAnnee(entite.get().getNmat(), entite.get().getAnnee());
+        }
+
+        return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping(value = APP_ROOT_PORTAIL + "/enquete/bienetre/{matricule}", produces = {MediaType.ALL_VALUE, MediaType.ALL_VALUE})
+    @ApiOperation(value = "Renvoi la liste des demandes", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "List<DemandePretResponse>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
+    })
+    ResponseEntity<List<EnqBienEtre>> findBienEtreBySalarieAndYear(
+            @PathVariable("matricule") String matricule,
+            @RequestParam("year") String year
+    ){
+        // Bien-être
+        List<EnqBienEtre> listeBienEtre = enqBienEtreRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
+        if(listeBienEtre == null || listeBienEtre.size()==0) {
+            listeBienEtre = new ArrayList<>();
+            listeBienEtre.add(new EnqBienEtre(matricule, Integer.parseInt(year), 1, "Comment vous sentez-vous dans votre travail ?", StringUtils.EMPTY));
+            listeBienEtre.add(new EnqBienEtre(matricule, Integer.parseInt(year), 2, "Le poste que vous occupez vous plaît-il ?", StringUtils.EMPTY));
+            listeBienEtre.add(new EnqBienEtre(matricule, Integer.parseInt(year), 3, "Les relations avec les autres membres de votre équipe sont-elles bonnes ?", StringUtils.EMPTY));
+            listeBienEtre.add(new EnqBienEtre(matricule, Integer.parseInt(year), 4, "Commentaires", StringUtils.EMPTY));
+            System.out.println("AJOUT BIEN ETRE ------------------------------------------------------------");
+        }
+
+
+        if(listeBienEtre!=null) {
+            return ResponseEntity.ok(listeBienEtre);
         } else {
             throw new EntityNotFoundException("Pas de notification");
         }

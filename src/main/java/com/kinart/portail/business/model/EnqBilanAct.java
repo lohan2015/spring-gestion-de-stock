@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Table(name = "enqbilanact")
 public class EnqBilanAct extends AbstractEntity {
 
-    @Column(name = "nmat", length = 6, nullable=false)
+    @Column(name = "nmat", length = 100, nullable=false)
     private String nmat;
 
     @Column(name = "annee", length = 4, nullable=false)
