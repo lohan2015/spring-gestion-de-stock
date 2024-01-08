@@ -31,11 +31,11 @@ public class EnqFormSuivie extends AbstractEntity {
     @Column(name = "objectif", length = 1000)
     private String objectif;
 
-    @Column(name = "repatt")
-    private boolean repAtt;
+    @Column(name = "repatt", length = 500)
+    private String repAtt;
 
-    @Column(name = "mep")
-    private boolean mep;
+    @Column(name = "mep", length = 500)
+    private String mep;
 
     public EnqFormSuivie(String nmat, int annee){
         this.nmat = nmat;

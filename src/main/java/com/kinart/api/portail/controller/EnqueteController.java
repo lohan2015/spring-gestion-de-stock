@@ -336,91 +336,6 @@ public class EnqueteController {
             result.setNmat(matricule);
         }
 
-        // Bien-être
-        List<EnqBienEtre> listeBienEtre = enqBienEtreRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
-        if(listeBienEtre != null && listeBienEtre.size()>0) {
-            result.setListeBienEtre(listeBienEtre);
-            System.out.println("LECTURE BIEN ETRE ------------------------------------------------------------");
-        }
-        else {
-            result.getListeBienEtre().add(new EnqBienEtre(matricule, Integer.parseInt(year), 1, "Comment vous sentez-vous dans votre travail ?", StringUtils.EMPTY));
-            result.getListeBienEtre().add(new EnqBienEtre(matricule, Integer.parseInt(year), 2, "Le poste que vous occupez vous plaît-il ?", StringUtils.EMPTY));
-            result.getListeBienEtre().add(new EnqBienEtre(matricule, Integer.parseInt(year), 3, "Les relations avec les autres membres de votre équipe sont-elles bonnes ?", StringUtils.EMPTY));
-            result.getListeBienEtre().add(new EnqBienEtre(matricule, Integer.parseInt(year), 4, "Commentaires", StringUtils.EMPTY));
-            System.out.println("AJOUT BIEN ETRE ------------------------------------------------------------");
-        }
-
-        // Bilan objectif
-        List<EnqBilanObj> listeBilanObj = enqBilanObjRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
-        if(listeBilanObj != null && listeBilanObj.size()>0) result.setListeBilanObjectif(listeBilanObj);
-        else {
-            result.getListeBilanObjectif().add(new EnqBilanObj(matricule, Integer.parseInt(year)));
-            result.getListeBilanObjectif().add(new EnqBilanObj(matricule, Integer.parseInt(year)));
-            result.getListeBilanObjectif().add(new EnqBilanObj(matricule, Integer.parseInt(year)));
-        }
-
-        // Bilan activité
-        List<EnqBilanAct> listeBilanAct= enqBilanActRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
-        if(listeBilanAct != null) result.setListeBilanActivites(listeBilanAct);
-        else {
-            result.getListeBilanActivites().add(new EnqBilanAct(matricule, Integer.parseInt(year)));
-            result.getListeBilanActivites().add(new EnqBilanAct(matricule, Integer.parseInt(year)));
-        }
-
-        // Bilan compétence poste
-        List<EnqBilanCompPoste> listeBilanCompPoste= enqBilanCompPosteRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
-        if(listeBilanCompPoste != null) result.setListeBilanCompPoste(listeBilanCompPoste);
-        else {
-            result.getListeBilanCompPoste().add(new EnqBilanCompPoste(matricule, Integer.parseInt(year), 1, "Que réussissez-vous le mieux dans votre poste actuel ?", StringUtils.EMPTY));
-            result.getListeBilanCompPoste().add(new EnqBilanCompPoste(matricule, Integer.parseInt(year), 2, "Qu'aimez-vous le plus dans vos fonctions actuelles ?", StringUtils.EMPTY));
-            result.getListeBilanCompPoste().add(new EnqBilanCompPoste(matricule, Integer.parseInt(year), 3, "Quels sont vos points d'amélioration ou compétences à acquérir ?", StringUtils.EMPTY));
-            result.getListeBilanCompPoste().add(new EnqBilanCompPoste(matricule, Integer.parseInt(year), 4, "Avez-vous des compétences non utilisées susceptibles d'être mises à profit dans votre vie professionnelle ?", StringUtils.EMPTY));
-        }
-
-        // Bilan compétence attendue
-        List<EnqBilanCompAtt> listeBilanCompAtt= enqBilanCompAttRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
-        if(listeBilanCompAtt != null) result.setListeBilanCompAttendu(listeBilanCompAtt);
-        else {
-            result.getListeBilanCompAttendu().add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Maîtrise des connaissances théoriques"));
-            result.getListeBilanCompAttendu().add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Maîtrise des éléments techniques"));
-            result.getListeBilanCompAttendu().add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Capacité à animer des réunions"));
-            result.getListeBilanCompAttendu().add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Capacité à gérer des projets"));
-            result.getListeBilanCompAttendu().add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Créativité"));
-            result.getListeBilanCompAttendu().add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Esprit d'équipe"));
-            result.getListeBilanCompAttendu().add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Gestion des priorités"));
-            result.getListeBilanCompAttendu().add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Organisation"));
-            result.getListeBilanCompAttendu().add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Autonomie"));
-            result.getListeBilanCompAttendu().add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Implication au travail"));
-            result.getListeBilanCompAttendu().add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Motivation"));
-        }
-
-        // Formation suivie
-        List<EnqFormSuivie> listeFormationSuivie = enqFormSuivieRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
-        if(listeFormationSuivie != null) result.setListeFormationSuivie(listeFormationSuivie);
-        else {
-            result.getListeFormationSuivie().add(new EnqFormSuivie(matricule, Integer.parseInt(year)));
-            result.getListeFormationSuivie().add(new EnqFormSuivie(matricule, Integer.parseInt(year)));
-            result.getListeFormationSuivie().add(new EnqFormSuivie(matricule, Integer.parseInt(year)));
-        }
-
-        // Formation souhaitée
-        List<EnqFormSouhait> listeFormationSouhait = enqFormSouhaitRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
-        if(listeFormationSouhait != null) result.setListeFormationSouhaitee(listeFormationSouhait);
-        else {
-            result.getListeFormationSouhaitee().add(new EnqFormSouhait(matricule, Integer.parseInt(year)));
-            result.getListeFormationSouhaitee().add(new EnqFormSouhait(matricule, Integer.parseInt(year)));
-            result.getListeFormationSouhaitee().add(new EnqFormSouhait(matricule, Integer.parseInt(year)));
-        }
-
-        // Condition
-        List<EnqCondition> listeCondition= enqConditionRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
-        if(listeCondition != null) result.setListeCondition(listeCondition);
-        else {
-            result.getListeCondition().add(new EnqCondition(matricule, Integer.parseInt(year), "Quelles sont vos remarques, points d'amélioration ou suggestions d’amélioration liés à vos conditions d’activité ? (Environnement de travail, communication, etc.)"));
-            result.getListeCondition().add(new EnqCondition(matricule, Integer.parseInt(year), "Comment évaluez-vous votre charge de travail ? (Adéquation de la charge de travail avec le nombre de jours travaillés, variabilité de l’activité, heures supplémentaires, atteinte des objectifs, etc.)"));
-            result.getListeCondition().add(new EnqCondition(matricule, Integer.parseInt(year), "Quel est votre ressenti quant à l’articulation de votre vie privée/ vie professionnelle ? (Conciliation vie professionnelle et vie personnelle, déconnexion, déplacements, etc.)"));
-        }
-
         if(result!=null) {
             return ResponseEntity.ok(result);
         } else {
@@ -465,18 +380,245 @@ public class EnqueteController {
         List<EnqBienEtre> listeBienEtre = enqBienEtreRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
         if(listeBienEtre == null || listeBienEtre.size()==0) {
             listeBienEtre = new ArrayList<>();
-            listeBienEtre.add(new EnqBienEtre(matricule, Integer.parseInt(year), 1, "Comment vous sentez-vous dans votre travail ?", StringUtils.EMPTY));
-            listeBienEtre.add(new EnqBienEtre(matricule, Integer.parseInt(year), 2, "Le poste que vous occupez vous plaît-il ?", StringUtils.EMPTY));
-            listeBienEtre.add(new EnqBienEtre(matricule, Integer.parseInt(year), 3, "Les relations avec les autres membres de votre équipe sont-elles bonnes ?", StringUtils.EMPTY));
+            listeBienEtre.add(new EnqBienEtre(matricule, Integer.parseInt(year), 1, "Comment vous sentez-vous dans votre travail ?.........................................................", StringUtils.EMPTY));
+            listeBienEtre.add(new EnqBienEtre(matricule, Integer.parseInt(year), 2, "Le poste que vous occupez vous plaît-il ?.....................................................................", StringUtils.EMPTY));
+            listeBienEtre.add(new EnqBienEtre(matricule, Integer.parseInt(year), 3, "Les relations avec les autres membres de votre équipe sont-elles bonnes ?..", StringUtils.EMPTY));
             listeBienEtre.add(new EnqBienEtre(matricule, Integer.parseInt(year), 4, "Commentaires", StringUtils.EMPTY));
-            System.out.println("AJOUT BIEN ETRE ------------------------------------------------------------");
+
         }
 
 
         if(listeBienEtre!=null) {
             return ResponseEntity.ok(listeBienEtre);
         } else {
-            throw new EntityNotFoundException("Pas de notification");
+            throw new EntityNotFoundException("Liste vide");
+        }
+    }
+
+    @GetMapping(value = APP_ROOT_PORTAIL + "/enquete/bilanobjectif/{matricule}", produces = {MediaType.ALL_VALUE, MediaType.ALL_VALUE})
+    @ApiOperation(value = "Renvoi la liste des demandes", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "List<DemandePretResponse>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
+    })
+    ResponseEntity<List<EnqBilanObj>> findBilanObjectifBySalarieAndYear(
+            @PathVariable("matricule") String matricule,
+            @RequestParam("year") String year
+    ){
+        // Bilan objectif
+        List<EnqBilanObj> listeBilanObj = enqBilanObjRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
+        if(listeBilanObj == null || listeBilanObj.size()==0) {
+            listeBilanObj.add(new EnqBilanObj(matricule, Integer.parseInt(year)));
+            listeBilanObj.add(new EnqBilanObj(matricule, Integer.parseInt(year)));
+            listeBilanObj.add(new EnqBilanObj(matricule, Integer.parseInt(year)));
+        }
+
+
+        if(listeBilanObj!=null) {
+            return ResponseEntity.ok(listeBilanObj);
+        } else {
+            throw new EntityNotFoundException("Liste vide");
+        }
+    }
+
+    @GetMapping(value = APP_ROOT_PORTAIL + "/enquete/bilanactivite/{matricule}", produces = {MediaType.ALL_VALUE, MediaType.ALL_VALUE})
+    @ApiOperation(value = "Renvoi la liste des demandes", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "List<DemandePretResponse>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
+    })
+    ResponseEntity<List<EnqBilanAct>> findBilanActiviteBySalarieAndYear(
+            @PathVariable("matricule") String matricule,
+            @RequestParam("year") String year
+    ){
+        // Bilan activité
+        List<EnqBilanAct> listeBilanAct= enqBilanActRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
+        if(listeBilanAct == null || listeBilanAct.size()==0) {
+            listeBilanAct.add(new EnqBilanAct(matricule, Integer.parseInt(year)));
+            listeBilanAct.add(new EnqBilanAct(matricule, Integer.parseInt(year)));
+        }
+
+
+        if(listeBilanAct!=null) {
+            return ResponseEntity.ok(listeBilanAct);
+        } else {
+            throw new EntityNotFoundException("Liste vide");
+        }
+    }
+
+    @GetMapping(value = APP_ROOT_PORTAIL + "/enquete/bilancompetenceposte/{matricule}", produces = {MediaType.ALL_VALUE, MediaType.ALL_VALUE})
+    @ApiOperation(value = "Renvoi la liste des demandes", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "List<DemandePretResponse>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
+    })
+    ResponseEntity<List<EnqBilanCompPoste>> findBilanCompetencePosteBySalarieAndYear(
+            @PathVariable("matricule") String matricule,
+            @RequestParam("year") String year
+    ){
+        // Bilan compétence poste
+        List<EnqBilanCompPoste> listeBilanCompPoste= enqBilanCompPosteRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
+        if(listeBilanCompPoste == null || listeBilanCompPoste.size()==0) {
+            listeBilanCompPoste.add(new EnqBilanCompPoste(matricule, Integer.parseInt(year), 1, "Que réussissez-vous le mieux dans votre poste actuel ?", StringUtils.EMPTY));
+            listeBilanCompPoste.add(new EnqBilanCompPoste(matricule, Integer.parseInt(year), 2, "Qu'aimez-vous le plus dans vos fonctions actuelles ?", StringUtils.EMPTY));
+            listeBilanCompPoste.add(new EnqBilanCompPoste(matricule, Integer.parseInt(year), 3, "Quels sont vos points d'amélioration ou compétences à acquérir ?", StringUtils.EMPTY));
+            listeBilanCompPoste.add(new EnqBilanCompPoste(matricule, Integer.parseInt(year), 4, "Avez-vous des compétences non utilisées susceptibles d'être mises à profit dans votre vie professionnelle ?", StringUtils.EMPTY));
+        }
+
+
+        if(listeBilanCompPoste!=null) {
+            return ResponseEntity.ok(listeBilanCompPoste);
+        } else {
+            throw new EntityNotFoundException("Liste vide");
+        }
+    }
+
+    @GetMapping(value = APP_ROOT_PORTAIL + "/enquete/bilancompetenceattendue/{matricule}", produces = {MediaType.ALL_VALUE, MediaType.ALL_VALUE})
+    @ApiOperation(value = "Renvoi la liste des demandes", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "List<DemandePretResponse>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
+    })
+    ResponseEntity<List<EnqBilanCompAtt>> findBilanCompetenceAttendueBySalarieAndYear(
+            @PathVariable("matricule") String matricule,
+            @RequestParam("year") String year
+    ){
+        // Bilan compétence attendue
+        List<EnqBilanCompAtt> listeBilanCompAtt= enqBilanCompAttRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
+        if(listeBilanCompAtt == null || listeBilanCompAtt.size()==0) {
+            listeBilanCompAtt.add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Maîtrise des connaissances théoriques"));
+            listeBilanCompAtt.add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Maîtrise des éléments techniques"));
+            listeBilanCompAtt.add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Capacité à animer des réunions"));
+            listeBilanCompAtt.add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Capacité à gérer des projets"));
+            listeBilanCompAtt.add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Créativité"));
+            listeBilanCompAtt.add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Esprit d'équipe"));
+            listeBilanCompAtt.add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Gestion des priorités"));
+            listeBilanCompAtt.add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Organisation"));
+            listeBilanCompAtt.add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Autonomie"));
+            listeBilanCompAtt.add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Implication au travail"));
+            listeBilanCompAtt.add(new EnqBilanCompAtt(matricule, Integer.parseInt(year), "Motivation"));
+        }
+
+
+        if(listeBilanCompAtt!=null) {
+            return ResponseEntity.ok(listeBilanCompAtt);
+        } else {
+            throw new EntityNotFoundException("Liste vide");
+        }
+    }
+
+    @GetMapping(value = APP_ROOT_PORTAIL + "/enquete/condition/{matricule}", produces = {MediaType.ALL_VALUE, MediaType.ALL_VALUE})
+    @ApiOperation(value = "Renvoi la liste des demandes", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "List<DemandePretResponse>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
+    })
+    ResponseEntity<List<EnqCondition>> findConditionBySalarieAndYear(
+            @PathVariable("matricule") String matricule,
+            @RequestParam("year") String year
+    ){
+        // Condition
+        List<EnqCondition> listeCondition= enqConditionRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
+        if(listeCondition == null || listeCondition.size()==0) {
+            listeCondition.add(new EnqCondition(matricule, Integer.parseInt(year), "Quelles sont vos remarques, points d'amélioration ou suggestions d’amélioration liés à vos conditions d’activité ? (Environnement de travail, communication, etc.)"));
+            listeCondition.add(new EnqCondition(matricule, Integer.parseInt(year), "Comment évaluez-vous votre charge de travail ? (Adéquation de la charge de travail avec le nombre de jours travaillés, variabilité de l’activité, heures supplémentaires, atteinte des objectifs, etc.)"));
+            listeCondition.add(new EnqCondition(matricule, Integer.parseInt(year), "Quel est votre ressenti quant à l’articulation de votre vie privée/ vie professionnelle ? (Conciliation vie professionnelle et vie personnelle, déconnexion, déplacements, etc.)"));
+        }
+
+
+        if(listeCondition!=null) {
+            return ResponseEntity.ok(listeCondition);
+        } else {
+            throw new EntityNotFoundException("Liste vide");
+        }
+    }
+
+    @GetMapping(value = APP_ROOT_PORTAIL + "/enquete/formationsouhaitee/{matricule}", produces = {MediaType.ALL_VALUE, MediaType.ALL_VALUE})
+    @ApiOperation(value = "Renvoi la liste des demandes", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "List<DemandePretResponse>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
+    })
+    ResponseEntity<List<EnqFormSouhait>> findFormationSouhaiteeBySalarieAndYear(
+            @PathVariable("matricule") String matricule,
+            @RequestParam("year") String year
+    ){
+        // Formation souhaitée
+        List<EnqFormSouhait> listeFormationSouhait = enqFormSouhaitRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
+        if(listeFormationSouhait == null || listeFormationSouhait.size()==0) {
+            listeFormationSouhait.add(new EnqFormSouhait(matricule, Integer.parseInt(year)));
+            listeFormationSouhait.add(new EnqFormSouhait(matricule, Integer.parseInt(year)));
+            listeFormationSouhait.add(new EnqFormSouhait(matricule, Integer.parseInt(year)));
+        }
+
+        if(listeFormationSouhait!=null) {
+            return ResponseEntity.ok(listeFormationSouhait);
+        } else {
+            throw new EntityNotFoundException("Liste vide");
+        }
+    }
+
+    @GetMapping(value = APP_ROOT_PORTAIL + "/enquete/formationsuivie/{matricule}", produces = {MediaType.ALL_VALUE, MediaType.ALL_VALUE})
+    @ApiOperation(value = "Renvoi la liste des demandes", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "List<DemandePretResponse>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
+    })
+    ResponseEntity<List<EnqFormSuivie>> findFormationSuivieBySalarieAndYear(
+            @PathVariable("matricule") String matricule,
+            @RequestParam("year") String year
+    ){
+
+        // Formation suivie
+        List<EnqFormSuivie> listeFormationSuivie = enqFormSuivieRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
+        if(listeFormationSuivie == null || listeFormationSuivie.size()==0) {
+            listeFormationSuivie.add(new EnqFormSuivie(matricule, Integer.parseInt(year)));
+            listeFormationSuivie.add(new EnqFormSuivie(matricule, Integer.parseInt(year)));
+            listeFormationSuivie.add(new EnqFormSuivie(matricule, Integer.parseInt(year)));
+        }
+
+        if(listeFormationSuivie!=null) {
+            return ResponseEntity.ok(listeFormationSuivie);
+        } else {
+            throw new EntityNotFoundException("Liste vide");
+        }
+    }
+
+    @GetMapping(value = APP_ROOT_PORTAIL + "/enquete/liste/{matricule}", produces = {MediaType.ALL_VALUE, MediaType.ALL_VALUE})
+    @ApiOperation(value = "Renvoi la liste des demandes", notes = "Cette methode permet de chercher et renvoyer la liste des éléments qui existent "
+            + "dans la BDD", responseContainer = "List<DemandePretResponse>")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "La liste des demandes absence conge / Une liste vide")
+    })
+    ResponseEntity<List<EnqSalarieEntete>> findEnqueteBySalarieAndYear(
+            @PathVariable("matricule") String matricule,
+            @RequestParam("year") String year,
+            @RequestParam("drhl") String drhl
+    ){
+
+        // Formation suivie
+        List<EnqSalarieEntete> listeEnquete = null;
+        if(StringUtils.isNotEmpty(drhl) && drhl.equalsIgnoreCase("O")){
+            listeEnquete = enqSalarieEnteteRepository.findAll();
+            if(listeEnquete == null) listeEnquete = new ArrayList<>();
+        }
+        else {
+            listeEnquete = new ArrayList<>();
+            Optional<EnqSalarieEntete> entity = enqSalarieEnteteRepository.findByNmatAndAnnee(matricule, Integer.parseInt(year));
+            if(entity.isPresent())
+                listeEnquete.add(entity.get());
+            else {
+                EnqSalarieEntete enq = new EnqSalarieEntete();
+                enq.setAnnee(Integer.parseInt(year));
+                enq.setNmat(matricule);
+                listeEnquete.add(enq);
+            }
+        }
+
+        if(listeEnquete!=null) {
+            return ResponseEntity.ok(listeEnquete);
+        } else {
+            throw new EntityNotFoundException("Liste vide");
         }
     }
 
