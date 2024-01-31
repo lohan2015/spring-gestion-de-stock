@@ -45,13 +45,13 @@ public class EnqueteController {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<EnqSalarieEnteteDto> saveEntete(@RequestBody EnqSalarieEnteteDto dto){
+    ResponseEntity<EnqSalarieEntete> saveEntete(@RequestBody EnqSalarieEntete dto){
         //validator.validate(dto);
         System.out.println("LECTURE PARAMETER........................");
         try {
-            EnqSalarieEntete entity = EnqSalarieEnteteDto.toEntity(dto);
-            enqSalarieEnteteRepository.save(entity);
-            dto.setId(entity.getId());
+            //EnqSalarieEntete entity = EnqSalarieEnteteDto.toEntity(dto);
+            enqSalarieEnteteRepository.save(dto);
+            //dto.setId(entity.getId());
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
         } catch (Exception e){
@@ -67,22 +67,20 @@ public class EnqueteController {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<EnqSalarieEnteteDto> saveBienEtre(@RequestBody EnqSalarieEnteteDto dto){
+    ResponseEntity<EnqBienEtre> saveBienEtre(@RequestBody EnqBienEtre dto){
         //validator.validate(dto);
         System.out.println("LECTURE PARAMETER........................");
         try {
-                for(EnqBienEtre entity : dto.getListeBienEtre()) {
-                    if(entity.getId()==null || entity.getId()==0)
-                      enqBienEtreRepository.save(entity);
+                    if(dto.getId()==null || dto.getId()==0)
+                      enqBienEtreRepository.save(dto);
                     else {
-                        Optional<EnqBienEtre> oldEntityOpt = enqBienEtreRepository.findById(entity.getId());
+                        Optional<EnqBienEtre> oldEntityOpt = enqBienEtreRepository.findById(dto.getId());
                         if(oldEntityOpt.isPresent()){
                             EnqBienEtre oldEntity = oldEntityOpt.get();
-                            BeanUtils.copyProperties(entity, oldEntity, "id");
+                            BeanUtils.copyProperties(dto, oldEntity, "id");
                             enqBienEtreRepository.save(oldEntity);
                         }
                     }
-                }
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
@@ -99,22 +97,21 @@ public class EnqueteController {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<EnqSalarieEnteteDto> saveBilanObjectif(@RequestBody EnqSalarieEnteteDto dto){
+    ResponseEntity<EnqBilanObj> saveBilanObjectif(@RequestBody EnqBilanObj dto){
         //validator.validate(dto);
         System.out.println("LECTURE PARAMETER........................");
         try {
-            for(EnqBilanObj entity : dto.getListeBilanObjectif()) {
-                if(entity.getId()==null || entity.getId()==0)
-                    enqBilanObjRepository.save(entity);
+                if(dto.getId()==null || dto.getId()==0)
+                    enqBilanObjRepository.save(dto);
                 else {
-                    Optional<EnqBilanObj> oldEntityOpt = enqBilanObjRepository.findById(entity.getId());
+                    Optional<EnqBilanObj> oldEntityOpt = enqBilanObjRepository.findById(dto.getId());
                     if(oldEntityOpt.isPresent()){
                         EnqBilanObj oldEntity = oldEntityOpt.get();
-                        BeanUtils.copyProperties(entity, oldEntity, "id");
+                        BeanUtils.copyProperties(dto, oldEntity, "id");
                         enqBilanObjRepository.save(oldEntity);
                     }
                 }
-            }
+
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
@@ -131,22 +128,22 @@ public class EnqueteController {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<EnqSalarieEnteteDto> saveBilanActivite(@RequestBody EnqSalarieEnteteDto dto){
+    ResponseEntity<EnqBilanAct> saveBilanActivite(@RequestBody EnqBilanAct dto){
         //validator.validate(dto);
         System.out.println("LECTURE PARAMETER........................");
         try {
-            for(EnqBilanAct entity : dto.getListeBilanActivites()) {
-                if(entity.getId()==null || entity.getId()==0)
-                    enqBilanActRepository.save(entity);
+
+                if(dto.getId()==null || dto.getId()==0)
+                    enqBilanActRepository.save(dto);
                 else {
-                    Optional<EnqBilanAct> oldEntityOpt = enqBilanActRepository.findById(entity.getId());
+                    Optional<EnqBilanAct> oldEntityOpt = enqBilanActRepository.findById(dto.getId());
                     if(oldEntityOpt.isPresent()){
                         EnqBilanAct oldEntity = oldEntityOpt.get();
-                        BeanUtils.copyProperties(entity, oldEntity, "id");
+                        BeanUtils.copyProperties(dto, oldEntity, "id");
                         enqBilanActRepository.save(oldEntity);
                     }
                 }
-            }
+
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
@@ -163,22 +160,22 @@ public class EnqueteController {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<EnqSalarieEnteteDto> saveBilanCompPoste(@RequestBody EnqSalarieEnteteDto dto){
+    ResponseEntity<EnqBilanCompPoste> saveBilanCompPoste(@RequestBody EnqBilanCompPoste dto){
         //validator.validate(dto);
         System.out.println("LECTURE PARAMETER........................");
         try {
-            for(EnqBilanCompPoste entity : dto.getListeBilanCompPoste()) {
-                if(entity.getId()==null || entity.getId()==0)
-                    enqBilanCompPosteRepository.save(entity);
+
+                if(dto.getId()==null || dto.getId()==0)
+                    enqBilanCompPosteRepository.save(dto);
                 else {
-                    Optional<EnqBilanCompPoste> oldEntityOpt = enqBilanCompPosteRepository.findById(entity.getId());
+                    Optional<EnqBilanCompPoste> oldEntityOpt = enqBilanCompPosteRepository.findById(dto.getId());
                     if(oldEntityOpt.isPresent()){
                         EnqBilanCompPoste oldEntity = oldEntityOpt.get();
-                        BeanUtils.copyProperties(entity, oldEntity, "id");
+                        BeanUtils.copyProperties(dto, oldEntity, "id");
                         enqBilanCompPosteRepository.save(oldEntity);
                     }
                 }
-            }
+
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
@@ -195,22 +192,22 @@ public class EnqueteController {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<EnqSalarieEnteteDto> saveBilanCompAttendu(@RequestBody EnqSalarieEnteteDto dto){
+    ResponseEntity<EnqBilanCompAtt> saveBilanCompAttendu(@RequestBody EnqBilanCompAtt dto){
         //validator.validate(dto);
         System.out.println("LECTURE PARAMETER........................");
         try {
-            for(EnqBilanCompAtt entity : dto.getListeBilanCompAttendu()) {
-                if(entity.getId()==null || entity.getId()==0)
-                    enqBilanCompAttRepository.save(entity);
+
+                if(dto.getId()==null || dto.getId()==0)
+                    enqBilanCompAttRepository.save(dto);
                 else {
-                    Optional<EnqBilanCompAtt> oldEntityOpt = enqBilanCompAttRepository.findById(entity.getId());
+                    Optional<EnqBilanCompAtt> oldEntityOpt = enqBilanCompAttRepository.findById(dto.getId());
                     if(oldEntityOpt.isPresent()){
                         EnqBilanCompAtt oldEntity = oldEntityOpt.get();
-                        BeanUtils.copyProperties(entity, oldEntity, "id");
+                        BeanUtils.copyProperties(dto, oldEntity, "id");
                         enqBilanCompAttRepository.save(oldEntity);
                     }
                 }
-            }
+
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
@@ -227,22 +224,22 @@ public class EnqueteController {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<EnqSalarieEnteteDto> saveFormationSuivie(@RequestBody EnqSalarieEnteteDto dto){
+    ResponseEntity<EnqFormSuivie> saveFormationSuivie(@RequestBody EnqFormSuivie dto){
         //validator.validate(dto);
-        System.out.println("LECTURE PARAMETER........................");
+        System.out.println("SAVE FORMATION SUIVIE........................");
         try {
-            for(EnqFormSuivie entity : dto.getListeFormationSuivie()) {
-                if(entity.getId()==null || entity.getId()==0)
-                    enqFormSuivieRepository.save(entity);
-                else {
-                    Optional<EnqFormSuivie> oldEntityOpt = enqFormSuivieRepository.findById(entity.getId());
+
+                //if(dto.getId()==null || dto.getId()==0)
+                    enqFormSuivieRepository.save(dto);
+                /*else {
+                    Optional<EnqFormSuivie> oldEntityOpt = enqFormSuivieRepository.findById(dto.getId());
                     if(oldEntityOpt.isPresent()){
                         EnqFormSuivie oldEntity = oldEntityOpt.get();
-                        BeanUtils.copyProperties(entity, oldEntity, "id");
+                        BeanUtils.copyProperties(dto, oldEntity, "id");
                         enqFormSuivieRepository.save(oldEntity);
                     }
-                }
-            }
+                }*/
+
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
@@ -259,22 +256,22 @@ public class EnqueteController {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<EnqSalarieEnteteDto> saveFormationSouhaitee(@RequestBody EnqSalarieEnteteDto dto){
+    ResponseEntity<EnqFormSouhait> saveFormationSouhaitee(@RequestBody EnqFormSouhait dto){
         //validator.validate(dto);
-        System.out.println("LECTURE PARAMETER........................");
+        System.out.println("SAVE FORMATION SOUHAITEE........................");
         try {
-            for(EnqFormSouhait entity : dto.getListeFormationSouhaitee()) {
-                if(entity.getId()==null || entity.getId()==0)
-                    enqFormSouhaitRepository.save(entity);
-                else {
-                    Optional<EnqFormSouhait> oldEntityOpt = enqFormSouhaitRepository.findById(entity.getId());
+
+                //if(dto.getId()==null || dto.getId()==0)
+                    enqFormSouhaitRepository.save(dto);
+                /*else {
+                    Optional<EnqFormSouhait> oldEntityOpt = enqFormSouhaitRepository.findById(dto.getId());
                     if(oldEntityOpt.isPresent()){
                         EnqFormSouhait oldEntity = oldEntityOpt.get();
-                        BeanUtils.copyProperties(entity, oldEntity, "id");
+                        BeanUtils.copyProperties(dto, oldEntity, "id");
                         enqFormSouhaitRepository.save(oldEntity);
                     }
-                }
-            }
+                }*/
+
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
@@ -291,22 +288,22 @@ public class EnqueteController {
             @ApiResponse(code = 200, message = "L'élément cree / modifie"),
             @ApiResponse(code = 400, message = "L'élément n'est pas valide")
     })
-    ResponseEntity<EnqSalarieEnteteDto> saveCondition(@RequestBody EnqSalarieEnteteDto dto){
+    ResponseEntity<EnqCondition> saveCondition(@RequestBody EnqCondition dto){
         //validator.validate(dto);
         System.out.println("LECTURE PARAMETER........................");
         try {
-            for(EnqCondition entity : dto.getListeCondition()) {
-                if(entity.getId()==null || entity.getId()==0)
-                    enqConditionRepository.save(entity);
+
+                if(dto.getId()==null || dto.getId()==0)
+                    enqConditionRepository.save(dto);
                 else {
-                    Optional<EnqCondition> oldEntityOpt = enqConditionRepository.findById(entity.getId());
+                    Optional<EnqCondition> oldEntityOpt = enqConditionRepository.findById(dto.getId());
                     if(oldEntityOpt.isPresent()){
                         EnqCondition oldEntity = oldEntityOpt.get();
-                        BeanUtils.copyProperties(entity, oldEntity, "id");
+                        BeanUtils.copyProperties(dto, oldEntity, "id");
                         enqConditionRepository.save(oldEntity);
                     }
                 }
-            }
+
 
         } catch (InvalidEntityException e){
             return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
