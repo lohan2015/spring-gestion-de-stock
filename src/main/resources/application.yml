@@ -8,7 +8,7 @@ management:
       enabled: "true"
   trace.http.enabled: true
   server:
-    port: 8081
+    port: 8088
 
   #jasypt:
     #encryptor:
@@ -19,28 +19,28 @@ spring:
   #pathmatch:
   #matching-strategy: ANT_PATH_MATCHER
   datasource:
-    url: jdbc:oracle:thin:@localhost:1521:amplituderh   #jdbc:mysql://localhost:3306/portal_notification
-    username: delta
-    password: delta  #ENC(FsSQiV5g7h53d9FwuaGf+Q==)
+    url: jdbc:oracle:thin:@localhost:1521:amplituderh   #jdbc:mysql://localhost:3306/portal_notification jdbc:oracle:thin:@localhost:1521:amplituderh 192.168.1.88:1521:sopra
+    username: delta   # delta PORTAILDB
+    password: delta  #ENC(FsSQiV5g7h53d9FwuaGf+Q==  delta PORTAILDB
     driver-class-name: oracle.jdbc.OracleDriver    #com.mysql.cj.jdbc.Driver
   mail:
-    host: smtp.gmail.com #SMTP server address
-    port: 465
-    username: lohanlaurel@gmail.com #Login account
-    password: qszduiavxyicburp #Login password (or authorization code)
+    host: 192.168.160.65 #SMTP server address smtp.gmail.com 192.168.160.65
+    port: 25 #Port  465 25
+    username: amplituderh@sonibank.com #Login account lohanlaurel@gmail.com  amplituderh@sonibank.com
+    password: sabc #Login password (or authorization code)  qszduiavxyicburp  sabc
     properties:
-      from: sirh@megatim.com #Email sender (i.e. real email)
+      from: DRH.SONIBANKNiger@sonibank.com #Email sender (i.e. real email)  sirh@megatim.com
       mail:
-        debug: true
+        debug: false
         transport:
           protocol: smtp
         smtp:
-          auth: true
+          auth: false
           connectiontimeout: 20000
           timeout: 20000
           writetimeout: 20000
           ssl:
-            enable: true
+            enable: false  # true false
   ## Specify DBMS
   jpa:
     database: ORACLE #MYSQL
@@ -63,7 +63,9 @@ spring:
       #type: trace
 
 server:
-  port: 8081
+  port: 8088
+  servlet:
+      context-path: /gestiondestock
 
 flickr:
   apiKey: da3d406c77a919c3f7b0d5f22f0fefb1

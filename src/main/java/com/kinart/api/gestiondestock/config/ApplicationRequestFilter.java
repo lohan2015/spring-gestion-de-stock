@@ -29,7 +29,7 @@ public class ApplicationRequestFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws ServletException, IOException {
-
+    System.out.println("DO FILTER.................................................................");
     final String authHeader = request.getHeader("Authorization");
     String userEmail = null;
     String jwt = null;

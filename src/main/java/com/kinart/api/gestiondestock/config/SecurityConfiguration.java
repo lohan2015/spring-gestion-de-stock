@@ -35,6 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    //System.out.println("Interceptor.....................................");
     auth.userDetailsService(applicationUserDetailsService)
     .passwordEncoder(passwordEncoder())
     ;
@@ -42,9 +43,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
+    //System.out.println("Interceptor.....................................");
     http.addFilterBefore(corsFilter(), SessionManagementFilter.class)
         .csrf().disable()
         .authorizeRequests().antMatchers("/**/authenticate",
+// chrome.exe --user-data-dir="C://Chrome dev session" --disable-web-security
+// Swagger url : http://localhost:8081/swagger-ui/index.html
 //           "/**/mail/**",
 //         "/**/calcul/**",
 //         "/**/salaries/**",
@@ -79,6 +83,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Bean
   public CorsFilter corsFilter() {
+    //System.out.println("CORS.....................................");
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     final CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);

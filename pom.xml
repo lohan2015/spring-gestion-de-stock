@@ -11,11 +11,13 @@
 	<groupId>com.mbassi</groupId>
 	<artifactId>gestiondestock</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<!--packaging>war</packaging-->
+	<!--packaging>jar</packaging-->
+	<packaging>war</packaging>
 	<name>API_Gestion_paie_stock</name>
 	<description>API du portil salarié</description>
 	<properties>
 		<java.version>11</java.version>
+		<tomcat.version>9.0.89</tomcat.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<junit-platform.version>5.7.0</junit-platform.version>
@@ -121,6 +123,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
@@ -224,6 +231,44 @@
 			<artifactId>poi</artifactId>
 			<version>3.7</version>
 		</dependency>
+		<dependency>
+			<groupId>com.innoventsolutions.birt.runtime</groupId>
+			<artifactId>org.eclipse.birt.runtime_4.8.0-20180626</artifactId>
+			<version>4.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.mail</groupId>
+			<artifactId>jakarta.mail-api</artifactId>
+			<version>2.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.angus</groupId>
+			<artifactId>angus-mail</artifactId>
+			<version>2.0.3</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.activation</groupId>
+			<artifactId>jakarta.activation-api</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>jakarta.mail</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>json-schema-validator</artifactId>
+			<version>${rest-assured.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.mail</groupId>
+					<artifactId>mailapi</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 
 		<!-- Thanks for using https://jar-download.com -->
 
@@ -309,6 +354,7 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<finalName>gestiondestock</finalName>
 	</build>
 
 </project>
